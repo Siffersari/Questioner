@@ -52,3 +52,29 @@ a {
 .fluid {
     min-height: 45em;
 }
+
+
+input:invalid{
+    border-color: #900;
+    
+  }
+  
+input:focus:invalid {
+    outline: none;
+  }
+
+input:focus:valid {
+    border-color: black;
+    outline: none;
+}
+
+
+.show {
+    display: show;
+}
+
+.error {
+    color: #dfa000;
+    padding: 10px;
+    
+}
