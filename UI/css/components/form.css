@@ -26,13 +26,23 @@
   
 }
 
-#questioner-reset {
-    width: 125px;
+.questioner-reset {
+    width: 125px !important;
     text-align: left;
 }
 
-#questioner-reset-input {
-    width: 66%;
+.questioner-request {
+    
+    width: 145px !important;    
+}
+
+.questioner-request-input {
+    width: 60% !important;
+  
+}
+
+.questioner-reset-input {
+    width: 65% !important;
 }
 
 .questioner-signup input{
