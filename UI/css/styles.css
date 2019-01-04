@@ -1,0 +1,45 @@
+/* --- Components design --- */
+
+@import url("components/navbar.css");
+@import url("components/form.css");
+@import url("components/button.css");
+@import url("components/footer.css");
+
+/* --- General design --- */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    letter-spacing: 1px;
+}
+
+.questioner-center{
+    text-align: center;
+}
+
+.questioner-container {
+    
+    margin-right: auto;
+    margin-left: auto;
+    width: 100%;
+}
+
+.info {
+    color: #dfa000;
+}
+
+.semi {
+    width: 75%;
+}
+
+.questioner-rule {
+    color: rgba(220,224,244,0.4);
+}
+
+a:focus {
+    outline: 0;
+    border: 0;
+}
