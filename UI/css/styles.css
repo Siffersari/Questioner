@@ -25,6 +25,7 @@ body {
     margin-right: auto;
     margin-left: auto;
     width: 100%;
+    padding-top: 30px;
 }
 
 .info {
@@ -46,4 +47,8 @@ a:focus {
 
 a {
     text-decoration: none;
+}
+
+.fluid {
+    min-height: 45em;
 }
