@@ -1,0 +1,35 @@
+footer {
+    color:  white;
+    background-color: #222222;
+    min-height: 12em;
+    display: flex;
+    align-content: space-around;
+    align-items: center;
+    margin-top: 50px;  
+}
+
+footer p {
+    margin: auto;
+    font-weight: bold;
+}
+
+footer ul {
+    list-style-type: none;
+    margin: auto;
+}
+
+footer li {
+    padding: 10px;
+}
+
+footer li :hover{
+    color: #fcbd20;
+}
+
+
+footer a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+}
+

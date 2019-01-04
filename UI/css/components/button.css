@@ -1,0 +1,17 @@
+.questioner-btn-transround {
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 15px;
+    font-weight: normal;
+    text-decoration: none;
+    opacity:0.95;
+    background-color: #A63569;
+}
+
+.questioner-btn-transround:hover {
+    opacity: 1;
+    text-decoration: none;
+    
+}
+

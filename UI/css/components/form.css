@@ -1,0 +1,66 @@
+.questioner-forms {
+    display: flex;
+    text-align: center;
+    padding: 20px;
+    
+    justify-content: space-around;
+}
+
+.questioner-row{
+    border: 1px solid black;
+    padding: 20px;
+    margin: 50px auto;
+    width: 40%;
+}
+
+.questioner-input{
+    padding: 15px;
+    margin-bottom: 20px; 
+      
+}
+.questioner-signup label{
+  display: inline-block;
+  width: 143px;
+  text-align: right;
+  padding-right: 2px;
+  
+}
+
+.questioner-signup input{
+    width: 65%;
+    padding: 10px;  
+}
+
+.questioner-signup input:focus{
+    color: #A63569;
+}
+
+.questioner-signup button{
+    width: 100%;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+
+
+
+
+
+@media (max-width: 990px){
+    .questioner-row {
+        width: 100%;
+    }   
+}
+
+@media (max-width: 640px) {
+    .questioner-signup label {
+        display: none;
+    }
+}
+
+@media (min-width: 992px){
+    .questioner-row {
+        width: 60%;
+    }
+}
+
