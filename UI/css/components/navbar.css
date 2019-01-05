@@ -27,6 +27,12 @@
     color: #A63569;
   }
   
+  /* User Avatar */
+  .questioner-navbar .questioner-avatar {
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+  }
   
   /* Right section */
   .questioner-navbar-right {
@@ -52,3 +58,7 @@
     text-decoration: none;
   }
  
+
+  
+
+  
