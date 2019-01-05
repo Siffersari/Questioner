@@ -8,6 +8,7 @@
 @import url("components/dropdown.css");
 @import url("components/tabs.css");
 @import url("components/list.css");
+@import url("components/messages.css");
 
 
 
@@ -55,7 +56,7 @@ input:focus:valid {
     margin-right: auto;
     margin-left: auto;
     width: 100%;
-    padding-top: 30px;
+    padding-top: 25px;
 }
 
 .info {
@@ -64,6 +65,10 @@ input:focus:valid {
 
 .semi {
     width: 75%;
+}
+
+.partial {
+    width: 60%;
 }
 
 .questioner-rule {
@@ -117,10 +122,17 @@ input:focus:valid {
     margin: auto;
 }
 
+.questioner-content {
+    margin-top: 5em;
+}
+
 
 
 @media screen and (max-width: 600px) {
-    .questioner-meetup-container {
+    .questioner-meetup-container, .partial{
+        width: 100%;
+    }
+    .questioner-meetup-container{
         width: 100%;
     }
     
