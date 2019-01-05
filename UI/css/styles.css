@@ -99,6 +99,7 @@ input:focus:valid {
 
 .questioner-span {
     font-weight: bold;
+    padding-left: 1em;
     
 }
 
@@ -122,4 +123,5 @@ input:focus:valid {
     .questioner-meetup-container {
         width: 100%;
     }
+    
 }
