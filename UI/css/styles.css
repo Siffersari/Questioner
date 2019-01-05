@@ -4,6 +4,13 @@
 @import url("components/form.css");
 @import url("components/button.css");
 @import url("components/footer.css");
+@import url("components/avatar.css");
+@import url("components/dropdown.css");
+@import url("components/tabs.css");
+@import url("components/list.css");
+
+
+
 
 /* --- General design --- */
 
@@ -14,6 +21,29 @@
 body {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     letter-spacing: 1px;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:focus {
+    outline: 0;
+    border: 0;
+}
+
+input:invalid{
+    border-color: #900;
+    
+}
+  
+input:focus:invalid {
+    outline: none;
+}
+
+input:focus:valid {
+    border-color: black;
+    outline: none;
 }
 
 .questioner-center{
@@ -40,32 +70,8 @@ body {
     color: rgba(220,224,244,0.4);
 }
 
-a:focus {
-    outline: 0;
-    border: 0;
-}
-
-a {
-    text-decoration: none;
-}
-
 .fluid {
     min-height: 45em;
-}
-
-
-input:invalid{
-    border-color: #900;
-    
-  }
-  
-input:focus:invalid {
-    outline: none;
-  }
-
-input:focus:valid {
-    border-color: black;
-    outline: none;
 }
 
 
@@ -77,4 +83,43 @@ input:focus:valid {
     color: #dfa000;
     padding: 10px;
     
+}
+
+.icon {
+    color: black;
+    margin-left: 1.5em;
+    font-size: 30px;
+}
+
+.active {
+    border-bottom: 2px solid #A63569;
+    border-radius: 5%;
+    padding-bottom: 5px;
+}
+
+.questioner-span {
+    font-weight: bold;
+    
+}
+
+.questioner-span:hover {
+    color: #A63569;
+}
+
+
+.main-heading {
+    margin-top: 2em;
+}
+
+.questioner-meetup-container {
+    width: 60%;
+    margin: auto;
+}
+
+
+
+@media screen and (max-width: 600px) {
+    .questioner-meetup-container {
+        width: 100%;
+    }
 }
