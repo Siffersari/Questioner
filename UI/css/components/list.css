@@ -35,7 +35,7 @@
 }
 
 .questioner-product-description {
-    flex: auto;
+    flex: 0 auto;
     padding:  0 10px;
 }
 
@@ -61,4 +61,15 @@
 
 .questioner-list-anchor {
     color: black;
+}
+
+
+
+@media screen and (max-width: 600px) {
+    .questioner-product:hover {
+        background: white;
+    }
+    .questioner-product {
+        width: 100%;
+    }
 }

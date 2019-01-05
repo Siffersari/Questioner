@@ -20,7 +20,7 @@
 
 .questioner-tabs-item {
     /* flex: 0 0 25%; # The items can't grow or shrink they keep to 25% of the flexbox */
-    flex: 1 0 auto; /* The items all grow equally and they all take the same space. Better because it works with any number of items*/
+    flex: 1 1 auto; /* The items all grow equally and they all take the same space. Better because it works with any number of items*/
     background: black;
     text-align: center;
     opacity: 0.9;
@@ -42,4 +42,11 @@
 .questioner-tabs-item.active {
     background: #A63569;
     color: white;
+}
+
+
+@media screen and (max-width: 600px) {
+    .questioner-tabs {
+        width: 100%;
+    }
 }
