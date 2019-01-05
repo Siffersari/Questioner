@@ -63,6 +63,10 @@
     color: black;
 }
 
+.questioner-product h3, p {
+    margin-left: 1em;
+}
+
 
 
 @media screen and (max-width: 600px) {
@@ -71,5 +75,10 @@
     }
     .questioner-product {
         width: 100%;
+        
+    }
+    
+    .questioner-product-image {
+        display: none;
     }
 }
