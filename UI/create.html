@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Questioner - Create Meetup</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="questioner-container">
+        <div class="questioner-navbar">
+            <!-- Logo -->
+            <a href="#" class="questioner-navbrand">QUESTIONER</a>
+
+            <!-- Right Nav Items-->
+            <div class="questioner-navbar-right" id="topnav">
+                <a href="administrator.html" class="questioner-navbar-item questioner-navbar-link active" id="home">Home</a>
+
+
+                <!-- Dashboard -->
+                <ul class="questioner-nav-list">
+
+                    <li class="parent"><a href="#" class="questioner-navbar-item questioner-navbar-link">Dashboard</a>
+                        <ul class="child">
+                            <li><a href="create.html" class="questioner-navbar-item questioner-navbar-link">Create
+                                    Meetup</a></li>
+                            <li><a href="meetups.html" class="questioner-navbar-item questioner-navbar-link">My Meetups</a></li>
+                            <li><a href="going.html" class="questioner-navbar-item questioner-navbar-link">I'm Going</a></li>
+                            <li><a href="questions.html" class="questioner-navbar-item questioner-navbar-link">My
+                                    Questions</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+
+                <!-- Profile picture with dropdown list -->
+                <div class="questioner-dropdown" id="nav-dropdown">
+                    <img src="http://placehold.it/50x50" alt="" class="questioner-avatar">
+                    <ul class="questioner-dropdown-content">
+                        <li><a href="profile.html" class="questioner-navbar-item questioner-navbar-link">Profile</a></li>
+                        <li><button class="questioner-btn-logout">Logout</button></li>
+                    </ul>
+                </div>
+
+                <div class="questioner-dropdown" id="bars">
+                    <i class="questioner-dropdown-icon fa fa-bars"></i>
+                    <div class="questioner-dropdown-menu">
+                        <a href="administrator.html" class="questioner-navbar-item questioner-navbar-link">Home</a>
+                        <a href="create.html" class="questioner-navbar-item questioner-navbar-link">Create
+                            Meetup</a>
+                        <a href="meetups.html" class="questioner-navbar-item questioner-navbar-link">My Meetups</a>
+                        <a href="going.html" class="questioner-navbar-item questioner-navbar-link">I'm Going</a>
+                        <a href="questions.html" class="questioner-navbar-item questioner-navbar-link">My
+                            Questions</a>
+                        <a href="profile.html" class="questioner-navbar-item questioner-navbar-link">Profile</a>
+                        <button class="questioner-btn-logout">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="questioner-container">
+        <div class="questioner-row">
+            <h1 class="questioner-center">CREATE MEETUP</h1>
+
+            <hr class="questioner-rule semi">
+            <div class="questioner-forms">
+                <form action="" class="questioner-signup">
+                    <h3> Where will your Meetup be held ? </h3>
+                    <div class="questioner-textbox">
+
+                        <input type="text" placeholder="E.g   Art of Music, Westlands - Nairobi" required>
+                        <br>
+                    </div>
+                    <h3>What date will your meetup be ? </h3>
+                    <div class="questioner-textbox">
+
+                        <input type="date" required>
+                        <br>
+                    </div>
+                    <h3>At what time will your Meetup take place ? </h3>
+                    <p><em>Please use the 24 Hour clock system</em></p>
+                    <div class="questioner-textbox">
+
+                        <input type="time" required>
+                        <br>
+                    </div>
+                    <h3>What will be the name of your Meetup ? </h3>
+                    <div class="questioner-textbox">
+
+                        <input type="text" placeholder="E.g   Nairobi Coders" required minlength="5">
+                        <br>
+                    </div>
+                    <h3>What will your Meetup be about ?</h3>
+                    <div class="questioner-textbox">
+
+                        <input type="text" placeholder="E.g.  Embracing cultural beliefs"  required minlength="5">
+                        <br>
+                    </div>
+                    <h3>Write a brief bio about the Meetup and who should join.</h3>
+                    <div class="questioner-textbox">
+
+                        <textarea rows="10" cols="65" wrap="physical" name="comments" required minlength="50"></textarea>
+                        <br>
+                    </div>
+
+                    <br>
+                    <hr class="questioner-rule">
+
+
+                    <button class="questioner-btn-transround">CREATE MEETUP</button>
+
+                    
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="questioner-footer">
+        <p>&copy; Questioner 2019. All Rights Reserved.</p>
+        <ul>
+            <li><a href="#">About</a></li>
+            <li><a href="#">API</a></li>
+            <li><a href="#">Help</a></li>
+        </ul>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>

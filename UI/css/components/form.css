@@ -60,7 +60,19 @@
     margin-top: 20px;
 }
 
+.questioner-textbox {
+    padding: 25px;
+    margin-bottom: 20px;
+}
 
+.questioner-textbox input {
+    min-height: 3em;
+    width: 100%;
+}
+
+.bio {
+    padding: 8em 0 !important;
+}
 
 
 
