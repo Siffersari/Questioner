@@ -15,3 +15,13 @@
     
 }
 
+.questioner-btn-logout {
+    border: none;
+    background-color: #ffffff;
+    margin: 10px 0 10px 10px;
+    color: #616668;
+}
+
+.questioner-btn-logout:hover {
+    color: #A63569
+}
