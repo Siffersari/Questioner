@@ -1,0 +1,66 @@
+.questioner-message {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid rgba(220,224,244,0.4);
+    max-width: 60%;
+    margin: auto;
+  }
+  .questioner-message:last-child {
+    border-bottom: none;
+  }
+  .questioner-message-body {
+    flex-grow: 1;
+  }
+  .questioner-message-name {
+    padding-left: 10px;
+    min-width: 100px;
+  }
+  .questioner-message-name h3 {
+    font-size: 13px;
+    margin-bottom: 0px;
+  }
+  .questioner-message-name p {
+    font-size: 13px;
+    font-weight: lighter;
+    opacity: 0.6;
+    margin-top: 5px;
+  }
+  .questioner-message-body {
+    padding-left: 10px;
+    font-size: 13px;
+    color: rgba(0,0,0,0.7);
+  }
+  .questioner-message-body {
+    padding-left: 20px;
+    color: rgba(0,0,0,0.4);
+  }
+  .questioner-message-body strong{
+    color: rgba(0,0,0,0.9);
+    color: rgba(0,0,0,0.9);
+  }
+  .questioner-message-body p {
+    margin: 6px 0;
+  }
+  .questioner-message-status {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .questioner-status.accepted {
+    color: #04A366;
+  }
+  .questioner-status.declined {
+    color: red;
+  }
+  .questioner-status.pending {
+    color: lightgrey;
+  }
+  
+
+
+  @media screen and (max-width: 600px) {
+    .questioner-message {
+      max-width: 100%;
+    }
+    
+}
