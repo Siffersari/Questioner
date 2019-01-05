@@ -49,4 +49,10 @@
     .questioner-tabs {
         width: 100%;
     }
+    #last-tab {
+        display: none;
+    }
+    #alt-tab {
+        border-radius: 0 10px 0 0;
+    }
 }
