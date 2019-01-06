@@ -157,7 +157,20 @@ input:focus:valid {
     color: white;
 }
 
+.pad-left {
+    margin-left: 1.2em;
+}
+.pad-left-half {
+    margin-left: 0.5em;
+}
 
+.hang {
+    width: 95%;
+    margin: 0 1em;
+}
+.questioner-margin {
+    margin: 5em 0;
+}
 .danger {
     color: red;
     font-size: 1.5em;
@@ -177,6 +190,9 @@ input:focus:valid {
     }
     .questioner-vote-div {
         padding: 10px 5px;
+    }
+    #profile {
+        display: block;
     }
     
 }
