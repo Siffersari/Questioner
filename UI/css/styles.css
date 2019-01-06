@@ -84,6 +84,10 @@ input:focus:valid {
     display: show;
 }
 
+.bottomless {
+    border-bottom: none !important;
+}
+
 .error {
     color: #dfa000;
     padding: 10px;
@@ -135,8 +139,18 @@ input:focus:valid {
     color: #A63569;
 }
 
+.questioner-question-accessories {
+    margin-top: 25px;
+    font-size: 15px;
+    font-weight: bold;    
+}
 
-@media screen and (max-width: 600px) {
+.questioner-question-accessories:hover {
+    color: #A63569;
+}
+
+
+@media screen and (max-width: 800px) {
     .questioner-meetup-container, .partial{
         width: 100%;
     }
