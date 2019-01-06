@@ -149,6 +149,20 @@ input:focus:valid {
     color: #A63569;
 }
 
+.questioner-anchor-button {
+    color: white;
+}
+
+
+.danger {
+    color: red;
+    font-size: 1.5em;
+    padding: 5px 0;
+}
+
+.pad-top {
+    margin-top: 7em;
+}
 
 @media screen and (max-width: 800px) {
     .questioner-meetup-container, .partial{
