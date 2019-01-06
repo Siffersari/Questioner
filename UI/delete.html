@@ -11,6 +11,95 @@
 </head>
 
 <body>
+    <div class="questioner-navbar">
+        <!-- Logo -->
+        <a href="#" class="questioner-navbrand">QUESTIONER</a>
+
+        <!-- Right Nav Items-->
+        <div class="questioner-navbar-right" id="topnav">
+            <a href="administrator.html" class="questioner-navbar-item questioner-navbar-link active" id="home">Home</a>
+
+
+            <!-- Dashboard -->
+            <ul class="questioner-nav-list">
+
+                <li class="parent"><a href="#" class="questioner-navbar-item questioner-navbar-link">Dashboard</a>
+                    <ul class="child">
+                        <li><a href="create.html" class="questioner-navbar-item questioner-navbar-link">Create
+                                Meetup</a></li>
+                        <li><a href="meetups.html" class="questioner-navbar-item questioner-navbar-link">My Meetups</a></li>
+                        <li><a href="going.html" class="questioner-navbar-item questioner-navbar-link">I'm Going</a></li>
+                        <li><a href="questions.html" class="questioner-navbar-item questioner-navbar-link">My
+                                Questions</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+
+            <!-- Profile picture with dropdown list -->
+            <div class="questioner-dropdown" id="nav-dropdown">
+                <img src="http://placehold.it/50x50" alt="" class="questioner-avatar">
+                <ul class="questioner-dropdown-content">
+                    <li><a href="profile.html" class="questioner-navbar-item questioner-navbar-link">Profile</a></li>
+                    <li><button class="questioner-btn-logout">Logout</button></li>
+                </ul>
+            </div>
+
+            <div class="questioner-dropdown" id="bars">
+                <i class="questioner-dropdown-icon fa fa-bars"></i>
+                <div class="questioner-dropdown-menu">
+                    <a href="administrator.html" class="questioner-navbar-item questioner-navbar-link">Home</a>
+                    <a href="create.html" class="questioner-navbar-item questioner-navbar-link">Create
+                        Meetup</a>
+                    <a href="meetups.html" class="questioner-navbar-item questioner-navbar-link">My Meetups</a>
+                    <a href="going.html" class="questioner-navbar-item questioner-navbar-link">I'm Going</a>
+                    <a href="questions.html" class="questioner-navbar-item questioner-navbar-link">My
+                        Questions</a>
+                    <a href="profile.html" class="questioner-navbar-item questioner-navbar-link">Profile</a>
+                    <button class="questioner-btn-logout">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="questioner-meetup-container fluid pad-top">
+        <h1 class="questioner-center">DELETE MEETUP</h1>
+        <hr class="questioner-rule partial">
+        <p class="questioner-center danger">Before proceeding <br> Please note that this action <b>cannot</b> be
+            reversed once done!</p>
+        <hr class="questioner-rule ">
+        <div class="questioner-product">
+
+            <img src="https://picsum.photos/200/150?image=0" alt="" class="questioner-product-image">
+            <div class="questioner-product-description">
+                <h3> <a href="#" class="questioner-list-anchor">National Heritage</a></h3>
+                <p>Embracing cultural beliefs and misconceptions.</p>
+                <span class="questioner-span" id="venue"><i class="fa fa-map-marker"></i> Bomas of Kenya, Nairobi</span>
+                <br><br>
+                <span class="questioner-span"> 05/01/19 </span>
+                <span class="questioner-span">10:30 AM</span>
+            </div>
+
+        </div>
+        <hr class="questioner-rule">
+
+        <div class="questioner-forms">
+            <button class="questioner-btn-transround" id="delete">DELETE</button>
+        </div>
+    </div>
+
+
+
+    <footer class="questioner-footer">
+        <p>&copy; Questioner 2019. All Rights Reserved.</p>
+        <ul>
+            <li><a href="#">About</a></li>
+            <li><a href="#">API</a></li>
+            <li><a href="#">Help</a></li>
+        </ul>
+    </footer>
+
     <script src="js/main.js"></script>
 </body>
 
