@@ -98,6 +98,10 @@
     color: #A63569;
 }
 
+#questioner-scheduled {
+    border-bottom: 1px solid #cccccc;
+}
+
 @media screen and (max-width: 800px) {
     .questioner-product:hover {
         background: white;
