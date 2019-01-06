@@ -55,10 +55,16 @@
   .questioner-status.pending {
     color: lightgrey;
   }
+  .questioner-heading-medium {
+    font-size: 2em;
+  }
+  .questioner-paragraph-medium{
+    font-size: 1.25em;
+  }
   
 
 
-  @media screen and (max-width: 600px) {
+  @media screen and (max-width: 800px) {
     .questioner-message {
       max-width: 100%;
     }
