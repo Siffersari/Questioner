@@ -139,6 +139,10 @@ input:focus:valid {
     color: #A63569;
 }
 
+.questioner-votes {
+    padding-right: 20px;
+}
+
 .questioner-question-accessories {
     margin-top: 25px;
     font-size: 15px;
