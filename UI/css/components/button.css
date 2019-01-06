@@ -25,3 +25,14 @@
 .questioner-btn-logout:hover {
     color: #A63569
 }
+
+#delete {
+    margin-top: 15px !important;
+    width: 100%;
+    background-color: #d4312d;
+    opacity: 1 !important;
+}
+
+#delete:hover {
+    background-color: red;
+}
