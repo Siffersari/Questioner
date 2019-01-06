@@ -67,9 +67,38 @@
     margin-left: 1em;
 }
 
+#questioner-product-comment {
+    margin: 5em 2em;  
+}
 
+#questioner-comment-head {
+    font-size: 2em;
+    padding-bottom: 5px;
+    border-bottom: 3px solid #A63569;
+    border-radius: 5%;  
+}
 
-@media screen and (max-width: 600px) {
+#questioner-comment-head:hover {
+    color: #A63569;
+}
+
+#questioner-comment-paragraph {
+    padding: 30px 0;
+}
+
+#questioner-comment {
+    color: black;
+}
+
+.questioner-comment-time {
+    padding: 5px 0;
+    color: #9c9b9b;
+}
+.questioner-comment-time:hover {
+    color: #A63569;
+}
+
+@media screen and (max-width: 800px) {
     .questioner-product:hover {
         background: white;
     }
@@ -81,4 +110,5 @@
     .questioner-product-image {
         display: none;
     }
+    
 }

@@ -5,13 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Questioner - Post Question</title>
+    <title>Questioner - Comment</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-
     <div class="questioner-navbar">
         <!-- Logo -->
         <a href="#" class="questioner-navbrand">QUESTIONER</a>
@@ -26,9 +25,6 @@
 
                 <li class="parent"><a href="#" class="questioner-navbar-item questioner-navbar-link">Dashboard</a>
                     <ul class="child">
-                        <li><a href="create.html" class="questioner-navbar-item questioner-navbar-link">Create
-                                Meetup</a></li>
-                        <li><a href="meetups.html" class="questioner-navbar-item questioner-navbar-link">My Meetups</a></li>
                         <li><a href="going.html" class="questioner-navbar-item questioner-navbar-link">I'm Going</a></li>
                         <li><a href="questions.html" class="questioner-navbar-item questioner-navbar-link">My
                                 Questions</a></li>
@@ -50,9 +46,6 @@
                 <i class="questioner-dropdown-icon fa fa-bars"></i>
                 <div class="questioner-dropdown-menu">
                     <a href="administrator.html" class="questioner-navbar-item questioner-navbar-link">Home</a>
-                    <a href="create.html" class="questioner-navbar-item questioner-navbar-link">Create
-                        Meetup</a>
-                    <a href="meetups.html" class="questioner-navbar-item questioner-navbar-link">My Meetups</a>
                     <a href="going.html" class="questioner-navbar-item questioner-navbar-link">I'm Going</a>
                     <a href="questions.html" class="questioner-navbar-item questioner-navbar-link">My
                         Questions</a>
@@ -67,35 +60,13 @@
     <div class="questioner-container fluid">
 
         <div class="questioner-meetup-container">
-            <div class="questioner-tabs">
-                <div class="questioner-tabs-item active">
-                    <h3>75</h3>
-                    <p>Attending</p>
-                </div>
-                <div class="questioner-tabs-item">
-                    <h3>45</h3>
-                    <p>Questions</p>
 
-                </div>
-                <div class="questioner-tabs-item" id="alt-tab">
-                    <h3>90</h3>
-                    <p>Comments</p>
+            <div class="questioner-product" id="questioner-product-comment">
 
-                </div>
 
-                <div class="questioner-tabs-item" id="last-tab">
-                    <br>
-                    <h3> ATTEND </h3>
-                </div>
-
-            </div>
-
-            <div class="questioner-product">
-
-                <img src="https://picsum.photos/200/150?image=0" alt="" class="questioner-product-image">
                 <div class="questioner-product-description">
-                    <h3> <a href="#" class="questioner-list-anchor">National Heritage</a></h3>
-                    <p>Embracing cultural beliefs and misconceptions.</p>
+                    <h3> <a href="#" class="questioner-list-anchor" id="questioner-comment-head">National Heritage</a></h3>
+                    <p id="questioner-comment-paragraph">Embracing cultural beliefs and misconceptions.</p>
                     <span class="questioner-span" id="venue"><i class="fa fa-map-marker"></i> Bomas of Kenya, Nairobi</span>
                     <br><br>
                     <span class="questioner-span"> 05/01/19 </span>
@@ -106,101 +77,87 @@
 
             </div>
         </div>
+
         <div class="questioner-content">
             <hr class="questioner-rule partial">
-            <h1 class="questioner-center main-content-heading">MEETUP QUESTIONS</h1>
+            <h2 class="questioner-center main-content-heading">QUESTION</h2>
             <hr class="questioner-rule partial">
         </div>
-        <div class="questioner-message">
-            <div class="questioner-vote-div">
-                <i class="fa fa-caret-up"></i><br> <span class="questioner-votes">30</span> <br> <i class="fa fa-caret-down"></i>
-            </div>
+
+        <div class="questioner-message bottomless">
             <img src="http://placehold.it/50x50" alt="" class="questioner-avatar-small" id="message-avatar">
             <div class="questioner-message-name">
                 <h3>Gaucho Mmoja</h3>
                 <p>10/07/17</p>
             </div>
-            <div class="questioner-message-body">
-                <p><strong>Cultural Misconception</strong></p>
-                <p>
+            <div class="questioner-message-body" id="questioner-question-large">
+                <p class="questioner-heading-medium"><strong>Cultural Misconception</strong></p>
+                <p class="questioner-paragraph-medium">
                     What is the most cultural thing that we are forgetting?
                 </p>
-                <div class="questioner-question-accessories">
-                    <span class="questioner-comments">20</span> <i class="fa fa-comment"></i>
-                </div>
             </div>
         </div>
-
-        <div class="questioner-message">
-            <div class="questioner-vote-div">
-                <i class="fa fa-caret-up"></i><br> <span class="questioner-votes">12</span> <br> <i class="fa fa-caret-down"></i>
-            </div>
-            <img src="http://placehold.it/50x50" alt="" class="questioner-avatar-small" id="message-avatar">
-            <div class="questioner-message-name">
-                <h3>Wayne Rooney</h3>
-                <p>10/07/17</p>
-            </div>
-            <div class="questioner-message-body">
-                <p><strong>Jamuhuri Day</strong></p>
-                <p>
-                    What more can be added to the list of activities to be performed?
-                </p>
-                <div class="questioner-question-accessories">
-                    <span class="questioner-comments">45</span> <i class="fa fa-comment"></i>
-                </div>
-            </div>
-        </div>
-        <div class="questioner-message">
-            <div class="questioner-vote-div">
-                <i class="fa fa-caret-up"></i><br> <span class="questioner-votes">48</span><br> <i class="fa fa-caret-down"></i>
-            </div>
-            <img src="http://placehold.it/50x50" alt="" class="questioner-avatar-small" id="message-avatar">
-            <div class="questioner-message-name">
-                <h3>Zinedine Zidane</h3>
-                <p>10/07/17</p>
-            </div>
-            <div class="questioner-message-body">
-                <p><strong>I am not sure yet</strong></p>
-                <p>
-                    I am not sure yet! Maybe Zidane made football culture news
-                </p>
-                <div class="questioner-question-accessories">
-                    <span class="questioner-comments">25</span> <i class="fa fa-comment"></i>
-                </div>
-            </div>
-        </div>
-
 
         <div class="questioner-content">
             <hr class="questioner-rule partial">
-            <h1 class="questioner-center main-content-heading">ASK QUESTION</h1>
+            <h2 class="questioner-center main-content-heading">COMMENTS</h2>
             <hr class="questioner-rule partial">
         </div>
+
+        <div class="questioner-message">
+
+            <img src="http://placehold.it/50x50" alt="" class="questioner-avatar-small" id="message-avatar">
+            <div class="questioner-message-name">
+                <h3>Wayne Rooney</h3>
+
+            </div>
+            <div class="questioner-message-body" id="questioner-comment">
+
+                <p>
+                    What more can be added to the list of activities to be performed?
+                </p>
+
+                <div class="questioner-comment-time">
+                    <p>9 hours ago</p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="questioner-message">
+
+            <img src="http://placehold.it/50x50" alt="" class="questioner-avatar-small" id="message-avatar">
+            <div class="questioner-message-name">
+                <h3>Zinedine Zidane</h3>
+
+            </div>
+            <div class="questioner-message-body" id="questioner-comment">
+
+                <p>
+                    I am not sure yet! Maybe Zidane made football culture news
+                </p>
+                <div class="questioner-comment-time">
+                    <p>Yesterday</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="questioner-content">
+            <hr class="questioner-rule partial">
+            <h2 class="questioner-center main-content-heading">ADD COMMENT</h2>
+            <hr class="questioner-rule partial">
+        </div>
+
         <div class="questioner-forms">
             <form action="" class="questioner-signup">
-                <h3> Title </h3>
+                <h3>Comment </h3>
                 <div class="questioner-textbox">
 
-                    <input type="text" placeholder="E.g   Improving Motor Efficiency" required>
+                    <textarea rows="10" cols="33" wrap="physical" name="comments" required minlength="5" placeholder="Type your comment here"></textarea>
                     <br>
                 </div>
-
-
-                <h3>Description</h3>
-                <div class="questioner-textbox">
-
-                    <textarea rows="10" cols="33" wrap="physical" name="comments" required minlength="50"></textarea>
-                    <br>
-                </div>
-
                 <br>
-
-
-
-                <button class="questioner-btn-transround">POST QUESTION</button>
-
-
-
+                <button class="questioner-btn-transround">COMMENT</button>
             </form>
         </div>
 
@@ -214,7 +171,6 @@
             <li><a href="#">Help</a></li>
         </ul>
     </footer>
-
 
     <script src="js/main.js"></script>
 </body>
