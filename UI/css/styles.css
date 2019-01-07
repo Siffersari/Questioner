@@ -216,6 +216,11 @@ input:focus:valid {
     
 }
 
+.full {
+    width: 85%;
+    margin: 4em 2em;
+}
+
 
 
 
