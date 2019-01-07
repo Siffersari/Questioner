@@ -1,0 +1,46 @@
+.questioner-card {
+    height: 200px;
+    color: white;
+    background: linear-gradient(135deg, 
+                      rgba(0,0,0,0.8) 0%,
+                      rgba(0,0,0,0.3) 50%),
+        url('https://picsum.photos/300/250?image=0');
+    background-size: cover;
+    position: relative;
+
+}
+
+.questioner-card-category {
+    position: absolute;
+    top: 20px;
+    left: 4em;
+}
+
+.questioner-card-description {
+    margin-left: 20px;
+    margin-bottom: 20px;
+    overflow: auto;
+}
+
+.questioner-card-image {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.questioner-card-detail {
+    border: 1px solid #cccccc;
+    font-size: 14px;
+    text-align: left;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc; 
+    border-radius: 4px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.questioner-card-detail:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
