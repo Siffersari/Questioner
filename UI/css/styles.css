@@ -183,6 +183,10 @@ input:focus:valid {
     margin-top: 7em;
 }
 
+.pad-bottom {
+    margin-bottom: 7em;
+}
+
 .questioner-index-anchor {
     color: white;
 }
@@ -196,7 +200,7 @@ input:focus:valid {
 
 .questioner-card-row{
     margin-top: 5em;
-    margin-bottom: 10em;
+    margin-bottom: 5em;
 
 }
 
@@ -204,6 +208,12 @@ input:focus:valid {
     content: "";
     display: table;
     clear: both;
+}
+
+#btn-attend {
+    width: 95%;
+    margin: 10px;
+    
 }
 
 
@@ -224,7 +234,7 @@ input:focus:valid {
         display: block;
     }
     .questioner-column {
-        margin-bottom: 8em;
+        margin-bottom: 9em;
     }
     .questioner-column {
         width: 100%;
