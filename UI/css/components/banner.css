@@ -36,3 +36,8 @@
 #banner-container {
     margin-top: 1.25em;
 }
+
+#banner-meetup {
+    height: 50vh !important;
+    margin-top: 4em;
+}
