@@ -6,6 +6,7 @@ footer {
     align-content: space-around;
     align-items: center;
     margin-top: 50px;  
+    position: relative;
 }
 
 footer p {
