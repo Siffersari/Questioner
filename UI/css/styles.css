@@ -221,6 +221,10 @@ input:focus:valid {
     margin: 4em 2em;
 }
 
+#home-text {
+    color: rgb(141, 144, 151);
+}
+
 
 
 
