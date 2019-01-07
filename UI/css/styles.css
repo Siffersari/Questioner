@@ -9,6 +9,8 @@
 @import url("components/tabs.css");
 @import url("components/list.css");
 @import url("components/messages.css");
+@import url("components/banner.css");
+@import url("components/card.css");
 
 
 
@@ -181,6 +183,33 @@ input:focus:valid {
     margin-top: 7em;
 }
 
+.questioner-index-anchor {
+    color: white;
+}
+
+.questioner-column {
+    float: left;
+    width: 33.33%;
+    padding: 10px;
+    height: 300px;
+}
+
+.questioner-card-row{
+    margin-top: 5em;
+    margin-bottom: 10em;
+
+}
+
+.questioner-card-row::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+
+
+
 @media screen and (max-width: 800px) {
     .questioner-meetup-container, .partial{
         width: 100%;
@@ -193,6 +222,12 @@ input:focus:valid {
     }
     #profile {
         display: block;
+    }
+    .questioner-column {
+        margin-bottom: 8em;
+    }
+    .questioner-column {
+        width: 100%;
     }
     
 }
