@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from werkzeug.security import generate_password_hash
 # This array users, store all the registered users
 
 users = []
@@ -57,6 +57,7 @@ class UserModels(object):
             "phoneNumber": user["phoneNumber"],
             "username": user["username"],
             "registered": datetime.now(),
+            "password": generate_password_hash(user["password"]),
             "isAdmin": False
         }
 
