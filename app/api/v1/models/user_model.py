@@ -1,5 +1,5 @@
 from datetime import datetime
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 # This array users, store all the registered users
 
 users = []
@@ -77,5 +77,34 @@ class UserModels(object):
             "users": self.db
         }
         return self.makeresp(resp, 200)
+
+
+    def login_user(self,username, password):
+        """ Logins in a user given correct user credentials """
+
+        user = [user for user in self.db if user["username"] == username]
+
+
+        if not user:
+            
+            return self.makeresp("Please check your username", 404)
+
+        if not check_password_hash(user[0]["password"], password):
+            
+            return self.makeresp("Please check your password", 401)
+
+        resp = {
+
+            "name": "{} {}".format(user[0]["lastname"], user[0]["firstname"]),
+            "memberSince": "{:%B %d, %Y}".format(user[0]["registered"]),
+            "message": "You have been logged in successfully"
+        }
+
+        return self.makeresp(resp, 200)
+
+
+
+
+
 
         

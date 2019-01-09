@@ -21,3 +21,15 @@ def register_user():
     resp = db.register_user(data)
 
     return jsonify(resp), 201
+
+@version1.route("/auth/login", methods=["POST"])
+def login_user():
+    """ Logs in a registered user """
+    data = request.get_json()
+
+    password = data["password"],
+    username = data["username"]
+
+    resp = db.login_user(username, password[0])
+
+    return jsonify(resp), resp["status"]
