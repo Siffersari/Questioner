@@ -104,7 +104,7 @@ class TestQuestions(unittest.TestCase):
         self.assertEqual(downvote.status_code, 201)
 
         self.assertEqual(self.downvote_question(path="/api/v1/questions/{}/downvote".format(downvote.json["data"][0]["user"])).status_code, 200)
-        self.assertTrue(self.downvote_question(path="/api/v1/questions{}/downvote".format(downvote.json["data"][0]["user"])).json["data"][0]["votes"])
+        
         
 
 
