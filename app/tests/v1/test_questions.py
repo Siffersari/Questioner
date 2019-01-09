@@ -80,12 +80,14 @@ class TestQuestions(unittest.TestCase):
         self.assertTrue(new_question.json["data"])
 
     def test_upvote_question(self):
-        """ Tests for upvoting answer """
+        """ Tests for upvoting a question """
 
         new_vote = self.post_question()
+        self.assertEqual(new_vote.status_code, 201)
 
-        self.assertEqual(self.upvote_question(path="/api/v1/questions/{}/upvote".format(new_vote.json["data"][0]["id"])), 200)
-        self.assertTrue(self.upvote_question(path="/api/v1/questions/{}/upvote".format(new_vote.json["data"][0]["votes"])))
+        self.assertEqual(self.upvote_question(path="/api/v1/questions/{}/upvote".format(new_vote.json["data"][0]["user"])).status_code, 200)
+        self.assertTrue(self.upvote_question(path="/api/v1/questions/{}/upvote".format(new_vote.json["data"][0]["user"])).json["data"][0]["votes"])
+        self.assertEqual(self.upvote_question(path="/api/v1/questions/{}/upvote".format(new_vote.json["data"][0]["user"])).json["data"][0]["votes"], 3)
 
 
 if __name__ == "__main__":
