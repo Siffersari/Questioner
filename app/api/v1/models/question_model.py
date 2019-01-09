@@ -84,3 +84,33 @@ class QuestionModels(CommonModels):
         }
         
         return self.makeresp(resp, 200)
+
+
+
+    def downvote_question(self, question_id):
+        """ 
+        Decreases the number of votes of a specific 
+        question by 1 
+        """
+
+        question = [[ind, question] for [ind, question] in enumerate(self.db) if question["id"] == question_id]
+
+        if not question:
+            return self.makeresp("Question not found", 404)
+
+        index = question[0][0]
+
+        votes = self.db[index]["votes"] - 1
+
+        self.db[index]["votes"] = votes
+
+        resp = {
+            "meetup": question[0][1]["meetup"],
+            "title": question[0][1]["title"],
+            "body": question[0][1]["body"],
+            "votes": question[0][1]["votes"]
+        }
+        
+        return self.makeresp(resp, 200)
+
+    
