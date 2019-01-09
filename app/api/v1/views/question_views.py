@@ -13,3 +13,11 @@ def create_question():
     resp = db.create_question(details)
 
     return jsonify(resp), resp["status"]
+
+@version1.route("/questions/<int:question_id>/upvote", methods=["PATCH"])
+def upvote_question(question_id):
+    """ Upvotes a specific question """
+
+    resp = db.upvote_question(question_id)
+
+    return jsonify(resp), resp["status"]
