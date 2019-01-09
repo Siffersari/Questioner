@@ -55,3 +55,20 @@ class MeetupModels(CommonModels):
         }
 
         return self.makeresp(resp, 201)
+
+    def fetch_specific_meetup(self, meetup_id):
+        """ Fetches a specific meetup record  """
+        meetup = [meetup for meetup in self.db if meetup["id"] == meetup_id]
+
+        if not meetup:
+            return self.makeresp("Meetup not found", 404)
+
+        resp = {
+            "id": meetup[0]["id"],
+            "topic": meetup[0]["topic"],
+            "location": meetup[0]["location"],
+            "happeningOn": "{:%B %d, %Y %I:%M%p}".format(meetup[0]["happeningOn"]),
+            "tags": meetup[0]["Tags"]
+        }
+
+        return self.makeresp(resp, 200)
