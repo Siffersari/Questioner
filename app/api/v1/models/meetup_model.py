@@ -72,3 +72,10 @@ class MeetupModels(CommonModels):
         }
 
         return self.makeresp(resp, 200)
+
+
+    def fetch_upcoming_meetups(self):
+        """ Fetches all upcoming meetups """
+        resp = self.db
+
+        return self.makeresp(resp, 200)
