@@ -35,31 +35,35 @@ class TestQuestions(unittest.TestCase):
             "username": "Leewel"
         }
 
-        self.user = self.client.post("/api/v1/auth/signup", data=json.dumps(self.data), content_type="application/json")
+        self.user = self.client.post(
+            "/api/v1/auth/signup", data=json.dumps(self.data), content_type="application/json")
+        self.assertEqual(self.user.status_code, 201)
 
-        self.meetup = self.client.post("/api/v1/meetups", data=json.dumps(self.meetup), content_type="application/json")
+        self.meetup = self.client.post(
+            "/api/v1/meetups", data=json.dumps(self.meetup), content_type="application/json")
+        self.assertEqual(self.meetup.status_code, 201)
 
         self.question = {
-            "username": self.user.json["data"][0]["id"],
+            "user": self.user.json["data"][0]["id"],
             "meetup": self.meetup.json["data"][0]["id"],
             "title": "Leather bag price",
-            "body": "How much would a good leather bag cost ?",
-            "votes": 0
+            "body": "How much would a good leather bag cost ?"
 
         }
+
+        
 
     def post_question(self, path="/api/v1/questions", data={}):
         """ Creates a question for a specific meetup """
 
         if not data:
-            data = self.data
+            data = self.question
 
         response = self.client.post(path, data=json.dumps(
             data), content_type="application/json")
 
         return response
 
-    
     def test_post_new_question(self):
         """ Tests whether new question is created with data provided """
 
@@ -68,6 +72,7 @@ class TestQuestions(unittest.TestCase):
         self.assertEqual(new_question.status_code, 201)
         self.assertTrue(new_question.json["data"])
 
+    
 
 
 if __name__ == "__main__":
