@@ -40,15 +40,6 @@ class TestMeetups(unittest.TestCase):
             "username": "Photographer"
         }
 
-        self.valulessimage = {
-            "location": "Angle House, Nairobi",
-            "images": "",
-            "topic": "No value Images",
-            "happeningOn": "Feb 1 2019 10:30AM",
-            "tags": ["Creative", "Technology"],
-            "username": "Pogba",
-        }
-
     def create_meetup(self, path="api/v1/meetups", data={}):
         """ Creates a meetup """
         if not data:
@@ -56,6 +47,13 @@ class TestMeetups(unittest.TestCase):
 
         response = self.client.post(path, data=json.dumps(
             data), content_type="application/json")
+
+        return response
+
+    def fetch_specific_meetup(self, path="/api/v1/meetups/<meetup-id>"):
+        """ Fetches a specific meetup record """
+
+        response = self.client.get(path)
 
         return response
 
@@ -87,6 +85,21 @@ class TestMeetups(unittest.TestCase):
 
         self.assertEqual(missing_images.status_code, 201)
         self.assertTrue(missing_images.json["data"])
+
+    def test_fetches_meetup_record_if_correct_id(self):
+        """
+        Tests that endpoint fetches a specific meetup record if
+        provided data is correct 
+        """
+
+        meetup_1 = self.create_meetup()
+
+        self.assertEqual(meetup_1.status_code, 201)
+        self.assertTrue(meetup_1.json["data"])
+
+        self.assertEqual(self.fetch_specific_meetup(path="/api/v1/meetups/1").status_code, 200)
+        self.assertTrue(self.fetch_specific_meetup(path="/api/v1/meetups/1").json["data"])
+        self.assertNotEqual(self.fetch_specific_meetup(path="/api/v1/meetups/1").status_code, 404)
 
     def tearDown(self):
         """ Destroy app and variable instances """
