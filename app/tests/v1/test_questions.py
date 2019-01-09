@@ -64,6 +64,13 @@ class TestQuestions(unittest.TestCase):
 
         return response
 
+    def upvote_question(self, path="/api/v1/questions/<int:question_id>/upvote", data={}):
+        """ Increases votes of a specific question by 1 """
+        
+        response = self.client.patch(path)
+
+        return response
+
     def test_post_new_question(self):
         """ Tests whether new question is created with data provided """
 
@@ -72,7 +79,13 @@ class TestQuestions(unittest.TestCase):
         self.assertEqual(new_question.status_code, 201)
         self.assertTrue(new_question.json["data"])
 
-    
+    def test_upvote_question(self):
+        """ Tests for upvoting answer """
+
+        new_vote = self.post_question()
+
+        self.assertEqual(self.upvote_question(path="/api/v1/questions/{}/upvote".format(new_vote.json["data"][0]["id"])), 200)
+        self.assertTrue(self.upvote_question(path="/api/v1/questions/{}/upvote".format(new_vote.json["data"][0]["votes"])))
 
 
 if __name__ == "__main__":
