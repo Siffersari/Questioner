@@ -27,4 +27,9 @@ def login_user():
     """ Logs in a registered user """
     data = request.get_json()
 
-    pass
+    password = data["password"],
+    username = data["username"]
+
+    resp = db.login_user(username, password[0])
+
+    return jsonify(resp), resp["status"]
