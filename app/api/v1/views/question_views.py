@@ -21,3 +21,12 @@ def upvote_question(question_id):
     resp = db.upvote_question(question_id)
 
     return jsonify(resp), resp["status"]
+
+
+@version1.route("/questions/<int:question_id>/downvote", methods=["PATCH"])
+def downvote_question(question_id):
+    """ Downvotes a question to a specific meetup """
+
+    resp = db.downvote_question(question_id)
+
+    return jsonify(resp), resp["status"]
