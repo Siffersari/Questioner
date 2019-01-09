@@ -51,6 +51,7 @@ class MeetupModels(CommonModels):
             "topic": payload["topic"],
             "location": payload["location"],
             "happeningOn": details["happeningOn"],
+            "id": payload["id"],
             "tags": payload["Tags"]
         }
 
