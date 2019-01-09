@@ -101,6 +101,7 @@ class TestMeetups(unittest.TestCase):
         self.assertTrue(self.fetch_specific_meetup(path="/api/v1/meetups/1").json["data"])
         self.assertNotEqual(self.fetch_specific_meetup(path="/api/v1/meetups/1").status_code, 404)
 
+
     def tearDown(self):
         """ Destroy app and variable instances """
         self.app = None
