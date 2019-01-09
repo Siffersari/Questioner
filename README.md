@@ -3,13 +3,17 @@
 Crowd-source questions for a meetup. Questioner helps the meetup organizer prioritize
 questions to be answered. Other users can vote on asked questions and they bubble to the top.
 
+### Badges
+[![Build Status](https://travis-ci.com/Siffersari/Questioner.svg?branch=develop)](https://travis-ci.com/Siffersari/Questioner) [![Coverage Status](https://coveralls.io/repos/github/Siffersari/Questioner/badge.svg?branch=ft-user-login-163047289)](https://coveralls.io/github/Siffersari/Questioner?branch=ft-user-login-163047289) [![Maintainability](https://api.codeclimate.com/v1/badges/132f7853a5541a616bba/maintainability)](https://codeclimate.com/github/Siffersari/Questioner/maintainability)
+
+
 ### Background Knowledge
----
+
 
 This branch contains the API Endpoints for Questioner platform
 
 ### Enpoints
----
+
 The platform should have the following endpoints at minimum
 
 Method | Endpoint | Purpose
