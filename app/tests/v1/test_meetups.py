@@ -114,7 +114,7 @@ class TestMeetups(unittest.TestCase):
         """
 
         self.assertEqual(self.fetch_upcoming_meetup(path="/api/v1/meetups/upcoming").status_code, 200)
-        self.assertTrue(self.fetch_upcoming_meetup(path="/api/v1/meetups/upcominng").json["data"])
+        self.assertTrue(self.fetch_upcoming_meetup(path="/api/v1/meetups/upcoming").json["data"])
         self.assertNotEqual(self.fetch_upcoming_meetup(path="/api/v1/meetups/upcoming").status_code, 404)
 
 
