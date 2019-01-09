@@ -57,6 +57,13 @@ class TestMeetups(unittest.TestCase):
 
         return response
 
+
+    def fetch_upcoming_meetup(self, path="/api/v1/meetups/upcoming"):
+
+        response = self.client.get(path)
+
+        return response
+
     def test_create_new_meetup(self):
         """ Test whether new meeup is created if data provided """
 
@@ -100,6 +107,15 @@ class TestMeetups(unittest.TestCase):
         self.assertEqual(self.fetch_specific_meetup(path="/api/v1/meetups/1").status_code, 200)
         self.assertTrue(self.fetch_specific_meetup(path="/api/v1/meetups/1").json["data"])
         self.assertNotEqual(self.fetch_specific_meetup(path="/api/v1/meetups/1").status_code, 404)
+
+    def test_fetches_upcoming_meetup(self):
+        """
+        Tests fetch all ucpcoming meetups
+        """
+
+        self.assertEqual(self.fetch_upcoming_meetup(path="/api/v1/meetups/upcoming").status_code, 200)
+        self.assertTrue(self.fetch_upcoming_meetup(path="/api/v1/meetups/upcominng").json["data"])
+        self.assertNotEqual(self.fetch_upcoming_meetup(path="/api/v1/meetups/upcoming").status_code, 404)
 
 
     def tearDown(self):
