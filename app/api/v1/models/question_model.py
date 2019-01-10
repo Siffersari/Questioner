@@ -1,12 +1,8 @@
 from datetime import datetime
 from .common_model import CommonModels
-from .user_model import users
-from .meetup_model import meetups
 
 # This array questions, stores all question
 # To a specific meetup
-
-questions = []
 
 
 class QuestionModels(CommonModels):
@@ -16,29 +12,31 @@ class QuestionModels(CommonModels):
     record
     """
 
-    def __init__(self):
-        self.db = questions
-
     def create_question(self, details):
         """ Creates a question to a meetup record """
 
-        for item, data in details.items():
-            if not data:
-                return self.makeresp("{} is a required field".format(item), 400)
+        try:            
+            user = self.check_item_exists("id", int(details["user"]), self.users)
 
-        user = [user for user in users if user["id"] == int(details["user"])]
+            meetup = self.check_item_exists(
+                "id", int(details["meetup"]), self.meetups)
 
-        meetup = [meetup for meetup in meetups if meetup["id"]
-                  == int(details["meetup"])]
+        except Exception as keyerror:
+            return self.makeresp("{} is a required field".format(keyerror), 400)
 
-        if not user:
+        if self.check_is_error(user):
             return self.makeresp("User not found", 404)
 
-        if not meetup:
+        if self.check_is_error(meetup):
             return self.makeresp("Meetup not found", 404)
 
+        if self.check_is_error(self.check_missing_details(details)):
+            return self.makeresp(self.check_missing_details(details), 400)
+
+        
+
         question = {
-            "id": len(self.db) + 1,
+            "id": len(self.questions) + 1,
             "createdOn": datetime.now(),
             "createdBy": user[0]["id"],
             "meetup": meetup[0]["id"],
@@ -47,7 +45,7 @@ class QuestionModels(CommonModels):
             "votes": 0
         }
 
-        self.db.append(question)
+        self.questions.append(question)
 
         resp = {
             "user": question["id"],
@@ -58,6 +56,9 @@ class QuestionModels(CommonModels):
 
         return self.makeresp(resp, 201)
 
+        
+
+        
 
     def upvote_question(self, question_id):
         """ 
@@ -65,27 +66,15 @@ class QuestionModels(CommonModels):
         question by 1 
         """
 
-        question = [[ind, question] for [ind, question] in enumerate(self.db) if question["id"] == question_id]
+        data = self.check_question_exists(question_id)
 
-        if not question:
+        if type(data) == str:
             return self.makeresp("Question not found", 404)
 
-        index = question[0][0]
+        self.questions[data[0][0]
+                       ]["votes"] = self.questions[data[0][0]]["votes"] + 1
 
-        votes = self.db[index]["votes"] + 1
-
-        self.db[index]["votes"] = votes
-
-        resp = {
-            "meetup": question[0][1]["meetup"],
-            "title": question[0][1]["title"],
-            "body": question[0][1]["body"],
-            "votes": question[0][1]["votes"]
-        }
-        
-        return self.makeresp(resp, 200)
-
-
+        return self.makequestionresponse(data)
 
     def downvote_question(self, question_id):
         """ 
@@ -93,16 +82,33 @@ class QuestionModels(CommonModels):
         question by 1 
         """
 
-        question = [[ind, question] for [ind, question] in enumerate(self.db) if question["id"] == question_id]
+        question = self.check_question_exists(question_id)
 
-        if not question:
+        if self.check_is_error(question):
             return self.makeresp("Question not found", 404)
 
-        index = question[0][0]
+        self.questions[question[0][0]
+                       ]["votes"] = self.questions[question[0][0]]["votes"] - 1
+                       
+        return self.makequestionresponse(question)
 
-        votes = self.db[index]["votes"] - 1
+        
 
-        self.db[index]["votes"] = votes
+    def check_question_exists(self, question_id):
+        """ 
+        This method takes in a question id and checks if the
+        question id exists in the questions database
+        """
+        question = self.check_item_return_index(
+            "id", question_id, self.questions)
+
+        return question
+
+    def makequestionresponse(self, question):
+        """
+        This method takes in data and selects what part of 
+        data to make response with and responds
+        """
 
         resp = {
             "meetup": question[0][1]["meetup"],
@@ -110,7 +116,6 @@ class QuestionModels(CommonModels):
             "body": question[0][1]["body"],
             "votes": question[0][1]["votes"]
         }
-        
+
         return self.makeresp(resp, 200)
 
-    

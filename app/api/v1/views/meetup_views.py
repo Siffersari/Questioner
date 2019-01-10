@@ -5,11 +5,10 @@ from .. models.meetup_model import MeetupModels
 db = MeetupModels()
 
 @version1.route("/meetups", methods=["POST"])
-def create_meetup():
-    """ Creates a meetup record if data """
-    meetup = request.get_json()
+def post_new_meetup():
+    """ Creates a new meetup record if details provided"""
 
-    resp = db.create_meetup(meetup)
+    resp = db.create_meetup(request.get_json())
 
     return jsonify(resp), resp["status"]
 
