@@ -1,8 +1,6 @@
 from datetime import datetime
 from .common_model import CommonModels
-
-# This array questions, stores all question
-# To a specific meetup
+from werkzeug.exceptions import BadRequest, NotFound
 
 
 class QuestionModels(CommonModels):
@@ -15,25 +13,24 @@ class QuestionModels(CommonModels):
     def create_question(self, details):
         """ Creates a question to a meetup record """
 
-        try:            
-            user = self.check_item_exists("id", int(details["user"]), self.users)
+        try:
+            user = self.check_item_exists(
+                "id", int(details["user"]), self.users)
 
             meetup = self.check_item_exists(
                 "id", int(details["meetup"]), self.meetups)
 
-        except Exception as keyerror:
-            return self.makeresp("{} is a required field".format(keyerror), 400)
+        except KeyError as keyerror:
+            raise BadRequest("{} is a required field".format(keyerror))
 
         if self.check_is_error(user):
-            return self.makeresp("User not found", 404)
+            raise NotFound("User not found")
 
         if self.check_is_error(meetup):
-            return self.makeresp("Meetup not found", 404)
+            raise NotFound("Meetup not found")
 
         if self.check_is_error(self.check_missing_details(details)):
-            return self.makeresp(self.check_missing_details(details), 400)
-
-        
+            raise BadRequest(self.check_missing_details(details))
 
         question = {
             "id": len(self.questions) + 1,
@@ -47,18 +44,13 @@ class QuestionModels(CommonModels):
 
         self.questions.append(question)
 
-        resp = {
-            "user": question["id"],
-            "meetup": question["meetup"],
-            "title": question["title"],
-            "body": question["body"]
-        }
-
-        return self.makeresp(resp, 201)
-
-        
-
-        
+        return self.makeresp(
+            {
+                "user": question["id"],
+                "meetup": question["meetup"],
+                "title": question["title"],
+                "body": question["body"]
+            }, 201)
 
     def upvote_question(self, question_id):
         """ 
@@ -69,7 +61,7 @@ class QuestionModels(CommonModels):
         data = self.check_question_exists(question_id)
 
         if type(data) == str:
-            return self.makeresp("Question not found", 404)
+            raise NotFound("Question not found")
 
         self.questions[data[0][0]
                        ]["votes"] = self.questions[data[0][0]]["votes"] + 1
@@ -89,10 +81,8 @@ class QuestionModels(CommonModels):
 
         self.questions[question[0][0]
                        ]["votes"] = self.questions[question[0][0]]["votes"] - 1
-                       
-        return self.makequestionresponse(question)
 
-        
+        return self.makequestionresponse(self.check_question_exists(question_id))
 
     def check_question_exists(self, question_id):
         """ 
@@ -118,4 +108,3 @@ class QuestionModels(CommonModels):
         }
 
         return self.makeresp(resp, 200)
-
