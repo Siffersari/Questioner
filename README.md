@@ -49,3 +49,56 @@ GET | /users | Fetch all registered users
 4. Pytest
 
 ```
+## Getting Started
+
+Clone this repository inside your working repository
+```
+git clone https://github.com/Siffersari/Questioner.git
+
+```
+Navigate into the cloned repository
+```
+cd Questioner/
+```
+Switch to develop branch
+```
+git checkout develop
+```
+
+
+### Installation
+Set up a virtual environment
+
+```
+virtualenv -p python3 venv
+```
+
+Activate the environment
+
+```
+source venv/bin/activate
+```
+Install dependencies
+```
+pip install -r requirements.txt
+```
+
+Run the application
+```
+flask run
+```
+
+### Testing
+Run the command
+```
+pytest app/tests/v1
+
+```
+
+### Heroku Deployment
+
+This app is deployed on [Heroku](https://questioner-siffersari-heroku.herokuapp.com)
+
+
+#### Author 
+Leewel K. Mwangi
