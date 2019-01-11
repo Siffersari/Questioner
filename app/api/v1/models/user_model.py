@@ -1,7 +1,7 @@
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from .common_model import CommonModels
-# This array users, store all the registered users
+from werkzeug.exceptions import BadRequest, NotFound, Unauthorized
 
 
 class UserModels(CommonModels):
@@ -16,20 +16,22 @@ class UserModels(CommonModels):
         import re
         for key, value in user.items():
             if not value:
-                return self.makeresp("{} is a required field.".format(key), 400)
+                raise BadRequest("{} is a required field.".format(key))
 
             if (key == 'email' and not re.search(r'\w+[.|\w]\w+@\w+[.]\w+[.|\w+]\w+', value)):
-                return self.makeresp("Please enter a valid {}.".format(key), 400)
+                raise BadRequest("Please enter a valid {}.".format(key))
 
             if (key == 'firstname' or key == 'lastname' or key == 'username') and (len(value) < 4 or len(value) > 15):
-                return self.makeresp("{} should be 4-15 characters long".format(key), 400)
+                raise BadRequest(
+                    "{} should be 4-15 characters long".format(key))
 
             if key == 'password':
 
                 if not (len(re.findall(r'[A-Z]', value)) > 0 and len(re.findall(
                         r'[a-z]', value)) > 0 and len(re.findall(r'[0-9]', value)) > 0 and len(re.findall(r'[@#$]', value)) > 0):
 
-                    return self.makeresp("{} should contain atleast one number, uppercase, lowercase and special character".format(key), 400)
+                    raise BadRequest(
+                        "{} should contain atleast one number, uppercase, lowercase and special character".format(key))
         payload = {
             "id": len(self.users) + 1,
             "firstname": user["firstname"],
@@ -54,10 +56,10 @@ class UserModels(CommonModels):
 
     def fetch_users(self):
         """ Returns all the users """
-        resp = {
+
+        return self.makeresp({
             "users": self.users
-        }
-        return self.makeresp(resp, 200)
+        }, 200)
 
     def login_user(self, username, password):
         """ Logins in a user given correct user credentials """
@@ -66,11 +68,11 @@ class UserModels(CommonModels):
 
         if isinstance(user, str):
 
-            return self.makeresp("Please check your username", 404)
+            raise NotFound("Please check your username")
 
         if not check_password_hash(user[0]["password"], password):
 
-            return self.makeresp("Please check your password", 401)
+            raise Unauthorized("Please check your password")
 
         resp = {
 
