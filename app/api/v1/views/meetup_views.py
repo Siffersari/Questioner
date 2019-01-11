@@ -24,7 +24,5 @@ def fetch_specific_meetup(meetup_id):
 @version1.route("/meetups/upcoming", methods=["GET"])
 def fetch_upcoming_meetup():
     """ Fetches all upcoming meetup records """
-
-    resp = db.fetch_upcoming_meetups()
-    
-    return jsonify(resp), resp["status"]
+   
+    return jsonify(db.fetch_upcoming_meetups()), db.fetch_upcoming_meetups()["status"]
