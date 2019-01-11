@@ -1,7 +1,6 @@
-users = []
-meetups = []
-questions = []
-rsvps = []
+# These 4 list store data for users, meetups, questions & rsvps respectively
+
+users, meetups, questions, rsvps = [], [], [], []
 
 
 class CommonModels(object):
