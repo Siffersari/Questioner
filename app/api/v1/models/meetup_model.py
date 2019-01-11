@@ -2,11 +2,6 @@ from datetime import datetime
 from .common_model import CommonModels
 
 
-# This array meetups, stores all meetup records created
-
-meetups = []
-
-
 class MeetupModels(CommonModels):
     """ 
     This class MeetupModels contain all the methods that
