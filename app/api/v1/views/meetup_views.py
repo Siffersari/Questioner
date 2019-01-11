@@ -15,10 +15,8 @@ def post_new_meetup():
 @version1.route("/meetups/<int:meetup_id>", methods=["GET"])
 def fetch_specific_meetup(meetup_id):
     """ Fetches a specific meetup record """
-    
-    resp = db.fetch_specific_meetup(meetup_id)
-
-    return jsonify(resp), resp["status"]
+        
+    return jsonify(db.fetch_specific_meetup(meetup_id)), db.fetch_specific_meetup(meetup_id)["status"]
 
 
 @version1.route("/meetups/upcoming", methods=["GET"])
