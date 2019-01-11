@@ -1,8 +1,8 @@
 from datetime import datetime
-from .common_model import CommonModels
+from .base_model import BaseModels
 
 
-class MeetupModels(CommonModels):
+class MeetupModels(BaseModels):
     """ 
     This class MeetupModels contain all the methods that
     interact with meetup details and records

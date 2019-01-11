@@ -1,9 +1,9 @@
 from datetime import datetime
-from .common_model import CommonModels
+from .base_model import BaseModels
 from werkzeug.exceptions import BadRequest, NotFound
 
 
-class QuestionModels(CommonModels):
+class QuestionModels(BaseModels):
     """ 
     This class QuestionModels contain all the 
     methods that interact with question details and

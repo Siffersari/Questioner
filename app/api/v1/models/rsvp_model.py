@@ -1,8 +1,8 @@
-from .common_model import CommonModels
+from .base_model import BaseModels
 from werkzeug.exceptions import BadRequest, NotFound
 
 
-class RsvpModels(CommonModels):
+class RsvpModels(BaseModels):
     """
     This class RsvpModels contains all the methods that
     are used to manipulated rsvps of a specific meetup
