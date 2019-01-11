@@ -3,7 +3,7 @@
 users, meetups, questions, rsvps = [], [], [], []
 
 
-class CommonModels(object):
+class BaseModels(object):
     """ 
     This class contains methods that are common to all other
     models
