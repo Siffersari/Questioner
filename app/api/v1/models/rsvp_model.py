@@ -1,7 +1,5 @@
 from .common_model import CommonModels
-
-
-# This array, rsvps, stores all rsvps to meetups on the platfrom
+from werkzeug.exceptions import BadRequest, NotFound
 
 
 class RsvpModels(CommonModels):
@@ -13,8 +11,10 @@ class RsvpModels(CommonModels):
     def respond_meetup(self, details, meetup_id):
         """ Responds to a meetup RSVP """
 
-        if self.check_is_error(self.check_missing_details(details)):
-            return self.makeresp(self.check_missing_details(details), 400)
+        error = self.check_missing_details(details)
+
+        if self.check_is_error(error):
+            raise BadRequest(error)
 
         try:
 
@@ -25,10 +25,10 @@ class RsvpModels(CommonModels):
                 "id", meetup_id, self.meetups)
 
             if self.check_is_error(user):
-                return self.makeresp("User not found", 404)
+                raise NotFound("User not found")
 
             if self.check_is_error(meetup):
-                return self.makeresp("This Meetup is not found", 404)
+                raise NotFound("This Meetup is not found")
 
             rsvp = {
                 "id": len(self.rsvps) + 1,
@@ -48,5 +48,5 @@ class RsvpModels(CommonModels):
 
             return self.makeresp(resp, 201)
 
-        except Exception as error:
-            return self.makeresp("{} is a required data field".format(error), 400)
+        except KeyError as error:
+            raise BadRequest("{} is a required data field".format(error))
