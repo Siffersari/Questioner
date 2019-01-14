@@ -199,7 +199,7 @@ input:focus:valid {
 }
 
 .questioner-card-row{
-    margin-top: 5em;
+    margin-top: 7em;
     margin-bottom: 5em;
 
 }
@@ -213,7 +213,15 @@ input:focus:valid {
 #btn-attend {
     width: 95%;
     margin: 10px;
-    
+}
+
+
+#btn-detail-attend:focus {
+    background-color: green;
+}
+
+#btn-attend:focus{
+    background-color: green;
 }
 
 .full {
@@ -225,7 +233,25 @@ input:focus:valid {
     color: rgb(141, 144, 151);
 }
 
+.icon-right{
+    position: absolute;
+    right: 2.5em;
+    font-size: 30px;
+}
 
+.icon-left {
+    position: absolute;
+    left: 2.5em;
+    font-size: 30px;
+}
+
+.questioner-pagination {
+    margin-top: 5em;
+}
+
+.questioner-explore-card {
+    color: black;
+}
 
 
 
