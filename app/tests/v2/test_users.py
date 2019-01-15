@@ -1,6 +1,6 @@
 import unittest
 import json
-from ... import create_app
+from ... import create_app 
 
 
 class TestUsers(unittest.TestCase):
@@ -38,7 +38,7 @@ class TestUsers(unittest.TestCase):
             "password": "P@5sword"
         }
 
-    def register_user(self, path="/api/v1/auth/signup", data={}):
+    def register_user(self, path="/api/v2/auth/signup", data={}):
         """ Registers a new user given data or default if not provided"""
 
         if not data:
@@ -49,7 +49,7 @@ class TestUsers(unittest.TestCase):
 
         return response
 
-    def login_user(self, path="/api/v1/auth/login", data={}):
+    def login_user(self, path="/api/v2/auth/login", data={}):
         """ Logs in a user if registered """
 
         if not data:
