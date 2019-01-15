@@ -19,6 +19,24 @@ class TestUsers(unittest.TestCase):
             "username": "testuser",
             "password": "P@5sword"
         }
+        self.data1 = {
+            "firstname": "User",
+            "lastname": "Test",
+            "othername": "UserTest",
+            "email": "leewel@test.com",
+            "phoneNumber": "0712332112",
+            "username": "testuser",
+            "password": "P@5sword"
+        }
+        self.data2 = {
+            "firstname": "User",
+            "lastname": "Test",
+            "othername": "UserTest",
+            "email": "leew@test.com",
+            "phoneNumber": "0712332112",
+            "username": "testuser",
+            "password": "P@5sword"
+        }
 
     def register_user(self, path="/api/v1/auth/signup", data={}):
         """ Registers a new user given data or default if not provided"""
@@ -51,9 +69,17 @@ class TestUsers(unittest.TestCase):
 
     def test_login_user(self):
         """ Test cases for login in a user """
-        dummy_user = self.register_user()
+        dummy_user = self.register_user(data=self.data1)
 
         self.assertEqual(self.login_user().status_code, 200)
+
+    def test_raises_conflict_if_already_existing_email(self):
+        """ Tests for failure if registering with existing email """
+        dummy_user = self.register_user(data=self.data2)
+        another = self.register_user(data=self.data2)
+
+        self.assertEqual(dummy_user.status_code, 201)
+        self.assertEqual(another.status_code, 409)
 
     def tearDown(self):
         """ Destroys set up data before running each test """
