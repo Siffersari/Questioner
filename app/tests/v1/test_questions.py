@@ -20,7 +20,7 @@ class TestQuestions(unittest.TestCase):
             "firstname": "Mohammed",
             "lastname": "Mohali",
             "othername": "Mrali",
-            "email": "ali@moh.com",
+            "email": "aliiili@moh.com",
             "phoneNumber": "0707070707",
             "username": "Mohali",
             "password": "P@5sword"
@@ -32,26 +32,34 @@ class TestQuestions(unittest.TestCase):
             "topic": "All the Leather you can get",
             "happeningOn": "Mar 8 2019 11:30AM",
             "tags": ["Creative", "Leather"],
-            "username": "Leewel"
+            "user": 1
         }
 
-        self.user = self.client.post(
-            "/api/v1/auth/signup", data=json.dumps(self.data), content_type="application/json")
-        self.assertEqual(self.user.status_code, 201)
-
-        self.meetup = self.client.post(
-            "/api/v1/meetups", data=json.dumps(self.meetup), content_type="application/json")
-        self.assertEqual(self.meetup.status_code, 201)
-
         self.question = {
-            "user": self.user.json["data"][0]["id"],
-            "meetup": self.meetup.json["data"][0]["id"],
+            "user": 1,
+            "meetup": 1,
             "title": "Leather bag price",
             "body": "How much would a good leather bag cost ?"
 
         }
 
-        
+    def register_user(self):
+        """ Registers a new user """
+
+        newuser = self.client.post("/api/v1/auth/signup",
+                                   data=json.dumps(self.data), content_type="application/json")
+        self.assertEqual(newuser.status_code, 201)
+
+        return newuser
+
+    def create_meetup(self):
+
+        newmeetup = self.client.post(
+            "/api/v1/meetups", data=json.dumps(self.meetup), content_type="application/json")
+
+        self.assertEqual(newmeetup.status_code, 201)
+
+        return newmeetup
 
     def post_question(self, path="/api/v1/questions", data={}):
         """ Creates a question for a specific meetup """
@@ -66,7 +74,7 @@ class TestQuestions(unittest.TestCase):
 
     def upvote_question(self, path="/api/v1/questions/<int:question_id>/upvote", data={}):
         """ Increases votes of a specific question by 1 """
-        
+
         response = self.client.patch(path)
 
         return response
@@ -92,10 +100,12 @@ class TestQuestions(unittest.TestCase):
         new_vote = self.post_question()
         self.assertEqual(new_vote.status_code, 201)
 
-        self.assertEqual(self.upvote_question(path="/api/v1/questions/{}/upvote".format(new_vote.json["data"][0]["user"])).status_code, 200)
-        self.assertTrue(self.upvote_question(path="/api/v1/questions/{}/upvote".format(new_vote.json["data"][0]["user"])).json["data"][0]["votes"])
-        self.assertEqual(self.upvote_question(path="/api/v1/questions/{}/upvote".format(new_vote.json["data"][0]["user"])).json["data"][0]["votes"], 3)
-
+        self.assertEqual(self.upvote_question(
+            path="/api/v1/questions/{}/upvote".format(new_vote.json["data"][0]["user"])).status_code, 200)
+        self.assertTrue(self.upvote_question(path="/api/v1/questions/{}/upvote".format(
+            new_vote.json["data"][0]["user"])).json["data"][0]["votes"])
+        self.assertEqual(self.upvote_question(path="/api/v1/questions/{}/upvote".format(
+            new_vote.json["data"][0]["user"])).json["data"][0]["votes"], 3)
 
     def test_downvote_question(self):
         """ Tests for downvoting a question """
@@ -103,9 +113,8 @@ class TestQuestions(unittest.TestCase):
         downvote = self.post_question()
         self.assertEqual(downvote.status_code, 201)
 
-        self.assertEqual(self.downvote_question(path="/api/v1/questions/{}/downvote".format(downvote.json["data"][0]["user"])).status_code, 200)
-        
-        
+        self.assertEqual(self.downvote_question(
+            path="/api/v1/questions/{}/downvote".format(downvote.json["data"][0]["user"])).status_code, 200)
 
 
 if __name__ == "__main__":
