@@ -15,21 +15,14 @@ class TestMeetups(unittest.TestCase):
 
         self.client = self.app.test_client()
 
-        self.data = {
-            "location": "Angle House, Nairobi",
-            "images": ["img1.jgp", "img2.jpg"],
-            "topic": "Do It Yourself",
-            "happeningOn": "Feb 4 2019 10:30AM",
-            "tags": ["Creative", "Technology"],
-            "username": "Leewel"
-
-        }
-        self.missing = {
-            "location": "Jungle House, Mombase",
-            "images": ["img1.jgp", "img2.jpg"],
-            "happeningOn": "Jan 13 2019 10:30AM",
-            "tags": ["Creative", "Technology"],
-            "username": "Nani"
+        self.userdata = {
+            "firstname": "Wayne",
+            "lastname": "Rooney",
+            "othername": "Plays",
+            "email": "annie@roone.com",
+            "phoneNumber": "0707070707",
+            "username": "wayneroon",
+            "password": "P@5sword"
         }
 
         self.imageless = {
@@ -37,13 +30,32 @@ class TestMeetups(unittest.TestCase):
             "topic": "Go Imagesless",
             "happeningOn": "Feb 15 2019 10:30AM",
             "tags": ["Creative"],
-            "username": "Photographer"
+            "user": 1
         }
+
+    def register_user(self):
+        """ Registers a new user """
+
+        newuser = self.client.post("/api/v1/auth/signup",
+                         data=json.dumps(self.userdata), content_type="application/json")
+        self.assertEqual(newuser.status_code, 201)
+
+        return newuser
+
 
     def create_meetup(self, path="api/v1/meetups", data={}):
         """ Creates a meetup """
+        dataa = {
+            "location": "Angle House, Nairobi",
+            "images": ["img1.jgp", "img2.jpg"],
+            "topic": "Do It Yourself",
+            "happeningOn": "Feb 4 2019 10:30AM",
+            "tags": ["Creative", "Technology"],
+            "user": 1
+        }
+
         if not data:
-            data = self.data
+            data = dataa
 
         response = self.client.post(path, data=json.dumps(
             data), content_type="application/json")
@@ -57,7 +69,6 @@ class TestMeetups(unittest.TestCase):
 
         return response
 
-
     def fetch_upcoming_meetup(self, path="/api/v1/meetups/upcoming"):
 
         response = self.client.get(path)
@@ -66,6 +77,8 @@ class TestMeetups(unittest.TestCase):
 
     def test_create_new_meetup(self):
         """ Test whether new meeup is created if data provided """
+
+        self.register_user()
 
         new_meetup = self.create_meetup()
 
@@ -77,10 +90,19 @@ class TestMeetups(unittest.TestCase):
         Test for Badrequest when a required field is missing
         """
 
-        missing_topic = self.create_meetup(data=self.missing)
+        missing = {
+            "location": "Jungle House, Mombase",
+            "images": ["img1.jgp", "img2.jpg"],
+            "happeningOn": "Jan 13 2019 10:30AM",
+            "tags": ["Creative", "Technology"],
+            "user": 1
+        }
+
+        missing_topic = self.create_meetup(data=missing)
 
         self.assertEqual(missing_topic.status_code, 400)
         self.assertTrue(missing_topic.json["error"])
+
 
     def test_creates_meetup_if_missing_images_key(self):
         """ 
@@ -108,6 +130,7 @@ class TestMeetups(unittest.TestCase):
         self.assertTrue(self.fetch_specific_meetup(path="/api/v1/meetups/1").json["data"])
         self.assertNotEqual(self.fetch_specific_meetup(path="/api/v1/meetups/1").status_code, 404)
 
+    
     def test_fetches_upcoming_meetup(self):
         """
         Tests fetch all ucpcoming meetups
@@ -116,7 +139,6 @@ class TestMeetups(unittest.TestCase):
         self.assertEqual(self.fetch_upcoming_meetup(path="/api/v1/meetups/upcoming").status_code, 200)
         self.assertTrue(self.fetch_upcoming_meetup(path="/api/v1/meetups/upcoming").json["data"])
         self.assertNotEqual(self.fetch_upcoming_meetup(path="/api/v1/meetups/upcoming").status_code, 404)
-
 
     def tearDown(self):
         """ Destroy app and variable instances """

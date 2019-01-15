@@ -26,19 +26,20 @@ class TestRsvps(unittest.TestCase):
             "password": "P@5sword"
         }
 
+        self.user = self.client.post(
+            "/api/v1/auth/signup", data=json.dumps(self.data), content_type="application/json")
+        self.assertEqual(self.user.status_code, 201)
+
         self.meetup = {
             "location": "Kiwanjani, Nairobi",
             "images": ["img1.jgp", "img2.jpg"],
             "topic": "Ligi ndoge",
             "happeningOn": "Mar 2 2019 11:30AM",
             "tags": ["Football", "Sports"],
-            "username": "Janet"
+            "user": self.user.json["data"][0]["id"]
         }
 
-        self.user = self.client.post(
-            "/api/v1/auth/signup", data=json.dumps(self.data), content_type="application/json")
-        self.assertEqual(self.user.status_code, 201)
-
+        
         self.meetup = self.client.post(
             "/api/v1/meetups", data=json.dumps(self.meetup), content_type="application/json")
         self.assertEqual(self.meetup.status_code, 201)
