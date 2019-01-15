@@ -8,7 +8,16 @@ db = MeetupModels()
 def post_new_meetup():
     """ Creates a new meetup record if details provided"""
 
-    resp = db.create_meetup(request.get_json())
+    data = request.get_json()
+
+    try:
+        if not isinstance(data["user"], int):
+            return jsonify({"error": "user must an integer", "status": 400}), 400
+
+    except KeyError as keyerr:
+        return jsonify({"error": "{} is  a required key".format(keyerr), "status": 400}), 400
+
+    resp = db.create_meetup(data)
 
     return jsonify(resp), resp["status"]
 

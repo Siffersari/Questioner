@@ -22,7 +22,7 @@ def register_user():
 
     resp = db.register_user(data)
 
-    return jsonify(resp), 201
+    return jsonify(resp), resp["status"]
 
 
 @version1.route("/auth/login", methods=["POST"])
@@ -33,9 +33,8 @@ def login_user():
         password = data["password"],
         username = data["username"]
     except KeyError as p:
-        raise BadRequest(
-            "{} should be present in the provided data".format(p))
-
-    resp = db.login_user(username, password[0])
+        return jsonify({"error" : "{} should be present in the provided data".format(p), "status": 400}, 400)
+            
+    resp = db.login_user(data)
 
     return jsonify(resp), resp["status"]
