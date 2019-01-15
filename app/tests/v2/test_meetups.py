@@ -36,13 +36,13 @@ class TestMeetups(unittest.TestCase):
     def register_user(self):
         """ Registers a new user """
 
-        newuser = self.client.post("/api/v1/auth/signup",
+        newuser = self.client.post("/api/v2/auth/signup",
                                    data=json.dumps(self.userdata), content_type="application/json")
         self.assertEqual(newuser.status_code, 201)
 
         return newuser
 
-    def create_meetup(self, path="api/v1/meetups", data={}):
+    def create_meetup(self, path="api/v2/meetups", data={}):
         """ Creates a meetup """
         dataa = {
             "location": "Angle House, Nairobi",
@@ -61,14 +61,14 @@ class TestMeetups(unittest.TestCase):
 
         return response
 
-    def fetch_specific_meetup(self, path="/api/v1/meetups/<meetup-id>"):
+    def fetch_specific_meetup(self, path="/api/v2/meetups/<meetup-id>"):
         """ Fetches a specific meetup record """
 
         response = self.client.get(path)
 
         return response
 
-    def fetch_upcoming_meetup(self, path="/api/v1/meetups/upcoming"):
+    def fetch_upcoming_meetup(self, path="/api/v2/meetups/upcoming"):
 
         response = self.client.get(path)
 
@@ -125,11 +125,11 @@ class TestMeetups(unittest.TestCase):
         self.assertTrue(meetup_1.json["data"])
 
         self.assertEqual(self.fetch_specific_meetup(
-            path="/api/v1/meetups/1").status_code, 200)
+            path="/api/v2/meetups/1").status_code, 200)
         self.assertTrue(self.fetch_specific_meetup(
-            path="/api/v1/meetups/1").json["data"])
+            path="/api/v2/meetups/1").json["data"])
         self.assertNotEqual(self.fetch_specific_meetup(
-            path="/api/v1/meetups/1").status_code, 404)
+            path="/api/v2/meetups/1").status_code, 404)
 
     def test_fetches_upcoming_meetup(self):
         """
@@ -137,11 +137,11 @@ class TestMeetups(unittest.TestCase):
         """
 
         self.assertEqual(self.fetch_upcoming_meetup(
-            path="/api/v1/meetups/upcoming").status_code, 200)
+            path="/api/v2/meetups/upcoming").status_code, 200)
         self.assertTrue(self.fetch_upcoming_meetup(
-            path="/api/v1/meetups/upcoming").json["data"])
+            path="/api/v2/meetups/upcoming").json["data"])
         self.assertNotEqual(self.fetch_upcoming_meetup(
-            path="/api/v1/meetups/upcoming").status_code, 404)
+            path="/api/v2/meetups/upcoming").status_code, 404)
 
     def tearDown(self):
         """ Destroy app and variable instances """

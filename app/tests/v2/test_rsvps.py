@@ -27,7 +27,7 @@ class TestRsvps(unittest.TestCase):
         }
 
         self.user = self.client.post(
-            "/api/v1/auth/signup", data=json.dumps(self.data), content_type="application/json")
+            "/api/v2/auth/signup", data=json.dumps(self.data), content_type="application/json")
         self.assertEqual(self.user.status_code, 201)
 
         self.meetup = {
@@ -40,7 +40,7 @@ class TestRsvps(unittest.TestCase):
         }
 
         self.meetup = self.client.post(
-            "/api/v1/meetups", data=json.dumps(self.meetup), content_type="application/json")
+            "/api/v2/meetups", data=json.dumps(self.meetup), content_type="application/json")
         self.assertEqual(self.meetup.status_code, 201)
 
         self.rsvp = {
@@ -49,7 +49,7 @@ class TestRsvps(unittest.TestCase):
             "response": "yes"
         }
 
-    def respond_meetup(self, path="/api/v1/meetups/<int:meetup_id>/rsvps", data={}):
+    def respond_meetup(self, path="/api/v2/meetups/<int:meetup_id>/rsvps", data={}):
         """ Responds to meetup RSVP """
 
         if not data:
@@ -64,7 +64,7 @@ class TestRsvps(unittest.TestCase):
         """ Tests for responding to a meetup """
 
         new_rsvp = self.respond_meetup(
-            path="/api/v1/meetups/{}/rsvps".format(self.rsvp["meetup"]))
+            path="/api/v2/meetups/{}/rsvps".format(self.rsvp["meetup"]))
 
         self.assertEqual(new_rsvp.status_code, 201)
         self.assertTrue(new_rsvp.json["data"])
