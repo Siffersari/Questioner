@@ -11,6 +11,13 @@ def respond_meetup(meetup_id):
 
     details = request.get_json()
 
+    try:
+        if not isinstance(details["user"], int):
+            return jsonify({"error": "user must an integer", "status": 400}), 400
+
+    except KeyError as keyerr:
+        return jsonify({"error": "{} is  a required key".format(keyerr), "status": 400}), 400
+
     resp = db.respond_meetup(details, meetup_id)
 
     return jsonify(resp), resp["status"]

@@ -11,6 +11,12 @@ def create_question():
 
     details = request.get_json()
 
+    if not isinstance(details["user"], int):
+        return jsonify({"error": "user must an integer", "status": 400}), 400
+
+    if not isinstance(details["meetup"], int):
+        return jsonify({"error": "Meetup must an integer", "status": 400}), 400
+
     resp = db.create_question(details)
 
     return jsonify(resp), resp["status"]

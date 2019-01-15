@@ -1,26 +1,9 @@
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from .base_model import BaseModels
+from ..utils.validators import DataValidators
 from werkzeug.exceptions import BadRequest, NotFound, Unauthorized
 import re
-
-
-def validator(user):
-    for key, value in user.items():
-
-        if not value:
-            raise BadRequest("{} is a required field.".format(key))
-        elif (key == 'firstname' or key == 'lastname' or key == 'username' or key == "othername") and (len(value) < 4 or len(value) > 15):
-            raise BadRequest(
-                "{} should be 4-15 characters long".format(key))
-
-    if not re.search(r'\w+[.|\w]\w+@\w+[.]\w+[.|\w+]\w+', user["email"]):
-        raise BadRequest("Please enter a valid {}.".format(key))
-
-    if not (len(re.findall(r'[A-Z]', user["password"])) > 0 and len(re.findall(
-            r'[a-z]', user["password"])) > 0 and len(re.findall(r'[0-9]', user["password"])) > 0 and len(re.findall(r'[@#$]', user["password"])) > 0):
-        raise BadRequest(
-            "Password should contain atleast one number, uppercase, lowercase and special character")
 
 
 class UserModels(BaseModels):
@@ -32,35 +15,55 @@ class UserModels(BaseModels):
     def register_user(self, user):
         """ Validates user user before adding them """
 
-        try:
+        required = ["firstname", "lastname", "othername",
+                    "email", "phoneNumber", "username", "password"]
 
-            validator(user)
+        ismissingkey = DataValidators(user).check_all_keys_present(required)
 
-            payload = {
-                "id": len(self.users) + 1,
-                "firstname": user["firstname"],
-                "lastname": user["lastname"],
-                "othername": user["othername"],
-                "email": user["email"],
-                "phoneNumber": user["phoneNumber"],
-                "username": user["username"],
-                "registered": datetime.now(),
-                "password": generate_password_hash(user["password"]),
-                "isAdmin": False
-            }
+        if isinstance(ismissingkey, str):
+            return self.makeresp(ismissingkey, 400)
 
-            self.users.append(payload)
+        isempty = DataValidators(user).check_values_not_empty()
 
-            resp = {
-                "id": payload["id"],
-                "name": "{} {}".format(payload["lastname"], payload["firstname"])
-            }
+        if isinstance(isempty, str):
+            return self.makeresp(isempty, 400)
 
-            return self.makeresp(resp, 201)
+        emailinvalid = DataValidators(user).check_email_is_valid()
 
-        except KeyError as keymiss:
-            raise BadRequest(
-                "{} should be present in the provided data".format(keymiss))
+        if not user["email"] == emailinvalid:
+            return self.makeresp(emailinvalid, 400)
+
+        isvalidpass = DataValidators(user).check_password_is_valid()
+
+        if self.check_is_error(isvalidpass):
+            return self.makeresp(isvalidpass, 400)
+
+        userFound = self.check_item_exists("email", user["email"], self.users)
+
+        if not isinstance(userFound, str):
+            return self.makeresp("This email already exists in the database", 409)
+
+        payload = {
+            "id": len(self.users) + 1,
+            "firstname": user["firstname"],
+            "lastname": user["lastname"],
+            "othername": user["othername"],
+            "email": user["email"],
+            "phoneNumber": user["phoneNumber"],
+            "username": user["username"],
+            "registered": datetime.now(),
+            "password": generate_password_hash(user["password"]),
+            "isAdmin": False
+        }
+
+        self.users.append(payload)
+
+        resp = {
+            "id": payload["id"],
+            "name": "{} {}".format(payload["lastname"], payload["firstname"])
+        }
+
+        return self.makeresp(resp, 201)
 
     def fetch_users(self):
         """ Returns all the users """
@@ -69,18 +72,20 @@ class UserModels(BaseModels):
             "users": self.users
         }, 200)
 
-    def login_user(self, username, password):
+    def login_user(self, data):
         """ Logins in a user given correct user credentials """
 
-        user = self.check_item_exists("username", username, self.users)
+        user = DataValidators(data).check_are_valid_credentials()
 
-        if isinstance(user, str):
+        status = 400
 
-            raise NotFound("Please check your username")
+        if self.check_is_error(user):
 
-        if not check_password_hash(user[0]["password"], password):
+            if "password" in user:
 
-            raise Unauthorized("Please check your password")
+                status = 401
+
+            return self.makeresp(user, status)
 
         resp = {
 

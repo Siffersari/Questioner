@@ -1,6 +1,7 @@
 from datetime import datetime
 from .base_model import BaseModels
-from werkzeug.exceptions import BadRequest, NotFound
+from ..utils.validators import DataValidators
+
 
 
 class QuestionModels(BaseModels):
@@ -19,26 +20,33 @@ class QuestionModels(BaseModels):
 
             meetup = self.check_item_exists(
                 "id", int(details["meetup"]), self.meetups)
+            
+            title = details["title"]
+
+            body = details["body"]
 
         except KeyError as keyerror:
-            raise BadRequest("{} is a required field".format(keyerror))
+            return self.makeresp("{} is a required field".format(keyerror), 400)
+
+        isempty = DataValidators(details).check_values_not_empty()
+
+        if isinstance(isempty, str):
+            return self.makeresp(isempty, 400)
 
         if self.check_is_error(user):
-            raise NotFound("User not found")
+            return self.makeresp("User not found", 404)
 
         if self.check_is_error(meetup):
-            raise NotFound("Meetup not found")
+            return self.makeresp("Meetup not found", 404)
 
-        if self.check_is_error(self.check_missing_details(details)):
-            raise BadRequest(self.check_missing_details(details))
 
         question = {
             "id": len(self.questions) + 1,
             "createdOn": datetime.now(),
             "createdBy": user[0]["id"],
             "meetup": meetup[0]["id"],
-            "title": details["title"],
-            "body": details["body"],
+            "title": title,
+            "body": body,
             "votes": 0
         }
 
@@ -61,7 +69,7 @@ class QuestionModels(BaseModels):
         data = self.check_question_exists(question_id)
 
         if type(data) == str:
-            raise NotFound("Question not found")
+            return self.makeresp("Question not found", 404)
 
         self.questions[data[0][0]
                        ]["votes"] = self.questions[data[0][0]]["votes"] + 1

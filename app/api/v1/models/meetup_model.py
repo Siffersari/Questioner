@@ -1,5 +1,6 @@
 from datetime import datetime
 from .base_model import BaseModels
+from ..utils.validators import DataValidators
 
 
 class MeetupModels(BaseModels):
@@ -18,6 +19,17 @@ class MeetupModels(BaseModels):
             pass
 
         try:
+            isempty = DataValidators(details).check_values_not_empty()
+
+            if isinstance(isempty, str):
+                return self.makeresp(isempty, 400)
+
+            user = self.check_item_exists(
+                "id", int(details["user"]), self.users)
+
+            if self.check_is_error(user):
+                return self.makeresp("This user is not found", 404)
+
             payload = {
                 "id": len(self.meetups) + 1,
                 "createdOn": datetime.now(),
@@ -26,7 +38,7 @@ class MeetupModels(BaseModels):
                 "topic": details["topic"],
                 "happeningOn": datetime.strptime(details["happeningOn"], "%b %d %Y %I:%M%p"),
                 "Tags": details["tags"],
-                "createdBy": details["username"]
+                "createdBy": details["user"]
             }
 
             self.meetups.append(payload)
@@ -36,7 +48,8 @@ class MeetupModels(BaseModels):
                 "location": payload["location"],
                 "happeningOn": details["happeningOn"],
                 "id": payload["id"],
-                "tags": payload["Tags"]
+                "tags": payload["Tags"],
+                "createdOn": payload["createdOn"]
             }
 
             return self.makeresp(resp, 201)
@@ -56,7 +69,8 @@ class MeetupModels(BaseModels):
             "topic": meetup[0]["topic"],
             "location": meetup[0]["location"],
             "happeningOn": "{:%B %d, %Y %I:%M%p}".format(meetup[0]["happeningOn"]),
-            "tags": meetup[0]["Tags"]
+            "tags": meetup[0]["Tags"],
+            "createdOn": meetup[0]["createdOn"]
         }
 
         return self.makeresp(resp, 200)
