@@ -42,12 +42,13 @@ def create_table_users():
 
     meetups = """ CREATE TABLE IF NOT EXISTS meetups (meetup_id serial PRIMARY KEY NOT NULL,
     user_id INTEGER NOT NULL, topic VARCHAR (150) NOT NULL,happening_on TIMESTAMP NOT NULL DEFAULT current_timestamp,
-    location VARCHAR (100) NOT NULL,created_on TIMESTAMP NOT NULL DEFAULT current_timestamp
+    location VARCHAR (100) NOT NULL, images VARCHAR[], tags VARCHAR [200], 
+    created_on TIMESTAMP NOT NULL DEFAULT current_timestamp
     ); """
 
     questions = """ CREATE TABLE IF NOT EXISTS questions (question_id serial PRIMARY KEY NOT NULL,
     meetup_id INTEGER NOT NULL, user_id INTEGER NOT NULL, title VARCHAR (150) NOT NULL,
-    body VARCHAR (1000) NOT NULL, votes INTEGER DEFAULT 0,
+    body VARCHAR (1000) NOT NULL, comments VARCHAR (1000), votes INTEGER DEFAULT 0, 
     created_on TIMESTAMP NOT NULL DEFAULT current_timestamp
     ); """
 
@@ -56,22 +57,9 @@ def create_table_users():
     responded_on TIMESTAMP NOT NULL DEFAULT current_timestamp
     ); """
 
-    comments = """ CREATE TABLE IF NOT EXISTS comments (comment_id serial PRIMARY KEY NOT NULL,
-    user_id INTEGER NOT NULL, question_id INTEGER NOT NULL, comments VARCHAR (1000), 
-    commented_on TIMESTAMP NOT NULL DEFAULT current_timestamp
-    ); """
-
-    tags = """ CREATE TABLE IF NOT EXISTS tags (tags_id serial PRIMARY KEY NOT NULL,
-    user_id INTEGER NOT NULL, meetup_id INTEGER NOT NULL, tags VARCHAR [200]
-    ); """
-
-    images = """ CREATE TABLE IF NOT EXISTS images (image_id serial PRIMARY KEY NOT NULL,
-    user_id INTEGER NOT NULL, meetup_id INTEGER NOT NULL, images VARCHAR[]
-    ); """
-
     blacklist = """ CREATE TABLE IF NOT EXISTS blacklisted (tokens VARCHAR (256) NOT NULL); """
 
-    return [users, meetups, questions, rsvps, comments, tags, images, blacklist]
+    return [users, meetups, questions, rsvps, blacklist]
 
 
 def create_tables():
