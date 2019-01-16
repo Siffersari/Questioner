@@ -155,3 +155,42 @@ class BaseModels(object):
         except jwt.InvalidTokenError:
 
             return "This token is invalid"
+
+    def check_user_is_admin(self, user_id):
+        """ Checks if a user is an admin using the user_id """
+        database = create_tables()
+
+        cur = database.cursor()
+        cur.execute(
+            """ SELECT user_id FROM users WHERE roles = 'true'; """)
+
+        admins = cur.fetchall()
+
+        cur.close()
+
+        if not admins:
+            return "Administrators not Found"
+
+        if not int(user_id) in admins[0]:
+            return "This user doesn't have the priviledges for this action"
+
+        return user_id
+
+    def make_user_administrator(self, user_id):
+        """ Checks if a user is an admin using the user_id """
+        database = create_tables()
+
+        cur = database.cursor()
+        cur.execute(
+            """ UPDATE users SET roles = true WHERE user_id = %d RETURNING roles; """ % (int(user_id)))
+
+        admins = cur.fetchone()
+
+        database.commit()
+
+        cur.close()
+
+        if not admins:
+            return "Failed to add user as Admin"
+
+        return admins
