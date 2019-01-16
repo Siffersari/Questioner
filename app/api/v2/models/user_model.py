@@ -2,6 +2,7 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from .base_model import BaseModels
 from ..utils.validators import DataValidators
+from ..utils.sql_helpers import SqlHelper
 from flask import current_app
 from .... db_con import create_tables
 import re
@@ -16,15 +17,6 @@ class UserModels(BaseModels):
     def __init__(self, details={}):
         self.user_details = details
         self.db = create_tables()
-
-    def check_exists(self, email):
-        """ Checks if the record exists """
-        cur = self.db.cursor()
-
-        cur.execute(
-            """ SELECT email FROM users WHERE email = '%s';""" % (email))
-
-        return cur.fetchone() is not None
 
     def register_user(self):
         """ Validates user user before adding them """
@@ -54,7 +46,7 @@ class UserModels(BaseModels):
         if self.check_is_error(isvalidpass):
             return self.makeresp(isvalidpass, 400)
 
-        if self.check_exists(self.user_details["email"]):
+        if SqlHelper().check_user_exist_by_email(self.user_details["email"]):
 
             return self.makeresp("This email already exists in the database", 409)
 
@@ -70,17 +62,7 @@ class UserModels(BaseModels):
             "isAdmin": False
         }
 
-        database = self.db
-        cur = database.cursor()
-        query = """INSERT INTO users (firstname, lastname, othername, email, phone_number, username, password) \
-            VALUES ( %(firstname)s, %(lastname)s,\
-            %(othername)s, %(email)s, %(phoneNumber)s, %(username)s, %(password)s) RETURNING user_id;
-            """
-
-        cur.execute(query, payload)
-        user_id = cur.fetchone()[0]
-        database.commit()
-        cur.close()
+        user_id = SqlHelper(self.user_details).save_user()
 
         token = self.give_auth_token(user_id)
 
@@ -98,19 +80,11 @@ class UserModels(BaseModels):
     def fetch_users(self):
         """ Returns all the users """
 
-        database = self.db
-
-        cur = database.cursor()
-        cur.execute(
-            """SELECT user_id, firstname, lastname FROM users;""")
-
-        data = cur.fetchall()
-
-        cur.close()
+        users = SqlHelper().get_all_users()
 
         resp = []
 
-        for user in data:
+        for user in users:
             try:
                 user_id, first_name, last_name = user
                 final = {
@@ -124,7 +98,6 @@ class UserModels(BaseModels):
         return self.makeresp({
             "users": resp
         }, 200)
-
 
     def login_user(self):
         """ Logins in a user given correct user credentials """
