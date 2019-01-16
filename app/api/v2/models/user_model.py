@@ -17,39 +17,6 @@ class UserModels(BaseModels):
         self.user_details = details
         self.db = create_tables()
 
-    def get_user_by_username(self, username):
-        """ Fetches a user's details from the database given a username """
-
-        database = self.db
-
-        cur = database.cursor()
-        cur.execute(
-            """ SELECT user_id ,firstname, lastname, password, registered_on FROM users WHERE username = '{}'; """.format(username))
-
-        data = cur.fetchone()
-
-        cur.close()
-
-        if not data:
-            return "User not Found"
-
-        return data
-
-    def get_username_by_id(self, user_id):
-        """ returns a username given the id """
-
-        try:
-            cur = self.db.cursor()
-            cur.execute(
-                """ SELECT username FROM users WHERE user_id = %d;""" % (user_id))
-            data = cur.fetchone()
-            cur.close()
-
-            return data
-
-        except Exception:
-            return "Not Found"
-
     def check_exists(self, email):
         """ Checks if the record exists """
         cur = self.db.cursor()
@@ -157,3 +124,34 @@ class UserModels(BaseModels):
         return self.makeresp({
             "users": resp
         }, 200)
+
+
+    def login_user(self):
+        """ Logins in a user given correct user credentials """
+
+        user = DataValidators(self.user_details).check_are_valid_credentials()
+
+        status = 400
+
+        if self.check_is_error(user):
+
+            if "password" in user:
+
+                status = 401
+
+            return self.makeresp(user, status)
+
+        user_id, firstname, lastname, password, registered = user
+
+        token = self.give_auth_token(user_id)
+
+        token = token.decode('utf-8')
+
+        resp = {
+
+            "name": "{} {}".format(lastname, firstname),
+            "token": token,
+            "message": "You have been logged in successfully"
+        }
+
+        return self.makeresp(resp, 200)
