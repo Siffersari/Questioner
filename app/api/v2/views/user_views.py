@@ -20,3 +20,18 @@ def register_user():
     resp = UserModels(data).register_user()
 
     return jsonify(resp), resp["status"]
+
+
+@version2.route("/auth/login", methods=["POST"])
+def login_user():
+    """ Logs in a registered user """
+    data = request.get_json()
+    try:
+        password = data["password"],
+        username = data["username"]
+    except KeyError as p:
+        return jsonify({"error": "{} should be present in the provided data".format(p), "status": 400}), 400
+
+    resp = UserModels(data).login_user()
+
+    return jsonify(resp), resp["status"] 
