@@ -1,7 +1,7 @@
 import unittest
 import json
 from ... import create_app
-from ... db_con import create_tables, destroy_database
+from ... db_con import init_test_db, destroy_database
 
 
 class TestMeetups(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestMeetups(unittest.TestCase):
 
         self.client = self.app.test_client()
 
-        self.db = create_tables(db_type="testing")
+        self.db = init_test_db()
 
         self.data = {
             "location": "Angle House, Nairobi",
