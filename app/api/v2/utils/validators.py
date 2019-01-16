@@ -3,7 +3,7 @@ import re
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-class DataValidators(BaseModels):
+class DataValidators(BaseModels): 
     """ 
     This class DataValidators contain all them methods that
     validate data all across the applfrom werkzeug.security import generate_password_hash, check_password_hashfrom werkzeug.security import generate_password_hash, check_password_hashication
@@ -70,14 +70,15 @@ class DataValidators(BaseModels):
     def check_are_valid_credentials(self):
         """ Checks if the provided credentials match the ones registered """
 
-        user = self.check_item_exists(
-            "username", self.given_data["username"], BaseModels().users)
+        user = self.get_user_by_username(self.given_data["username"])
 
         if isinstance(user, str):
 
             return "Please check your username"
 
-        elif not check_password_hash(user[0]["password"], self.given_data["password"]):
+        user_id, firstname, lastname, password, registered = user
+
+        if not check_password_hash(password, self.given_data["password"]):
 
             return "Please check your password"
 
