@@ -36,3 +36,28 @@ def post_new_meetup():
     resp = MeetupModels(data).create_meetup()
 
     return jsonify(resp), resp["status"]
+
+
+@version2.route("/meetups/<int:meetup_id>", methods=["GET"])
+def fetch_specific_meetup(meetup_id):
+    """ Fetches a specific meetup record given meetup_id """
+
+    header = request.headers.get("Authorization")
+
+    if not header:
+        return jsonify(
+            {"error": "This resource is secured. Please provide authorization header",
+             "status": 400}
+        ), 400
+
+    auth_token = header.split(" ")[1]
+
+    response = MeetupModels().validate_token_status(auth_token)
+
+    if isinstance(response, str):
+        return jsonify(
+            {"error": response,
+             "status": 400}
+        ), 400
+
+    return jsonify(MeetupModels().fetch_specific_meetup(meetup_id)), MeetupModels().fetch_specific_meetup(meetup_id)["status"]
