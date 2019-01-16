@@ -1,6 +1,7 @@
 from datetime import datetime
 from .base_model import BaseModels
 from ..utils.validators import DataValidators
+from ..utils.sql_helpers import SqlHelper
 from flask import current_app
 from ....db_con import create_tables
 from .user_model import UserModels
@@ -15,6 +16,7 @@ class MeetupModels(BaseModels):
     def __init__(self, details={}):
         self.meetup_details = details
         self.db = create_tables()
+        self.sql = SqlHelper()
 
     def create_meetup(self):
         """ Creates a meetup record given data """
@@ -32,7 +34,8 @@ class MeetupModels(BaseModels):
             if isinstance(isempty, str):
                 return self.makeresp(isempty, 400)
 
-            user = self.get_username_by_id(int(self.meetup_details["user"]))
+            user = self.sql.get_username_by_id(
+                int(self.meetup_details["user"]))
 
             if not user:
                 return self.makeresp("This user is not found", 404)
@@ -47,7 +50,7 @@ class MeetupModels(BaseModels):
                 "createdBy": self.meetup_details["user"]
             }
 
-            is_admin = self.check_user_is_admin(self.meetup_details["user"])
+            is_admin = self.sql.get_admin_user(self.meetup_details["user"])
 
             if self.check_is_error(is_admin):
                 status = 403
@@ -56,14 +59,9 @@ class MeetupModels(BaseModels):
 
                 return self.makeresp(is_admin, status)
 
-            database = self.db
-            cur = database.cursor()
-            query = """ INSERT INTO meetups (user_id, topic, location, happening_on, images, tags) VALUES (%(createdBy)s, %(topic)s, %(location)s, %(happeningOn)s, %(images)s, %(Tags)s) RETURNING meetup_id; """
-            cur.execute(query, payload)
+            # Add meetup details to the database
 
-            meetup_id = cur.fetchone()[0]
-            database.commit()
-            cur.close()
+            meetup_id = SqlHelper(payload).save_meetup()
 
             resp = {
                 "topic": payload["topic"],
@@ -83,12 +81,13 @@ class MeetupModels(BaseModels):
 
     def fetch_specific_meetup(self, meetup_id):
         """ Fetches a specific meetup record  """
-        meetup = self.fetch_details_by_id("meetup_id", meetup_id, "meetups")
+        meetup = self.sql.fetch_details_by_id(
+            "meetup_id", meetup_id, "meetups")
 
         if not meetup:
             return self.makeresp("Meetup not found", 404)
 
-        username = self.get_username_by_id(meetup[1])
+        username = self.sql.get_username_by_id(meetup[1])
 
         resp = {
             "id": meetup_id,
@@ -104,16 +103,15 @@ class MeetupModels(BaseModels):
 
     def fetch_upcoming_meetups(self):
         """ Fetches all upcoming meetups """
-        dbconn = self.db
-        cur = dbconn.cursor()
-        cur.execute(""" SELECT * FROM meetups; """)
-        data = cur.fetchall()
+
+        meetups = self.sql.get_upcoming_meetups()
+
         resp = []
 
-        for items in data:
+        for items in meetups:
             meetup_id, user_id, topic, happening_on, location, images, tags, created_on = items
 
-            user = self.get_username_by_id(user_id)
+            user = self.sql.get_username_by_id(user_id)
 
             meetup = {
                 "id": meetup_id,

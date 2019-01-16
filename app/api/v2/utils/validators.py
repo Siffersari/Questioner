@@ -1,4 +1,5 @@
 from ..models.base_model import BaseModels
+from ..utils.sql_helpers import SqlHelper
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -70,7 +71,7 @@ class DataValidators(BaseModels):
     def check_are_valid_credentials(self):
         """ Checks if the provided credentials match the ones registered """
 
-        user = self.get_user_by_username(self.given_data["username"])
+        user = SqlHelper().get_user_by_username(self.given_data["username"])
 
         if isinstance(user, str):
 
