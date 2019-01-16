@@ -36,3 +36,10 @@ def post_new_meetup():
     resp = MeetupModels(data).create_meetup()
 
     return jsonify(resp), resp["status"]
+
+
+@version2.route("/meetups/<int:meetup_id>", methods=["GET"])
+def fetch_specific_meetup(meetup_id):
+    """ Fetches a specific meetup record """
+
+    return jsonify(MeetupModels().fetch_specific_meetup(meetup_id)), MeetupModels().fetch_specific_meetup(meetup_id)["status"]
