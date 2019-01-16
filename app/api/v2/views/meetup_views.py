@@ -61,3 +61,28 @@ def fetch_specific_meetup(meetup_id):
         ), 400
 
     return jsonify(MeetupModels().fetch_specific_meetup(meetup_id)), MeetupModels().fetch_specific_meetup(meetup_id)["status"]
+
+
+@version2.route("/meetups/upcoming", methods=["GET"])
+def fetch_upcoming_meetup():
+    """ Fetches all upcoming meetup records """
+
+    header = request.headers.get("Authorization")
+
+    if not header:
+        return jsonify(
+            {"error": "This resource is secured. Please provide authorization header",
+             "status": 400}
+        ), 400
+
+    auth_token = header.split(" ")[1]
+
+    response = MeetupModels().validate_token_status(auth_token)
+
+    if isinstance(response, str):
+        return jsonify(
+            {"error": response,
+             "status": 400}
+        ), 400
+
+    return jsonify(MeetupModels().fetch_upcoming_meetups()), MeetupModels().fetch_upcoming_meetups()["status"]
