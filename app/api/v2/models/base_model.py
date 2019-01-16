@@ -30,6 +30,39 @@ class BaseModels(object):
             "data": payload
         }
 
+    def get_user_by_username(self, username):
+        """ Fetches a user's details from the database given a username """
+
+        database = create_tables()
+
+        cur = database.cursor()
+        cur.execute(
+            """ SELECT user_id ,firstname, lastname, password, registered_on FROM users WHERE username = '{}'; """.format(username))
+
+        data = cur.fetchone()
+
+        cur.close()
+
+        if not data:
+            return "User not Found"
+
+        return data
+
+    def get_username_by_id(self, user_id):
+        """ returns a username given the id """
+
+        try:
+            cur = create_tables().cursor()
+            cur.execute(
+                """ SELECT username FROM users WHERE user_id = %d;""" % (user_id))
+            data = cur.fetchone()
+            cur.close()
+
+            return data
+
+        except Exception:
+            return "Not Found"
+
     def fetch_id_if_text_exists(self, item_name, text, table):
         # select meetup_id from meetups where topic = 'This is topic';
         singular = table[:-1] + '_id'
@@ -71,11 +104,10 @@ class BaseModels(object):
     def give_auth_token(user_id):
         """ Generates a JWT auth token """
         app = os.getenv("SECRET_KEY")
- 
 
         token_data = {
-            "exp": datetime.now() + timedelta(days=1),
-            "iat": datetime.now(),
+            "exp": datetime.utcnow() + timedelta(days=1),
+            "iat": datetime.utcnow(),
             "sub": user_id
         }
 
