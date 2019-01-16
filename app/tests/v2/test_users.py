@@ -1,7 +1,7 @@
 import unittest
 import json
 from ... import create_app
-from ... db_con import create_tables, destroy_database
+from ... db_con import init_test_db, destroy_database
 
 
 class TestUsers(unittest.TestCase):
@@ -12,7 +12,9 @@ class TestUsers(unittest.TestCase):
 
         self.app = create_app("testing")
         self.client = self.app.test_client()
-        self.db = create_tables(db_type="testing")
+
+        with self.app.app_context():
+            self.db = init_test_db()
 
         self.data = {
             "firstname": "User",
@@ -55,15 +57,14 @@ class TestUsers(unittest.TestCase):
 
     def test_login_user(self):
         """ Test cases for login in a user """
-        dummy_user = self.register_user()
 
         self.assertEqual(self.login_user().status_code, 200)
 
     def tearDown(self):
         """ Destroys set up data before running each test """
-        
-        destroy_database()
-        self.db.close()
+        with self.app.app_context():
+            destroy_database()
+            self.db.close()
 
 
 if __name__ == "__main__":

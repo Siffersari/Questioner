@@ -2,9 +2,6 @@ from flask import Flask
 from instance.config import app_config
 
 from .api.v2.views.user_views import version2 as v2
-from .api.v2.views.meetup_views import version2 as meets2
-from .api.v2.views.question_views import version2 as ques2
-from .api.v2.views.rsvp_views import version2 as rsvps2
 
 
 def create_app(config_name="development"):
@@ -14,8 +11,5 @@ def create_app(config_name="development"):
     app.config.from_pyfile('config.py')
 
     app.register_blueprint(v2)
-    app.register_blueprint(meets2)
-    app.register_blueprint(ques2)
-    app.register_blueprint(rsvps2)
 
     return app
