@@ -38,33 +38,6 @@ class TestQuestions(unittest.TestCase):
             "username": "Leewel"
         }
 
-        self.user = self.client.post(
-            "/api/v2/auth/signup", data=json.dumps(self.data), content_type="application/json")
-        self.assertEqual(self.user.status_code, 201)
-
-        self.meetup = self.client.post(
-            "/api/v2/meetups", data=json.dumps(self.meetup), content_type="application/json")
-        self.assertEqual(self.meetup.status_code, 201)
-
-        self.question = {
-            "user": self.user.json["data"][0]["id"],
-            "meetup": self.meetup.json["data"][0]["id"],
-            "title": "Leather bag price",
-            "body": "How much would a good leather bag cost ?"
-
-        }
-
-    def post_question(self, path="/api/v2/questions", data={}):
-        """ Creates a question for a specific meetup """
-
-        if not data:
-            data = self.question
-
-        response = self.client.post(path, data=json.dumps(
-            data), content_type="application/json")
-
-        return response
-
     def upvote_question(self, path="/api/v2/questions/<int:question_id>/upvote", data={}):
         """ Increases votes of a specific question by 1 """
 
