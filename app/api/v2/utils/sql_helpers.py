@@ -52,7 +52,7 @@ class SqlHelper:
         return admins
 
     def fetch_details_by_id(self, item_name, item_id, table):
-        """ returns a username given the id """
+        """ returns a details given the id """
 
         try:
             cur = self.database.cursor()
@@ -193,3 +193,16 @@ class SqlHelper:
         cur.close()
 
         return users
+
+    def save_question(self):
+        """ Adds question to the database """
+
+        cur = self.database.cursor()
+        query = """ INSERT INTO questions (meetup_id, user_id, title, body) VALUES (%(createdBy)s, %(meetup)s, %(title)s, %(body)s) RETURNING question_id; """
+        cur.execute(query, self.details)
+
+        question_id = cur.fetchone()[0]
+        self.database.commit()
+        cur.close()
+
+        return question_id
