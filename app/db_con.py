@@ -18,7 +18,8 @@ def destroy_database():
     """ Drops all tables if exists """
 
     testing_url = os.getenv('DATABASE_TESTING_URL')
-    conn = connect_to_database_url("")
+
+    conn = connect_to_database_url(testing_url)
 
     curr = conn.cursor()
 
@@ -90,7 +91,9 @@ def init_test_db():
     """
     destroy_database()
 
-    conn = connect_to_database_url('')
+    testing_url = os.getenv('DATABASE_TESTING_URL')
+
+    conn = connect_to_database_url(testing_url)
 
     curr = conn.cursor()
 
