@@ -23,9 +23,11 @@ def destroy_database():
 
     curr = conn.cursor()
 
-    curr.execute("DROP SCHEMA public CASCADE;")
-    curr.execute("CREATE SCHEMA public;")
-    curr.execute("GRANT USAGE ON SCHEMA public TO postgres;")
+    curr.execute("DROP TABLE IF EXISTS users CASCADE;")
+    curr.execute("DROP TABLE IF EXISTS meetups CASCADE;")
+    curr.execute("DROP TABLE IF EXISTS questions CASCADE;")
+    curr.execute("DROP TABLE IF EXISTS rsvps CASCADE;")
+    curr.execute("DROP TABLE IF EXISTS blacklist CASCADE;")
 
     conn.commit()
 
