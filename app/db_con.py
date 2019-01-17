@@ -28,6 +28,8 @@ def destroy_database():
 
     conn.commit()
 
+    conn.close()
+
 
 def create_table_users():
     """ 
