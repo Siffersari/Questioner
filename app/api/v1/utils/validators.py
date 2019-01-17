@@ -40,7 +40,7 @@ class DataValidators(BaseModels):
             if not (key == "images"):
                 if not value:
                     missing.append(key)
-        
+
         if missing:
             return "{} is a required field".format(missing[0])
 
@@ -50,19 +50,21 @@ class DataValidators(BaseModels):
         """ Takes in an email and checks whether or not it is valid """
 
         if not re.search(r'\w+[.|\w]\w+@\w+[.]\w+[.|\w+]\w+', self.given_data["email"]) or re.search(r'\s', self.given_data["email"]):
-            return self.makeresp("Please enter a valid email address", 400)
+            return "Please enter a valid email address"
 
         return self.given_data["email"]
 
     def check_password_is_valid(self):
         password = self.given_data["password"]
 
-        upper_case, lower_case = len(re.findall(r'[A-Z]', password)), len(re.findall(r'[a-z]', password))
+        upper_case, lower_case = len(re.findall(
+            r'[A-Z]', password)), len(re.findall(r'[a-z]', password))
 
-        digits, special = len(re.findall(r'[0-9]', password)), len(re.findall(r'[@#$]', password))
-        
+        digits, special = len(re.findall(
+            r'[0-9]', password)), len(re.findall(r'[@#$]', password))
+
         if not (upper_case and lower_case and digits and special) > 0:
-            
+
             return "Password should contain atleast one number, uppercase, lowercase and special character"
 
     def check_are_valid_credentials(self):
