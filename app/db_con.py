@@ -69,9 +69,9 @@ def create_tables():
     & initializes the app's main database if 'main' or testing database if 
     'testing' is passed"""
 
-    db_url = current_app.config['DATABASE_URL']
+    db_url = os.getenv('DATABASE_URL')
 
-    conn = connect_to_database_url(db_url)
+    conn = psycopg2.connect(db_url)
 
     curr = conn.cursor()
 
