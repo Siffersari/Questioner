@@ -206,3 +206,17 @@ class SqlHelper:
         cur.close()
 
         return question_id
+
+    def upvote_question(self, question_id):
+        """ Upvotes a question """
+
+        cur = self.database.cursor()
+        query = """ UPDATE questions SET votes = votes + 1 WHERE question_id = {} RETURNING meetup_id, title, body, votes; """.format(
+            question_id)
+        cur.execute(query)
+
+        data = cur.fetchone()
+        self.database.commit()
+        cur.close()
+
+        return data
