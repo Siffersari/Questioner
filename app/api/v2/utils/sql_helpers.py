@@ -234,3 +234,16 @@ class SqlHelper:
         cur.close()
 
         return data
+
+    def reply_meetup(self, rsvp):
+        """ Saves attendance response to the database """
+
+        cur = self.database.cursor()
+        query = """ INSERT INTO rsvps (user_id, meetup_id, response) VALUES (%(user)s, %(meetup)s, %(response)s) RETURNING rsvp_id; """
+        cur.execute(query, rsvp)
+
+        rsvp_id = cur.fetchone()[0]
+        self.database.commit()
+        cur.close()
+
+        return rsvp_id
