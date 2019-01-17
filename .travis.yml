@@ -17,6 +17,7 @@ before_script:
   - psql -c "create user leewel with password 'root';" -U postgres
 
 script:
+ - export FLASK_ENV="testing"
  - pytest --cov app/tests/v2
 
 after_success:
