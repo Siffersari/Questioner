@@ -38,3 +38,36 @@ def create_question():
     return jsonify(resp), resp["status"]
 
 
+@version2.route("/questions/<int:question_id>/upvote", methods=["PATCH"])
+def upvote_question(question_id):
+    """ 
+    This method upvotes a specific question 
+    """
+    header = request.headers.get("Authorization")
+
+    if not header:
+        return jsonify(
+            {"error": "This resource is secured. Please provide authorization header",
+             "status": 400}
+        ), 400
+
+    auth_token = header.split(" ")[1]
+
+    response = QuestionModels().validate_token_status(auth_token)
+
+    if isinstance(response, str):
+        return jsonify(
+            {"error": response,
+             "status": 400}
+        ), 400
+
+    details = request.get_json()
+
+    try:
+        if not isinstance(details["user"], int):
+            return jsonify({"error": "user must be represented by an integer id", "status": 400}), 400
+
+    except KeyError as keyerr:
+        return jsonify({"error": "{} is  a required key".format(keyerr), "status": 400}), 400
+
+    return jsonify(QuestionModels(details).upvote_question(question_id)), 200
