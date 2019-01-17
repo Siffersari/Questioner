@@ -18,8 +18,8 @@ before_script:
 
 script:
  - export FLASK_ENV="testing"
- - export DATABASE_TESTING_URL="dbname='questionertest' host='localhost' port='5432' user='leewel' password='root'"
- - export DATABASE_TESTING_URL="dbname='questioner' host='localhost' port='5432' user='leewel' password='root'"
+ - export DATABASE_TESTING_URL="dbname='questionertest' host='localhost' port='5432' user='postgres' password='secret'"
+ - export DATABASE_TESTING_URL="dbname='questioner' host='localhost' port='5432' user='postgres' password='secret'"
  - pytest --cov app/tests/v2
 
 after_success:
