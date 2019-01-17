@@ -23,13 +23,15 @@ def destroy_database():
 
     curr = conn.cursor()
 
-    curr.execute("DROP TABLE IF EXISTS users CASCADE;")
-    curr.execute("DROP TABLE IF EXISTS meetups CASCADE;")
-    curr.execute("DROP TABLE IF EXISTS questions CASCADE;")
-    curr.execute("DROP TABLE IF EXISTS rsvps CASCADE;")
-    curr.execute("DROP TABLE IF EXISTS blacklist CASCADE;")
+    curr.execute(""" DROP TABLE IF EXISTS users CASCADE;""")
+    curr.execute(""" DROP TABLE IF EXISTS meetups CASCADE;""")
+    curr.execute("""DROP TABLE IF EXISTS questions CASCADE;""")
+    curr.execute("""DROP TABLE IF EXISTS rsvps CASCADE;""")
+    curr.execute("""DROP TABLE IF EXISTS blacklist CASCADE;""")
 
     conn.commit()
+
+    conn.close()
 
 
 def create_table_users():
@@ -72,6 +74,11 @@ def create_tables():
     & initializes the app's main database if 'main' or testing database if 
     'testing' is passed"""
 
+    testdb = os.getenv("DATABASE_TESTING_URL")
+
+    if "questionertest" in testdb:
+        destroy_database()
+
     db_url = os.getenv('DATABASE_URL')
 
     conn = psycopg2.connect(db_url)
@@ -106,3 +113,5 @@ def init_test_db():
         conn.commit()
 
     return conn
+
+

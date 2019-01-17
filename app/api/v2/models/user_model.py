@@ -104,7 +104,7 @@ class UserModels(BaseModels):
 
         user = DataValidators(self.user_details).check_are_valid_credentials()
 
-        status = 400
+        status = 404
 
         if self.check_is_error(user):
 
