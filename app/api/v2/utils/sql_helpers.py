@@ -148,7 +148,7 @@ class SqlHelper:
     def get_upcoming_meetups(self):
 
         cur = self.database.cursor()
-        cur.execute(""" SELECT * FROM meetups; """)
+        cur.execute(""" SELECT * FROM meetups WHERE happening_on > now(); """)
         meetups = cur.fetchall()
         cur.close()
 
