@@ -48,8 +48,7 @@ class BaseModels(object):
 
         token = jwt.encode(
             token_data,
-            app,
-            algorithm="HS256"
+            app
         )
 
         return token
