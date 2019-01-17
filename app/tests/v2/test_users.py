@@ -54,11 +54,13 @@ class TestUsers(unittest.TestCase):
         new_user = self.register_user()
 
         self.assertEqual(new_user.status_code, 201)
-        
 
     def test_login_user(self):
         """ Test cases for login in a user """
-        pass
+
+        self.register_user()
+
+        self.assertEqual(self.login_user().status_code, 200)
 
     def tearDown(self):
         """ Destroys set up data before running each test """
