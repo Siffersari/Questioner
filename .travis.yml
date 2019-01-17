@@ -1,8 +1,5 @@
 language: python
 
-env:
-  DATABASE_TESTING_URL="dbname='questionertest' host='127.0.0.1' port='5432' user='postgres' password=''"
-
 python:
  - "3.6"
 
@@ -14,13 +11,10 @@ install:
 services:
   - postgresql
 
-addons:
-postgresql: "9.6"
-
 before_script:
-
   - psql -c 'create database questioner;' -U postgres
-  - psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to postgres ;" -U postgres
+  - psql -c 'create database questionertest;' -U postgres
+  - psql -c "create user leewel with password 'root';" -U postgres
 
 script:
  - pytest --cov app/tests/v2
