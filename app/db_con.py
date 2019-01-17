@@ -18,7 +18,7 @@ def destroy_database():
     """ Drops all tables if exists """
 
     testing_url = os.getenv('DATABASE_TESTING_URL')
-    conn = connect_to_database_url(testing_url)
+    conn = connect_to_database_url("")
 
     curr = conn.cursor()
 
@@ -27,8 +27,6 @@ def destroy_database():
     curr.execute("GRANT USAGE ON SCHEMA public TO postgres;")
 
     conn.commit()
-
-    conn.close()
 
 
 def create_table_users():
