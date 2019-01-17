@@ -13,7 +13,7 @@ class TestQuestions(unittest.TestCase):
     def setUp(self):
         """ Sets up what the test will need before it runs """
 
-        self.app = create_app()
+        self.app = create_app("testing")
 
         self.client = self.app.test_client()
 

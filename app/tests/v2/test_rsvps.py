@@ -13,7 +13,7 @@ class TestRsvps(unittest.TestCase):
     def setUp(self):
         """ Setsup what the test will require """
 
-        self.app = create_app()
+        self.app = create_app("testing")
 
         self.client = self.app.test_client()
 
