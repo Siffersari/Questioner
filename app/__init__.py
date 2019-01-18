@@ -14,6 +14,9 @@ def create_app(config_name="development"):
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
 
+    if config_name == "testing":
+        os.environ["DATABASE_URL"] = os.getenv("DATABASE_TESTING_URL")
+
     app.register_blueprint(v2)
     app.register_blueprint(meets2)
     app.register_blueprint(ques2)
