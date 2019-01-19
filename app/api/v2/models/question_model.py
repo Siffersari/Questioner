@@ -138,6 +138,48 @@ class QuestionModels(BaseModels):
 
         return self.makequestionresponse(data)
 
+    def post_comment(self):
+        """ Posts a comment to a question """
+        try:
+
+            user = self.sql.get_username_by_id(
+                int(self.question_details["user"]))
+
+            question = self.sql.fetch_details_by_id(
+                "question_id", self.question_details["question"], "questions")
+
+            comment = self.question_details["comment"]
+
+            isempty = DataValidators(
+                self.question_details).check_values_not_empty()
+
+            if isinstance(isempty, str):
+                return self.makeresp(isempty, 400)
+
+            if isinstance(comment, str):
+                self.question_details["comment"] = [comment]
+
+        except KeyError as keyerror:
+            return self.makeresp("{} is a required field".format(keyerror), 400)
+
+        if not user:
+            return self.makeresp("User not found", 404)
+
+        if not question:
+            return self.makeresp("Question not found", 404)
+
+        comment_id = SqlHelper(self.question_details).save_comment()
+
+        return self.makeresp(
+            {
+                "id": comment_id,
+                "user": user[0],
+                "question": question[0],
+                "title": question[3],
+                "body": question[4],
+                "comment": comment
+            }, 201)
+
     def makequestionresponse(self, question):
         """
         This method takes in data and selects what part of 
