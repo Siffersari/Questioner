@@ -154,6 +154,22 @@ class SqlHelper:
 
         return meetups
 
+    def delete_meetup(self, meetup_id):
+        """ Deletes a meetup record """
+
+        cur = self.database.cursor()
+
+        try:
+            cur.execute(
+                """ DELETE FROM meetups WHERE meetup_id = %d; """ % (meetup_id))
+
+            self.database.commit()
+
+        except:
+            return False
+
+        return "Meetup deleted successfully"
+
     def check_user_exist_by_email(self, email):
         """ Checks database for existing users using user emails """
 
