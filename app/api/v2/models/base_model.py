@@ -55,7 +55,7 @@ class BaseModels(object):
         return token
 
     def validate_token_status(self, token):
-        """ Decodes a given token """
+        """ Decodes a given token  """
 
         if SqlHelper().check_blacklisted_user_token(token):
             return "Token is no longer valid. Get a new one"
