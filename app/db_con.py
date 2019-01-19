@@ -28,6 +28,7 @@ def destroy_database():
     curr.execute("""DROP TABLE IF EXISTS questions CASCADE;""")
     curr.execute("""DROP TABLE IF EXISTS rsvps CASCADE;""")
     curr.execute("""DROP TABLE IF EXISTS blacklist CASCADE;""")
+    curr.execute("""DROP TABLE IF EXISTS comments CASCADE;""")
 
     conn.commit()
 
@@ -54,7 +55,7 @@ def create_table_users():
 
     questions = """ CREATE TABLE IF NOT EXISTS questions (question_id serial PRIMARY KEY NOT NULL,
     meetup_id INTEGER NOT NULL, user_id INTEGER NOT NULL, title VARCHAR (150) NOT NULL,
-    body VARCHAR (1000) NOT NULL, comments VARCHAR (1000), votes INTEGER DEFAULT 0, 
+    body VARCHAR (1000) NOT NULL, votes INTEGER DEFAULT 0, 
     created_on TIMESTAMP NOT NULL DEFAULT current_timestamp
     ); """
 
@@ -63,9 +64,14 @@ def create_table_users():
     responded_on TIMESTAMP NOT NULL DEFAULT current_timestamp
     ); """
 
+    comments = """ CREATE TABLE IF NOT EXISTS comments (comment_id serial PRIMARY KEY NOT NULL,
+    question_id INTEGER NOT NULL, user_id INTEGER NOT NULL, comments VARCHAR [1000],
+    created_on TIMESTAMP NOT NULL DEFAULT current_timestamp
+    ); """
+
     blacklist = """ CREATE TABLE IF NOT EXISTS blacklisted (tokens VARCHAR (256) NOT NULL); """
 
-    return [users, meetups, questions, rsvps, blacklist]
+    return [users, meetups, questions, rsvps, comments, blacklist]
 
 
 def create_tables():
@@ -87,8 +93,3 @@ def create_tables():
         conn.commit()
 
     return conn
-
-
-
-
-
