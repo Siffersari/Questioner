@@ -263,3 +263,17 @@ class SqlHelper:
         cur.close()
 
         return rsvp_id
+
+    def save_comment(self):
+        """ Save comment details to the database """
+
+        cur = self.database.cursor()
+
+        query = """ INSERT INTO comments (question_id, user_id, comments) VALUES (%(question)s, %(user)s, %(comment)s) RETURNING comment_id; """
+        cur.execute(query, self.details)
+
+        comment_id = cur.fetchone()[0]
+        self.database.commit()
+        cur.close()
+
+        return comment_id
