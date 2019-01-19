@@ -157,3 +157,39 @@ def post_images(meetup_id):
     response = MeetupModels(details).post_images(meetup_id)
 
     return jsonify(response), response["status"]
+
+
+@version2.route("/meetups/<int:meetup_id>/tags", methods=["POST"])
+def add_tags(meetup_id):
+    """ Add tags to a meetup """
+
+    header = request.headers.get("Authorization")
+
+    if not header:
+        return jsonify(
+            {"error": "This resource is secured. Please provide authorization header",
+             "status": 400}
+        ), 400
+
+    auth_token = header.split(" ")[1]
+
+    response = MeetupModels().validate_token_status(auth_token)
+
+    if isinstance(response, str):
+        return jsonify(
+            {"error": response,
+             "status": 400}
+        ), 400
+
+    details = request.get_json()
+
+    try:
+        if not isinstance(details["user"], int):
+            return jsonify({"error": "user must an integer", "status": 400}), 400
+
+    except KeyError as keyerr:
+        return jsonify({"error": "{} is  a required key".format(keyerr), "status": 400}), 400
+
+    response = MeetupModels(details).add_tags(meetup_id)
+
+    return jsonify(response), response["status"]
