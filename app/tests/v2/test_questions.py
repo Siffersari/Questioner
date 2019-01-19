@@ -102,6 +102,21 @@ class TestQuestions(unittest.TestCase):
 
         return response
 
+    def create_comment(self, path="/api/v2/comments", data={}):
+        """ Posts a comment to a question """
+
+        if not data:
+            data = {
+                "user": 1,
+                "question": 1,
+                "comment": "Just a sample comment"
+            }
+
+        response = self.client.post(path, data=json.dumps(
+            data), content_type=self.content_type, headers=self.headers)
+
+        return response
+
     def upvote_question(self, path="/api/v2/questions/<int:question_id>/upvote", data={}):
         """ Increases votes of a specific question by 1 """
 
@@ -125,6 +140,17 @@ class TestQuestions(unittest.TestCase):
 
         self.assertEqual(new_question.status_code, 201)
         self.assertTrue(new_question.json["data"])
+
+    def test_create_comment(self):
+        """ Tests whether new question is created with data provided """
+
+        new_question = self.post_question()
+
+        self.assertEqual(new_question.status_code, 201)
+
+        self.assertEqual(self.create_comment().status_code, 201)
+
+        self.assertTrue(self.create_comment().json["data"])
 
     def test_upvote_question(self):
         """ Tests for upvoting a question """
