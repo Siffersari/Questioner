@@ -1,7 +1,8 @@
 import unittest
 import json
+import os
 from ... import create_app
-from ... db_con import init_test_db, destroy_database
+from ... db_con import create_tables, destroy_database
 
 
 class TestQuestions(unittest.TestCase):
@@ -17,50 +18,146 @@ class TestQuestions(unittest.TestCase):
 
         self.client = self.app.test_client()
 
-        self.db = init_test_db()
+        os.environ["DATABASE_URL"] = os.getenv("DATABASE_TESTING_URL")
+
+        create_tables()
 
         self.data = {
-            "firstname": "Mohammed",
-            "lastname": "Mohali",
-            "othername": "Mrali",
-            "email": "ali@moh.com",
-            "phoneNumber": "0707070707",
-            "username": "Mohali",
+            "firstname": "User",
+            "lastname": "Test",
+            "othername": "UserTest",
+            "email": "test@test.com",
+            "phoneNumber": "0712332112",
+            "username": "testuser",
             "password": "P@5sword"
         }
 
         self.meetup = {
-            "location": "House of Leather, Nairobi",
+            "location": "Angle House, Nairobi",
             "images": ["img1.jgp", "img2.jpg"],
-            "topic": "All the Leather you can get",
-            "happeningOn": "Mar 8 2019 11:30AM",
-            "tags": ["Creative", "Leather"],
-            "username": "Leewel"
+            "topic": "Do It Yourself",
+            "happeningOn": "Feb 4 2019 10:30AM",
+            "tags": ["Creative", "Technology"],
+            "user": 1
         }
+
+        self.question = {
+            "user": 1,
+            "meetup": 1,
+            "title": "Leather bag price",
+            "body": "How much would a good leather bag cost"
+
+        }
+
+        self.votedetail = {
+            "user": 1
+        }
+
+        self.content_type = "application/json"
+
+        self.user = self.client.post("/api/v2/auth/signup",
+                                     data=json.dumps(self.data), content_type="application/json")
+
+        login = self.login_user()
+
+        self.assertEqual(login.status_code, 200)
+
+        self.assertTrue(self.login_user().json["data"][0]["token"])
+
+        self.headers = {'Authorization': 'Bearer {}'.format(
+            login.json["data"][0]["token"])}
+
+        self.create_meetup()
+
+    def login_user(self, path="/api/v2/auth/login", data={}):
+        """ Logs in a user if registered """
+
+        if not data:
+            data = self.data
+
+        response = self.client.post(path, data=json.dumps(
+            data), content_type="application/json")
+
+        return response
+
+    def create_meetup(self, path="api/v2/meetups", data={}):
+        """ Creates a meetup """
+
+        if not data:
+            data = self.meetup
+
+        response = self.client.post(path, data=json.dumps(
+            data), content_type=self.content_type, headers=self.headers)
+
+        return response
+
+    def post_question(self, path="/api/v2/questions", data={}):
+        """ Creates a question for a specific meetup """
+
+        if not data:
+            data = self.question
+
+        response = self.client.post(path, data=json.dumps(
+            data), content_type="application/json", headers=self.headers)
+
+        return response
 
     def upvote_question(self, path="/api/v2/questions/<int:question_id>/upvote", data={}):
         """ Increases votes of a specific question by 1 """
 
-        response = self.client.patch(path)
+        response = self.client.patch(path, data=json.dumps(
+            self.votedetail), content_type=self.content_type, headers=self.headers)
 
         return response
 
     def downvote_question(self, path="/api/v2/questions/<int:question_id>/downvote", data={}):
         """ Downvotes a question to a specific meetup """
 
-        response = self.client.patch(path)
+        response = self.client.patch(path, data=json.dumps(
+            self.votedetail), content_type=self.content_type, headers=self.headers)
 
         return response
 
     def test_post_new_question(self):
         """ Tests whether new question is created with data provided """
-        pass
+
+        new_question = self.post_question()
+
+        self.assertEqual(new_question.status_code, 201)
+        self.assertTrue(new_question.json["data"])
+
+    def test_upvote_question(self):
+        """ Tests for upvoting a question """
+
+        new_vote = self.post_question()
+        self.assertEqual(new_vote.status_code, 201)
+
+        vote = self.upvote_question(
+            path="/api/v2/questions/{}/upvote".format(new_vote.json["data"][0]["id"]))
+
+        self.assertEqual(vote.status_code, 200)
+
+        self.assertTrue(self.upvote_question(path="/api/v2/questions/{}/upvote".format(
+            new_vote.json["data"][0]["user"])).json["data"][0]["votes"])
+        self.assertEqual(self.upvote_question(path="/api/v2/questions/{}/upvote".format(
+            new_vote.json["data"][0]["user"])).json["data"][0]["votes"], 3)
+
+    def test_downvote_question(self):
+        """ Tests for downvoting a question """
+        new_vote = self.post_question()
+        self.assertEqual(new_vote.status_code, 201)
+
+        vote = self.downvote_question(
+            path="/api/v2/questions/{}/upvote".format(new_vote.json["data"][0]["id"]))
+
+        self.assertEqual(vote.status_code, 200)
 
     def tearDown(self):
         """ Destroys set up data before running each test """
 
         destroy_database()
-        self.db.close()
+
+    os.environ["DATABASE_URL"] = "dbname='questioner' host='localhost' port='5432' user='leewel' password='root'"
 
 
 if __name__ == "__main__":
