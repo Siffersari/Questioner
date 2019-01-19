@@ -117,6 +117,20 @@ class TestMeetups(unittest.TestCase):
 
         return response
 
+    def add_tags(self, path="api/v2/meetups/<meetup-id>/tags", data={}):
+        """ Adds images to meetup """
+
+        if not data:
+            data = {
+                "user": 1,
+                "tags": ["Instagram", "ruby"]
+            }
+
+        response = self.client.post(path, data=json.dumps(
+            data), content_type=self.content_type, headers=self.headers)
+
+        return response
+
     def fetch_specific_meetup(self, path="/api/v2/meetups/<meetup-id>"):
         """ Fetches a specific meetup record """
 
@@ -237,6 +251,39 @@ class TestMeetups(unittest.TestCase):
 
         self.assertEqual(self.post_images(
             path="/api/v2/meetups/1/images", data=data).status_code, 404)
+
+    def test_add_tags(self):
+        """ Tests for posting meetup """
+
+        new_meetup = self.create_meetup()
+
+        self.assertEqual(new_meetup.status_code, 201)
+
+        self.assertEqual(self.add_tags(
+            path="/api/v2/meetups/1/tags").status_code, 201)
+
+        self.assertTrue(self.add_tags(
+            path="/api/v2/meetups/1/tags").json["data"][0]["tags"])
+
+    def test_raises_Notfound_if_missing_meetup(self):
+        """ Tests for failure if missing meetup """
+
+        self.assertEqual(self.add_tags(
+            path="/api/v2/meetups/1/tags").status_code, 404)
+
+        self.assertTrue(self.add_tags(
+            path="/api/v2/meetups/1/tags").json["error"])
+
+    def test_raises_NotFound_if_missing_user(self):
+        """ Test for failure if missing user """
+
+        data = {
+            "user": 99,
+            "tags": ["tags"]
+        }
+
+        self.assertEqual(self.add_tags(
+            path="/api/v2/meetups/1/tags", data=data).status_code, 404)
 
     def tearDown(self):
         """ Destroys set up data before running each test """

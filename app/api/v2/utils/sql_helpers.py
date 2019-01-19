@@ -318,3 +318,44 @@ class SqlHelper:
         cur.close()
 
         return images
+
+    def get_tags(self, meetup_id):
+        """ Saves images to the database """
+
+        cur = self.database.cursor()
+
+        query = """ SELECT tags FROM meetups WHERE meetup_id = %d; """ % (
+            meetup_id)
+
+        cur.execute(query)
+
+        tags = cur.fetchone()[0]
+
+        cur.close()
+
+        if not tags:
+            return "Tags not found"
+
+        return tags
+
+    def add_tags(self, meetup_id):
+        """ Saves images to the database """
+
+        data = {
+            "tags": self.details["tags"],
+            "meetupId": meetup_id
+        }
+
+        cur = self.database.cursor()
+
+        query = """ UPDATE meetups SET tags = %(tags)s WHERE meetup_id = %(meetupId)s RETURNING images; """
+
+        cur.execute(query, data)
+
+        tags = cur.fetchone()[0]
+
+        self.database.commit()
+
+        cur.close()
+
+        return tags
