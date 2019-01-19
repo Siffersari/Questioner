@@ -86,3 +86,38 @@ def fetch_upcoming_meetup():
         ), 400
 
     return jsonify(MeetupModels().fetch_upcoming_meetups()), MeetupModels().fetch_upcoming_meetups()["status"]
+
+
+@version2.route("/meetups/<int:meetup_id>", methods=['DELETE'])
+def delete_meetup(meetup_id):
+    """ Deletes a meetup record """
+    header = request.headers.get("Authorization")
+
+    if not header:
+        return jsonify(
+            {"error": "This resource is secured. Please provide authorization header",
+             "status": 400}
+        ), 400
+
+    auth_token = header.split(" ")[1]
+
+    response = MeetupModels().validate_token_status(auth_token)
+
+    if isinstance(response, str):
+        return jsonify(
+            {"error": response,
+             "status": 400}
+        ), 400
+
+    details = request.get_json()
+
+    try:
+        if not isinstance(details["user"], int):
+            return jsonify({"error": "user must an integer", "status": 400}), 400
+
+    except KeyError as keyerr:
+        return jsonify({"error": "{} is  a required key".format(keyerr), "status": 400}), 400
+
+    response = MeetupModels(details).delete_meetup(meetup_id)
+
+    return jsonify(response), response["status"]
