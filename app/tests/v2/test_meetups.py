@@ -90,6 +90,19 @@ class TestMeetups(unittest.TestCase):
 
         return response
 
+    def delete_meetup(self, path="api/v2/meetups/<meetup-id>", data={}):
+        """ Deletes a meetup """
+
+        if not data:
+            data = {
+                "user": 1
+            }
+
+        response = self.client.delete(path, data=json.dumps(
+            data), content_type=self.content_type, headers=self.headers)
+
+        return response
+
     def fetch_specific_meetup(self, path="/api/v2/meetups/<meetup-id>"):
         """ Fetches a specific meetup record """
 
@@ -104,7 +117,7 @@ class TestMeetups(unittest.TestCase):
         return response
 
     def test_create_new_meetup(self):
-        """ Test cases for login in a user """
+        """ Test cases for creating  a new meetup """
 
         new_meetup = self.create_meetup()
 
@@ -161,6 +174,22 @@ class TestMeetups(unittest.TestCase):
             path="/api/v2/meetups/upcoming").json["data"])
         self.assertNotEqual(self.fetch_upcoming_meetup(
             path="/api/v2/meetups/upcoming").status_code, 404)
+
+    def test_delete_existing_meetup(self):
+        """ Test cases for login in a user """
+
+        new_meetup = self.create_meetup()
+
+        self.assertEqual(new_meetup.status_code, 201)
+
+        self.assertEqual(self.delete_meetup(
+            path="api/v2/meetups/1").status_code, 200)
+
+        self.assertEqual(self.delete_meetup(
+            path="api/v2/meetups/1").status_code, 404)
+
+        self.assertTrue(self.delete_meetup(
+            path="api/v2/meetups/1").json["error"])
 
     def tearDown(self):
         """ Destroys set up data before running each test """
