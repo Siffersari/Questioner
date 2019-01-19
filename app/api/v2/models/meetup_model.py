@@ -125,3 +125,30 @@ class MeetupModels(BaseModels):
             resp.append(meetup)
 
         return self.makeresp(resp, 200)
+
+    def delete_meetup(self, meetup_id):
+        """ Accepts a meetup_id and deletes meetup record """
+        meetup = self.sql.fetch_details_by_id(
+            "meetup_id", meetup_id, "meetups")
+
+        if not meetup:
+            return self.makeresp("Meetup not found", 404)
+
+        user = self.sql.get_username_by_id(
+            int(self.meetup_details["user"]))
+
+        if not user:
+            return self.makeresp("This user is not found", 404)
+
+        is_admin = self.sql.get_admin_user(self.meetup_details["user"])
+
+        if self.check_is_error(is_admin):
+            status = 403
+            if 'Administrator' in is_admin:
+                status = 404
+
+            return self.makeresp(is_admin, status)
+
+        self.sql.delete_meetup(meetup_id)
+
+        return self.makeresp(["This meetup has been deleted successfully"], 200)
