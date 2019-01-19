@@ -62,7 +62,7 @@ class UserModels(BaseModels):
             "isAdmin": False
         }
 
-        user_id = SqlHelper(self.user_details).save_user()
+        user_id = SqlHelper(payload).save_user()
 
         token = self.give_auth_token(user_id)
 
