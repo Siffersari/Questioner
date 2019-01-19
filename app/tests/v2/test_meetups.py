@@ -103,6 +103,20 @@ class TestMeetups(unittest.TestCase):
 
         return response
 
+    def post_images(self, path="api/v2/meetups/<meetup-id>/images", data={}):
+        """ Adds images to meetup """
+
+        if not data:
+            data = {
+                "user": 1,
+                "images": ["tumbl.url.com", "insta.com"]
+            }
+
+        response = self.client.post(path, data=json.dumps(
+            data), content_type=self.content_type, headers=self.headers)
+
+        return response
+
     def fetch_specific_meetup(self, path="/api/v2/meetups/<meetup-id>"):
         """ Fetches a specific meetup record """
 
@@ -176,7 +190,7 @@ class TestMeetups(unittest.TestCase):
             path="/api/v2/meetups/upcoming").status_code, 404)
 
     def test_delete_existing_meetup(self):
-        """ Test cases for login in a user """
+        """ Test cases for deleting a meetup """
 
         new_meetup = self.create_meetup()
 
@@ -190,6 +204,39 @@ class TestMeetups(unittest.TestCase):
 
         self.assertTrue(self.delete_meetup(
             path="api/v2/meetups/1").json["error"])
+
+    def test_posts_images(self):
+        """ Tests for posting meetup """
+
+        new_meetup = self.create_meetup()
+
+        self.assertEqual(new_meetup.status_code, 201)
+
+        self.assertEqual(self.post_images(
+            path="/api/v2/meetups/1/images").status_code, 201)
+
+        self.assertTrue(self.post_images(
+            path="/api/v2/meetups/1/images").json["data"][0]["images"])
+
+    def test_raises_error_if_missing_meetup(self):
+        """ Tests for failure if missing meetup """
+
+        self.assertEqual(self.post_images(
+            path="/api/v2/meetups/1/images").status_code, 404)
+
+        self.assertTrue(self.post_images(
+            path="/api/v2/meetups/1/images").json["error"])
+
+    def test_raises_error_if_missing_user(self):
+        """ Test for failure if missing user """
+
+        data = {
+            "user": 99,
+            "images": ["this"]
+        }
+
+        self.assertEqual(self.post_images(
+            path="/api/v2/meetups/1/images", data=data).status_code, 404)
 
     def tearDown(self):
         """ Destroys set up data before running each test """

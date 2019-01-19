@@ -277,3 +277,44 @@ class SqlHelper:
         cur.close()
 
         return comment_id
+
+    def get_images(self, meetup_id):
+        """ Saves images to the database """
+
+        cur = self.database.cursor()
+
+        query = """ SELECT images FROM meetups WHERE meetup_id = %d; """ % (
+            meetup_id)
+
+        cur.execute(query)
+
+        images = cur.fetchone()[0]
+
+        cur.close()
+
+        if not images:
+            return "Images not found"
+
+        return images
+
+    def post_images(self, meetup_id):
+        """ Saves images to the database """
+
+        data = {
+            "images": self.details["images"],
+            "meetupId": meetup_id
+        }
+
+        cur = self.database.cursor()
+
+        query = """ UPDATE meetups SET images = %(images)s WHERE meetup_id = %(meetupId)s RETURNING images; """
+
+        cur.execute(query, data)
+
+        images = cur.fetchone()[0]
+
+        self.database.commit()
+
+        cur.close()
+
+        return images
