@@ -1,56 +1,88 @@
 import unittest
 import json
+import os
 from ... import create_app
-from ... db_con import init_test_db, destroy_database
+from ... db_con import create_tables, destroy_database
 
 
-class TestRsvps(unittest.TestCase):
-    """ 
-    Contains testcases for RSVPs to for a meetup
-    record
+class TestQuestions(unittest.TestCase):
+    """
+    Contains testcases for questions 
+    for a meetup record
     """
 
     def setUp(self):
-        """ Setsup what the test will require """
+        """ Sets up what the test will need before it runs """
 
         self.app = create_app("testing")
 
         self.client = self.app.test_client()
 
-        self.db = init_test_db()
+        os.environ["DATABASE_URL"] = os.getenv("DATABASE_TESTING_URL")
+
+        create_tables()
 
         self.data = {
-            "firstname": "Wayne",
-            "lastname": "Rooney",
-            "othername": "Plays",
-            "email": "Wayne@roon.com",
-            "phoneNumber": "0707070707",
-            "username": "wayneroon",
+            "firstname": "User",
+            "lastname": "Test",
+            "othername": "UserTest",
+            "email": "test@test.com",
+            "phoneNumber": "0712332112",
+            "username": "testuser",
             "password": "P@5sword"
         }
 
         self.meetup = {
-            "location": "Kiwanjani, Nairobi",
+            "location": "Angle House, Nairobi",
             "images": ["img1.jgp", "img2.jpg"],
-            "topic": "Ligi ndoge",
-            "happeningOn": "Mar 2 2019 11:30AM",
-            "tags": ["Football", "Sports"],
-            "username": "Janet"
+            "topic": "Do It Yourself",
+            "happeningOn": "Feb 4 2019 10:30AM",
+            "tags": ["Creative", "Technology"],
+            "user": 1
         }
-
-        self.user = self.client.post(
-            "/api/v2/auth/signup", data=json.dumps(self.data), content_type="application/json")
-        self.assertEqual(self.user.status_code, 201)
-
-        self.meetup = self.client.post(
-            "/api/v2/meetups", data=json.dumps(self.meetup), content_type="application/json")
-        self.assertEqual(self.meetup.status_code, 201)
 
         self.rsvp = {
-            "user": self.user.json["data"][0]["id"],
-            "meetup": self.meetup.json["data"][0]["id"],
+            "user": 1,
             "response": "yes"
         }
+
+        self.content_type = "application/json"
+
+        self.user = self.client.post("/api/v2/auth/signup",
+                                     data=json.dumps(self.data), content_type="application/json")
+
+        login = self.login_user()
+
+        self.assertEqual(login.status_code, 200)
+
+        self.assertTrue(self.login_user().json["data"][0]["token"])
+
+        self.headers = {'Authorization': 'Bearer {}'.format(
+            login.json["data"][0]["token"])}
+
+        self.create_meetup()
+
+    def login_user(self, path="/api/v2/auth/login", data={}):
+        """ Logs in a user if registered """
+
+        if not data:
+            data = self.data
+
+        response = self.client.post(path, data=json.dumps(
+            data), content_type="application/json")
+
+        return response
+
+    def create_meetup(self, path="api/v2/meetups", data={}):
+        """ Creates a meetup """
+
+        if not data:
+            data = self.meetup
+
+        response = self.client.post(path, data=json.dumps(
+            data), content_type=self.content_type, headers=self.headers)
+
+        return response
 
     def respond_meetup(self, path="/api/v2/meetups/<int:meetup_id>/rsvps", data={}):
         """ Responds to meetup RSVP """
@@ -59,24 +91,23 @@ class TestRsvps(unittest.TestCase):
             data = self.rsvp
 
         response = self.client.post(path, data=json.dumps(
-            data), content_type="application/json")
+            data), content_type="application/json", headers=self.headers)
 
         return response
 
     def test_respond_meetup(self):
         """ Tests for responding to a meetup """
 
-        new_rsvp = self.respond_meetup(
-            path="/api/v2/meetups/{}/rsvps".format(self.rsvp["meetup"]))
+        rsvp = self.respond_meetup(path="/api/v2/meetups/1/rsvps")
 
-        self.assertEqual(new_rsvp.status_code, 201)
-        self.assertTrue(new_rsvp.json["data"])
+        self.assertEqual(rsvp.status_code, 201)
 
     def tearDown(self):
         """ Destroys set up data before running each test """
 
         destroy_database()
-        self.db.close()
+
+    os.environ["DATABASE_URL"] = "dbname='questioner' host='localhost' port='5432' user='leewel' password='root'"
 
 
 if __name__ == "__main__":

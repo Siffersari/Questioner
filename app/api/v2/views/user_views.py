@@ -34,4 +34,4 @@ def login_user():
 
     resp = UserModels(data).login_user()
 
-    return jsonify(resp), resp["status"] 
+    return jsonify(resp), resp["status"]

@@ -1,7 +1,5 @@
-# This file config, contains different settings of the application
-# to suite the intended purpose. 
-
 import os
+
 
 class Config(object):
     DEBUG = False
@@ -15,13 +13,16 @@ class DevelopmentConfig(Config):
     """
     DEBUG = True
 
+
 class TestingConfig(Config):
     """
     Enables interactive debugger and propagates Exception
     for testing
     """
-    DEBUG = True
+    DEBUG = False
     TESTING = True
+    DATABASE_URL = os.getenv("DATABASE_TEST_URL")
+
 
 class ProductionConfig(Config):
     """
@@ -37,4 +38,3 @@ app_config = {
     "testing": TestingConfig,
     "production": ProductionConfig
 }
-

@@ -62,7 +62,7 @@ class UserModels(BaseModels):
             "isAdmin": False
         }
 
-        user_id = SqlHelper(self.user_details).save_user()
+        user_id = SqlHelper(payload).save_user()
 
         token = self.give_auth_token(user_id)
 
@@ -104,7 +104,7 @@ class UserModels(BaseModels):
 
         user = DataValidators(self.user_details).check_are_valid_credentials()
 
-        status = 400
+        status = 404
 
         if self.check_is_error(user):
 

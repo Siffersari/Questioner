@@ -1,7 +1,8 @@
 import unittest
 import json
+import os
 from ... import create_app
-from ... db_con import init_test_db, destroy_database
+from ... db_con import create_tables, destroy_database
 
 
 class TestUsers(unittest.TestCase):
@@ -11,10 +12,12 @@ class TestUsers(unittest.TestCase):
         """ Sets up what the test will need before it runs """
 
         self.app = create_app("testing")
+
         self.client = self.app.test_client()
 
-        with self.app.app_context():
-            self.db = init_test_db()
+        os.environ["DATABASE_URL"] = os.getenv("DATABASE_TESTING_URL")
+
+        create_tables()
 
         self.data = {
             "firstname": "User",
@@ -30,7 +33,7 @@ class TestUsers(unittest.TestCase):
         """ Registers a new user given data or default if not provided"""
 
         if not data:
-            data = self.data 
+            data = self.data
 
         response = self.client.post(path, data=json.dumps(
             data), content_type="application/json")
@@ -58,13 +61,18 @@ class TestUsers(unittest.TestCase):
     def test_login_user(self):
         """ Test cases for login in a user """
 
+        self.client.post("/api/v2/auth/signup",
+                         data=json.dumps(self.data), content_type="application/json")
+
         self.assertEqual(self.login_user().status_code, 200)
+        self.assertTrue(self.login_user().json["data"][0]["token"])
 
     def tearDown(self):
         """ Destroys set up data before running each test """
-        with self.app.app_context():
-            destroy_database()
-            self.db.close()
+
+        destroy_database()
+
+    os.environ["DATABASE_URL"] = "dbname='questioner' host='localhost' port='5432' user='leewel' password='root'"
 
 
 if __name__ == "__main__":

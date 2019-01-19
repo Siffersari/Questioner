@@ -81,6 +81,6 @@ class DataValidators(BaseModels):
 
         if not check_password_hash(password, self.given_data["password"]):
 
-            return "Please check your password"
+            return "Please check your password {}".format(password)
 
         return user

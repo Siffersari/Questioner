@@ -18,15 +18,20 @@ def destroy_database():
     """ Drops all tables if exists """
 
     testing_url = os.getenv('DATABASE_TESTING_URL')
-    conn = connect_to_database_url("")
+
+    conn = connect_to_database_url(testing_url)
 
     curr = conn.cursor()
 
-    curr.execute("DROP SCHEMA public CASCADE;")
-    curr.execute("CREATE SCHEMA public;")
-    curr.execute("GRANT USAGE ON SCHEMA public TO postgres;")
+    curr.execute(""" DROP TABLE IF EXISTS users CASCADE;""")
+    curr.execute(""" DROP TABLE IF EXISTS meetups CASCADE;""")
+    curr.execute("""DROP TABLE IF EXISTS questions CASCADE;""")
+    curr.execute("""DROP TABLE IF EXISTS rsvps CASCADE;""")
+    curr.execute("""DROP TABLE IF EXISTS blacklist CASCADE;""")
 
     conn.commit()
+
+    conn.close()
 
 
 def create_table_users():
@@ -38,7 +43,7 @@ def create_table_users():
     firstname VARCHAR (20) NOT NULL, lastname VARCHAR (20) NOT NULL, othername VARCHAR (20),
     email VARCHAR (30) NOT NULL, phone_number VARCHAR (20), username VARCHAR (20) NOT NULL,
     registered_on TIMESTAMP NOT NULL DEFAULT current_timestamp, password VARCHAR (256) NOT NULL,
-    roles VARCHAR (20) DEFAULT false
+    roles VARCHAR (20) DEFAULT true
     );"""
 
     meetups = """ CREATE TABLE IF NOT EXISTS meetups (meetup_id serial PRIMARY KEY NOT NULL,
@@ -69,28 +74,9 @@ def create_tables():
     & initializes the app's main database if 'main' or testing database if 
     'testing' is passed"""
 
-    db_url = current_app.config['DATABASE_URL']
+    db_url = os.getenv('DATABASE_URL')
 
-    conn = connect_to_database_url(db_url)
-
-    curr = conn.cursor()
-
-    data = create_table_users()
-
-    for i in data:
-        curr.execute(i)
-        conn.commit()
-
-    return conn
-
-
-def init_test_db():
-    """ 
-    Sets up database for testing 
-    """
-    destroy_database()
-
-    conn = connect_to_database_url('')
+    conn = psycopg2.connect(db_url)
 
     curr = conn.cursor()
 
@@ -101,3 +87,8 @@ def init_test_db():
         conn.commit()
 
     return conn
+
+
+
+
+

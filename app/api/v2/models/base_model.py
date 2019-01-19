@@ -48,7 +48,7 @@ class BaseModels(object):
 
         token = jwt.encode(
             token_data,
-            app,
+            str(app),
             algorithm="HS256"
         )
 
@@ -61,7 +61,7 @@ class BaseModels(object):
             return "Token is no longer valid. Get a new one"
 
         try:
-            data = jwt.decode(token, os.getenv("SECRET_KEY"))
+            data = jwt.decode(token, os.getenv("SECRET_KEY"), algorithms="HS256")
 
             return data["sub"]
 
