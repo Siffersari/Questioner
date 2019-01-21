@@ -9,13 +9,13 @@ def respond_meetup(meetup_id):
 
     details = request.get_json()
 
-    if RsvpModels().check_authorization():
+    checks = [RsvpModels().check_authorization(),
+              RsvpModels().check_if_is_integer(details)]
 
-        return RsvpModels().check_authorization()
+    error_response = [response for response in checks if response]
 
-    elif RsvpModels().check_if_is_integer(details):
-
-        return RsvpModels().check_if_is_integer(details)
+    if error_response:
+        return error_response[0]
 
     resp = RsvpModels(details).respond_meetup(meetup_id)
 
