@@ -7,31 +7,15 @@ from .. models.meetup_model import MeetupModels
 def post_new_meetup():
     """ Creates a new meetup record if details provided"""
 
-    header = request.headers.get("Authorization")
-
-    if not header:
-        return jsonify(
-            {"error": "This resource is secured. Please provide authorization header",
-             "status": 400}
-        ), 400
-
-    auth_token = header.split(" ")[1]
-
-    response = MeetupModels().validate_token_status(auth_token)
-
-    if isinstance(response, str):
-        return jsonify(
-            {"error": response,
-             "status": 400}
-        ), 400
     data = request.get_json()
 
-    try:
-        if not isinstance(data["user"], int):
-            return jsonify({"error": "user must an integer", "status": 400}), 400
+    if MeetupModels().check_authorization():
 
-    except KeyError as keyerr:
-        return jsonify({"error": "{} is  a required key".format(keyerr), "status": 400}), 400
+        return MeetupModels().check_authorization()
+
+    elif MeetupModels().check_if_is_integer(data):
+
+        return MeetupModels().check_if_is_integer(data)
 
     resp = MeetupModels(data).create_meetup()
 
@@ -42,23 +26,9 @@ def post_new_meetup():
 def fetch_specific_meetup(meetup_id):
     """ Fetches a specific meetup record given meetup_id """
 
-    header = request.headers.get("Authorization")
+    if MeetupModels().check_authorization():
 
-    if not header:
-        return jsonify(
-            {"error": "This resource is secured. Please provide authorization header",
-             "status": 400}
-        ), 400
-
-    auth_token = header.split(" ")[1]
-
-    response = MeetupModels().validate_token_status(auth_token)
-
-    if isinstance(response, str):
-        return jsonify(
-            {"error": response,
-             "status": 400}
-        ), 400
+        return MeetupModels().check_authorization()
 
     return jsonify(MeetupModels().fetch_specific_meetup(meetup_id)), MeetupModels().fetch_specific_meetup(meetup_id)["status"]
 
@@ -67,56 +37,30 @@ def fetch_specific_meetup(meetup_id):
 def fetch_upcoming_meetup():
     """ Fetches all upcoming meetup records """
 
-    header = request.headers.get("Authorization")
+    if MeetupModels().check_authorization():
 
-    if not header:
-        return jsonify(
-            {"error": "This resource is secured. Please provide authorization header",
-             "status": 400}
-        ), 400
+        return MeetupModels().check_authorization()
 
-    auth_token = header.split(" ")[1]
+    response = MeetupModels().fetch_upcoming_meetups()
 
-    response = MeetupModels().validate_token_status(auth_token)
+    status = response["status"]
 
-    if isinstance(response, str):
-        return jsonify(
-            {"error": response,
-             "status": 400}
-        ), 400
-
-    return jsonify(MeetupModels().fetch_upcoming_meetups()), MeetupModels().fetch_upcoming_meetups()["status"]
+    return jsonify(response), status
 
 
 @version2.route("/meetups/<int:meetup_id>", methods=['DELETE'])
 def delete_meetup(meetup_id):
     """ Deletes a meetup record """
-    header = request.headers.get("Authorization")
 
-    if not header:
-        return jsonify(
-            {"error": "This resource is secured. Please provide authorization header",
-             "status": 400}
-        ), 400
+    if MeetupModels().check_authorization():
 
-    auth_token = header.split(" ")[1]
-
-    response = MeetupModels().validate_token_status(auth_token)
-
-    if isinstance(response, str):
-        return jsonify(
-            {"error": response,
-             "status": 400}
-        ), 400
+        return MeetupModels().check_authorization()
 
     details = request.get_json()
 
-    try:
-        if not isinstance(details["user"], int):
-            return jsonify({"error": "user must an integer", "status": 400}), 400
+    if MeetupModels().check_if_is_integer(details):
 
-    except KeyError as keyerr:
-        return jsonify({"error": "{} is  a required key".format(keyerr), "status": 400}), 400
+        return MeetupModels().check_if_is_integer(details)
 
     response = MeetupModels(details).delete_meetup(meetup_id)
 
@@ -127,69 +71,35 @@ def delete_meetup(meetup_id):
 def post_images(meetup_id):
     """ Add images to a meetup """
 
-    header = request.headers.get("Authorization")
+    if MeetupModels().check_authorization():
 
-    if not header:
-        return jsonify(
-            {"error": "This resource is secured. Please provide authorization header",
-             "status": 400}
-        ), 400
-
-    auth_token = header.split(" ")[1]
-
-    response = MeetupModels().validate_token_status(auth_token)
-
-    if isinstance(response, str):
-        return jsonify(
-            {"error": response,
-             "status": 400}
-        ), 400
+        return MeetupModels().check_authorization()
 
     details = request.get_json()
 
-    try:
-        if not isinstance(details["user"], int):
-            return jsonify({"error": "user must an integer", "status": 400}), 400
+    if MeetupModels().check_if_is_integer(details):
 
-    except KeyError as keyerr:
-        return jsonify({"error": "{} is  a required key".format(keyerr), "status": 400}), 400
+        return MeetupModels().check_if_is_integer(details)
 
-    response = MeetupModels(details).post_images(meetup_id)
+    status = MeetupModels(details).post_images(meetup_id)["status"]
 
-    return jsonify(response), response["status"]
+    return jsonify(MeetupModels(details).post_images(meetup_id)), status
 
 
 @version2.route("/meetups/<int:meetup_id>/tags", methods=["POST"])
 def add_tags(meetup_id):
     """ Add tags to a meetup """
 
-    header = request.headers.get("Authorization")
+    if MeetupModels().check_authorization():
 
-    if not header:
-        return jsonify(
-            {"error": "This resource is secured. Please provide authorization header",
-             "status": 400}
-        ), 400
-
-    auth_token = header.split(" ")[1]
-
-    response = MeetupModels().validate_token_status(auth_token)
-
-    if isinstance(response, str):
-        return jsonify(
-            {"error": response,
-             "status": 400}
-        ), 400
+        return MeetupModels().check_authorization()
 
     details = request.get_json()
 
-    try:
-        if not isinstance(details["user"], int):
-            return jsonify({"error": "user must an integer", "status": 400}), 400
+    if MeetupModels().check_if_is_integer(details):
 
-    except KeyError as keyerr:
-        return jsonify({"error": "{} is  a required key".format(keyerr), "status": 400}), 400
+        return MeetupModels().check_if_is_integer(details)
 
     response = MeetupModels(details).add_tags(meetup_id)
 
-    return jsonify(response), response["status"]
+    return jsonify(response), MeetupModels(details).add_tags(meetup_id)["status"]
