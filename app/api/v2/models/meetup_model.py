@@ -7,6 +7,50 @@ from ....db_con import create_tables
 from .user_model import UserModels
 
 
+def validate_meetup(details):
+    """ Checks whether user and meetup exists """
+
+    try:
+        isempty = DataValidators(
+            details).check_values_not_empty()
+
+        if isinstance(isempty, str):
+            return MeetupModels().makeresp(isempty, 400)
+
+        user = MeetupModels().sql.get_username_by_id(
+            int(details["user"]))
+
+        if not user:
+
+            return MeetupModels().makeresp("This user is not found", 404)
+
+        is_admin = MeetupModels().sql.get_admin_user(details["user"])
+
+        if MeetupModels().check_is_error(is_admin):
+            status = 403
+            if 'Administrator' in is_admin:
+                status = 404
+
+            return UserModels().makeresp(is_admin, status)
+
+        return user
+
+    except KeyError as missing:
+
+        return UserModels().makeresp("Expected {} key to be present in the data but found none".format(missing), 400)
+
+
+def check_meetup_exists(meetup_id):
+
+    meetup = SqlHelper().fetch_details_by_id(
+        "meetup_id", meetup_id, "meetups")
+
+    if not meetup:
+        return MeetupModels().makeresp("Meetup not found", 404)
+
+    return meetup
+
+
 class MeetupModels(BaseModels):
     """
     This class MeetupModels contain all the methods that
@@ -20,72 +64,61 @@ class MeetupModels(BaseModels):
 
     def create_meetup(self):
         """ Creates a meetup record given data """
-        images = []
 
+        images, locations = [], ["user_id", "topic",
+                                 "location", "happening_on", "images", "tags"]
         try:
             images = self.meetup_details["images"]
         except:
             pass
 
         try:
-            isempty = DataValidators(
-                self.meetup_details).check_values_not_empty()
+            topic, tags, happeningOn, location = self.meetup_details["topic"], self.meetup_details[
+                "tags"], self.meetup_details["happeningOn"], self.meetup_details["location"]
 
-            if isinstance(isempty, str):
-                return self.makeresp(isempty, 400)
+        except KeyError as errkey:
+            return UserModels().makeresp("Expected {} key to be present in the data but found none".format(errkey), 400)
 
-            user = self.sql.get_username_by_id(
-                int(self.meetup_details["user"]))
+        user = validate_meetup(self.meetup_details)
 
-            if not user:
-                return self.makeresp("This user is not found", 404)
+        if not isinstance(user, tuple):
 
-            payload = {
-                "createdOn": datetime.now(),
-                "location": self.meetup_details["location"],
-                "images": images,
-                "topic": self.meetup_details["topic"],
-                "happeningOn": self.meetup_details["happeningOn"],
-                "Tags": self.meetup_details["tags"],
-                "createdBy": self.meetup_details["user"]
-            }
+            return user
 
-            is_admin = self.sql.get_admin_user(self.meetup_details["user"])
+        payload = {
+            "createdBy": self.meetup_details["user"],
+            "topic": topic,
+            "location": location,
+            "happeningOn": happeningOn,
+            "images": images,
+            "Tags": tags,
+        }
 
-            if self.check_is_error(is_admin):
-                status = 403
-                if 'Administrator' in is_admin:
-                    status = 404
+        meetup_id = SqlHelper(payload).save_to_database(
+            locations, "meetups")
 
-                return self.makeresp(is_admin, status)
+        resp = {
+            "topic": payload["topic"],
+            "location": payload["location"],
+            "happeningOn": self.meetup_details["happeningOn"],
+            "id": meetup_id,
+            "images": images,
+            "tags": payload["Tags"],
+            "createdOn": datetime.now(),
+            "createdBy": user[0]
 
-            # Add meetup details to the database
+        }
 
-            meetup_id = SqlHelper(payload).save_meetup()
-
-            resp = {
-                "topic": payload["topic"],
-                "location": payload["location"],
-                "happeningOn": self.meetup_details["happeningOn"],
-                "id": meetup_id,
-                "images": images,
-                "tags": payload["Tags"],
-                "createdOn": payload["createdOn"],
-                "createdBy": user[0]
-            }
-
-            return self.makeresp(resp, 201)
-
-        except KeyError as missing:
-            return self.makeresp("{} can not be empty".format(missing), 400)
+        return self.makeresp(resp, 201)
 
     def fetch_specific_meetup(self, meetup_id):
         """ Fetches a specific meetup record  """
-        meetup = self.sql.fetch_details_by_id(
-            "meetup_id", meetup_id, "meetups")
 
-        if not meetup:
-            return self.makeresp("Meetup not found", 404)
+        meetup = check_meetup_exists(meetup_id)
+
+        if not isinstance(meetup, tuple):
+
+            return meetup
 
         username = self.sql.get_username_by_id(meetup[1])
 
@@ -110,18 +143,17 @@ class MeetupModels(BaseModels):
         resp = []
 
         for items in meetups:
-            meetup_id, user_id, topic, happening_on, location, images, tags, created_on = items
 
-            user = self.sql.get_username_by_id(user_id)
+            user = self.sql.get_username_by_id(items[1])[0]
 
             meetup = {
-                "id": meetup_id,
-                "topic": topic,
-                "location": location,
-                "happeningOn": happening_on,
-                "tags": tags,
+                "id": items[0],
+                "topic": items[2],
+                "location": items[4],
+                "happeningOn": items[3],
+                "tags": items[6],
                 "createdBy": user,
-                "createdOn": created_on
+                "createdOn": items[7]
             }
             resp.append(meetup)
 
@@ -129,27 +161,18 @@ class MeetupModels(BaseModels):
 
     def delete_meetup(self, meetup_id):
         """ Accepts a meetup_id and deletes meetup record """
-        meetup = self.sql.fetch_details_by_id(
-            "meetup_id", meetup_id, "meetups")
 
-        if not meetup:
-            return self.makeresp("Meetup not found", 404)
+        meetup = check_meetup_exists(meetup_id)
 
-        user = self.sql.get_username_by_id(
-            int(self.meetup_details["user"]))
+        if not isinstance(meetup, tuple):
 
-        if not user:
-            return self.makeresp("This user is not found", 404)
+            return meetup
 
-        is_admin = self.sql.get_admin_user(self.meetup_details["user"])
+        user = validate_meetup(self.meetup_details)
 
-        if self.check_is_error(is_admin):
-            status = 403
-            if 'Administrator' in is_admin:
-                status = 404
+        if not isinstance(user, tuple):
 
-            return self.makeresp(is_admin, status)
-
+            return user
         self.sql.delete_meetup(meetup_id)
 
         return self.makeresp(["This meetup has been deleted successfully"], 200)
@@ -157,38 +180,23 @@ class MeetupModels(BaseModels):
     def post_images(self, meetup_id):
         """ Adds images to a meetup record """
 
+        meetup = check_meetup_exists(meetup_id)
+
+        if not isinstance(meetup, tuple):
+
+            return meetup
+
         try:
             images = self.meetup_details["images"]
 
         except KeyError as key:
             return self.makeresp("{} is a required field".format(key), 400)
 
-        isempty = DataValidators(
-            self.meetup_details).check_values_not_empty()
+        user = validate_meetup(self.meetup_details)
 
-        if isinstance(isempty, str):
-            return self.makeresp(isempty, 400)
+        if not isinstance(user, tuple):
 
-        meetup = self.sql.fetch_details_by_id(
-            "meetup_id", meetup_id, "meetups")
-
-        if not meetup:
-            return self.makeresp("Meetup not found", 404)
-
-        user = self.sql.get_username_by_id(
-            int(self.meetup_details["user"]))
-
-        if not user:
-            return self.makeresp("This user is not found", 404)
-
-        is_admin = self.sql.get_admin_user(self.meetup_details["user"])
-
-        if self.check_is_error(is_admin):
-            status = 403
-            if 'Administrator' in is_admin:
-                status = 404
-
-            return self.makeresp(is_admin, status)
+            return user
 
         updated_img = SqlHelper(self.meetup_details).get_images(meetup_id)
 
@@ -223,42 +231,26 @@ class MeetupModels(BaseModels):
         except KeyError as key:
             return self.makeresp("{} is a required field".format(key), 400)
 
-        isempty = DataValidators(
-            self.meetup_details).check_values_not_empty()
+        user = validate_meetup(self.meetup_details)
 
-        if isinstance(isempty, str):
-            return self.makeresp(isempty, 400)
+        if not isinstance(user, tuple):
 
-        meetup = self.sql.fetch_details_by_id(
-            "meetup_id", meetup_id, "meetups")
+            return user
 
-        if not meetup:
-            return self.makeresp("Meetup not found", 404)
+        meetup = check_meetup_exists(meetup_id)
 
-        user = self.sql.get_username_by_id(
-            int(self.meetup_details["user"]))
+        if not isinstance(meetup, tuple):
 
-        if not user:
-            return self.makeresp("This user is not found", 404)
-
-        is_admin = self.sql.get_admin_user(self.meetup_details["user"])
-
-        if self.check_is_error(is_admin):
-            status = 403
-            if 'Administrator' in is_admin:
-                status = 404
-
-            return self.makeresp(is_admin, status)
+            return meetup
 
         tags = SqlHelper(self.meetup_details).get_tags(meetup_id)
 
-        if self.check_is_error(tags):
-            updtags = SqlHelper(self.meetup_details).add_tags(meetup_id)
+        if isinstance(tags, str):
 
             return self.makeresp({
                 "meetup": meetup[0],
                 "topic": meetup[2],
-                "tags": updtags
+                "tags": SqlHelper(self.meetup_details).add_tags(meetup_id)
             }, 201)
 
         self.meetup_details["tags"] = tags + \
@@ -266,10 +258,8 @@ class MeetupModels(BaseModels):
 
         tags = SqlHelper(self.meetup_details).add_tags(meetup_id)
 
-        response = {
+        return self.makeresp({
             "meetup": meetup[0],
             "topic": meetup[2],
             "tags": self.meetup_details["tags"]
-        }
-
-        return self.makeresp(response, 201)
+        }, 201)
