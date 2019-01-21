@@ -17,14 +17,12 @@ def validate_meetup(details):
         if isinstance(isempty, str):
             return MeetupModels().makeresp(isempty, 400)
 
-        user = MeetupModels().sql.get_username_by_id(
-            int(details["user"]))
-
-        if not user:
+        if not SqlHelper().get_username_by_id(
+                int(details["user"])):
 
             return MeetupModels().makeresp("This user is not found", 404)
 
-        is_admin = MeetupModels().sql.get_admin_user(details["user"])
+        is_admin = SqlHelper().get_admin_user(details["user"])
 
         if MeetupModels().check_is_error(is_admin):
             status = 403
@@ -33,7 +31,8 @@ def validate_meetup(details):
 
             return UserModels().makeresp(is_admin, status)
 
-        return user
+        return SqlHelper().get_username_by_id(
+            int(details["user"]))
 
     except KeyError as missing:
 
@@ -58,9 +57,8 @@ class MeetupModels(BaseModels):
     """
 
     def __init__(self, details={}):
+
         self.meetup_details = details
-        self.db = create_tables()
-        self.sql = SqlHelper()
 
     def create_meetup(self):
         """ Creates a meetup record given data """
@@ -120,7 +118,7 @@ class MeetupModels(BaseModels):
 
             return meetup
 
-        username = self.sql.get_username_by_id(meetup[1])
+        username = SqlHelper().get_username_by_id(meetup[1])
 
         resp = {
             "id": meetup_id,
@@ -138,13 +136,13 @@ class MeetupModels(BaseModels):
     def fetch_upcoming_meetups(self):
         """ Fetches all upcoming meetups """
 
-        meetups = self.sql.get_upcoming_meetups()
+        meetups = SqlHelper().get_upcoming_meetups()
 
         resp = []
 
         for items in meetups:
 
-            user = self.sql.get_username_by_id(items[1])[0]
+            user = SqlHelper().get_username_by_id(items[1])[0]
 
             meetup = {
                 "id": items[0],
@@ -173,7 +171,7 @@ class MeetupModels(BaseModels):
         if not isinstance(user, tuple):
 
             return user
-        self.sql.delete_meetup(meetup_id)
+        SqlHelper().delete_meetup(meetup_id)
 
         return self.makeresp(["This meetup has been deleted successfully"], 200)
 
@@ -189,8 +187,8 @@ class MeetupModels(BaseModels):
         try:
             images = self.meetup_details["images"]
 
-        except KeyError as key:
-            return self.makeresp("{} is a required field".format(key), 400)
+        except KeyError as missingkey:
+            return self.makeresp("Expected {} key to be present in the provided data but found none ".format(missingkey), 400)
 
         user = validate_meetup(self.meetup_details)
 

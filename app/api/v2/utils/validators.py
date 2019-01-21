@@ -60,10 +60,12 @@ class DataValidators(BaseModels):
         upper_case, lower_case = len(re.findall(
             r'[A-Z]', password)), len(re.findall(r'[a-z]', password))
 
-        digits, special = len(re.findall(
-            r'[0-9]', password)), len(re.findall(r'[@#$]', password))
+        digits = re.findall(
+            r'[0-9]', password)
 
-        if not (upper_case and lower_case and digits and special) > 0:
+        special = len(re.findall(r'[@#$]', password))
+
+        if not (upper_case and lower_case and len(digits) and special) > 0:
 
             return "Password should contain atleast one number, uppercase, lowercase and special character"
 

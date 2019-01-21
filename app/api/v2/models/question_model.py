@@ -93,12 +93,14 @@ class QuestionModels(BaseModels):
         if isinstance(isempty, str):
             return self.makeresp(isempty, 400)
 
-        try:
-            user = self.sql.fetch_details_by_id(
-                "user_id", self.question_details["user"], "users")
+        user_id = self.question_details["user"]
 
-        except KeyError as keyerr:
-            return self.makeresp("{} is a required key".format(keyerr), 400)
+        try:
+            user = SqlHelper().fetch_details_by_id(
+                "user_id", user_id, "users")
+
+        except KeyError as errs:
+            return self.makeresp("{} is a required key".format(errs), 400)
 
         if not user:
             return self.makeresp("User does not exist. Please register first", 404)
@@ -134,7 +136,7 @@ class QuestionModels(BaseModels):
         if not user:
             return self.makeresp("User does not exist. Please register first", 404)
 
-        data = self.sql.vote_question(question_id,"down")
+        data = self.sql.vote_question(question_id, "down")
 
         return self.makequestionresponse(data)
 
