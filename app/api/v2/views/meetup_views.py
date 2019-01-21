@@ -79,6 +79,14 @@ def post_images(meetup_id):
 
         return MeetupModels().check_if_is_integer(details)
 
+    try:
+
+        images = details["images"]
+
+    except KeyError as missingkey:
+
+        return MeetupModels().makeresp("Expected {} key to be present in the provided data but found none ".format(missingkey), 400)
+
     status = MeetupModels(details).post_images(meetup_id)["status"]
 
     return jsonify(MeetupModels(details).post_images(meetup_id)), status
