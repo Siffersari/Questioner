@@ -21,6 +21,8 @@ class QuestionModels(BaseModels):
     def create_question(self):
         """ Creates a question to a meetup record """
 
+        locations = ["meetup_id", "user_id", "title", "body"]
+
         try:
 
             user = self.sql.get_username_by_id(
@@ -55,15 +57,14 @@ class QuestionModels(BaseModels):
             return self.makeresp("This Question already exists", 409)
 
         question = {
-            "createdOn": datetime.now(),
-            "createdBy": self.question_details["user"],
             "meetup": self.question_details["meetup"],
+            "createdBy": self.question_details["user"],
             "title": title,
-            "body": body,
-            "votes": 0
+            "body": body
         }
 
-        question_id = SqlHelper(question).save_question()
+        question_id = SqlHelper(question).save_to_database(
+            locations, "questions")
 
         return self.makeresp(
             {
@@ -102,14 +103,13 @@ class QuestionModels(BaseModels):
         if not user:
             return self.makeresp("User does not exist. Please register first", 404)
 
-        data = SqlHelper(self.question_details).upvote_question(question_id)
+        data = self.sql.vote_question(question_id)
 
         return self.makequestionresponse(data)
 
     def downvote_question(self, question_id):
         """ 
-        Increases the number of votes of a specific 
-        question by 1 
+        Decreases the number of votes by 1 
         """
 
         question = self.sql.fetch_details_by_id(
@@ -134,12 +134,15 @@ class QuestionModels(BaseModels):
         if not user:
             return self.makeresp("User does not exist. Please register first", 404)
 
-        data = SqlHelper(self.question_details).downvote_question(question_id)
+        data = self.sql.vote_question(question_id,"down")
 
         return self.makequestionresponse(data)
 
     def post_comment(self):
         """ Posts a comment to a question """
+
+        locations = ["question_id", "user_id", "comments"]
+
         try:
 
             user = self.sql.get_username_by_id(
@@ -168,7 +171,8 @@ class QuestionModels(BaseModels):
         if not question:
             return self.makeresp("Question not found", 404)
 
-        comment_id = SqlHelper(self.question_details).save_comment()
+        comment_id = SqlHelper(self.question_details).save_to_database(
+            locations, "comments")
 
         return self.makeresp(
             {

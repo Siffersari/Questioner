@@ -4,7 +4,7 @@ import re
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-class DataValidators(BaseModels): 
+class DataValidators(BaseModels):
     """ 
     This class DataValidators contain all them methods that
     validate data all across the applfrom werkzeug.security import generate_password_hash, check_password_hashfrom werkzeug.security import generate_password_hash, check_password_hashication
@@ -38,9 +38,8 @@ class DataValidators(BaseModels):
         missing = []
 
         for key, value in self.given_data.items():
-            if not (key == "images"):
-                if not value:
-                    missing.append(key)
+            if not (key == "images") and not value:
+                missing.append(key)
 
         if missing:
             return "{} is a required field".format(missing[0])

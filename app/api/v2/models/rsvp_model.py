@@ -19,6 +19,8 @@ class RsvpModels(BaseModels):
     def respond_meetup(self, meetup_id):
         """ Responds to a meetup RSVP """
 
+        locations = ["user_id", "meetup_id", "response"]
+
         isempty = DataValidators(
             self.rsvp_details).check_values_not_empty()
 
@@ -48,12 +50,12 @@ class RsvpModels(BaseModels):
             return self.makeresp("Your answer may only take one of the form {}".format(validresp), 400)
 
         rsvp = {
-            "meetup": meetup_id,
             "user": self.rsvp_details["user"],
+            "meetup": meetup_id,
             "response": response
         }
 
-        rsvp_id = self.sql.reply_meetup(rsvp)
+        rsvp_id = SqlHelper(rsvp).save_to_database(locations, "rsvps")
 
         resp = {
             "id": rsvp_id,

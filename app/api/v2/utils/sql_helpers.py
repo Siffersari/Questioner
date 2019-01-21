@@ -132,18 +132,75 @@ class SqlHelper:
 
         return False
 
-    def save_meetup(self):
-        """ Saves question to the database """
+    def save_to_database(self, locations, database):
+        """
+        accepts the column names as location 
+        and a database name to save the data into
+        and saves the data to the specified database
+        """
+
+        queries = {
+            "meetup": """ %(createdBy)s, %(topic)s, %(location)s, %(happeningOn)s, %(images)s, %(Tags)s """,
+            "user": """ %(firstname)s, %(lastname)s, %(othername)s, %(email)s, %(phoneNumber)s, %(username)s, %(password)s """,
+            "question": """ %(createdBy)s, %(meetup)s, %(title)s, %(body)s """,
+            "rsvp": """ %(user)s, %(meetup)s, %(response)s """,
+            "comment": """ %(question)s, %(user)s, %(comment)s """
+        }
+
+        table_key = database[:-1]
+
+        item_id, values = table_key + '_id', queries[table_key]
+
+        columns = ", ".join(locations)
 
         cur = self.database.cursor()
-        query = """ INSERT INTO meetups (user_id, topic, location, happening_on, images, tags) VALUES (%(createdBy)s, %(topic)s, %(location)s, %(happeningOn)s, %(images)s, %(Tags)s) RETURNING meetup_id; """
+
+        query = """ INSERT INTO %s (%s) VALUES (%s) RETURNING %s; """ % (
+            database, columns, values, item_id)
+
         cur.execute(query, self.details)
 
-        meetup_id = cur.fetchone()[0]
+        required_id = cur.fetchone()[0]
+
         self.database.commit()
+
         cur.close()
 
-        return meetup_id
+        return required_id
+
+    def vote_question(self, question_id, vote="up"):
+        """ Up or down votes an answer """
+
+        cur = self.database.cursor()
+
+        number_votes = """ SELECT votes FROM questions WHERE question_id = {}; """.format(
+            question_id)
+
+        cur.execute(number_votes)
+
+        votes_num = cur.fetchone()[0]
+
+        if vote == "down":
+            if votes_num == 0:
+                updated = 0
+            else:
+                updated = votes_num - 1
+
+        else:
+            updated = votes_num + 1
+
+        query = """ UPDATE questions SET votes = {} WHERE question_id = {} RETURNING meetup_id, title, body, votes; """.format(
+            updated, question_id)
+
+        cur.execute(query)
+
+        data = cur.fetchone()
+
+        self.database.commit()
+
+        cur.close()
+
+        return data
 
     def get_upcoming_meetups(self):
 
@@ -180,22 +237,6 @@ class SqlHelper:
 
         return cur.fetchone() is not None
 
-    def save_user(self):
-        """ Adds user details to the database """
-
-        cur = self.database.cursor()
-        query = """INSERT INTO users (firstname, lastname, othername, email, phone_number, username, password) \
-            VALUES ( %(firstname)s, %(lastname)s,\
-            %(othername)s, %(email)s, %(phoneNumber)s, %(username)s, %(password)s) RETURNING user_id;
-            """
-
-        cur.execute(query, self.details)
-        user_id = cur.fetchone()[0]
-        self.database.commit()
-        cur.close()
-
-        return user_id
-
     def get_all_users(self):
         """ Returns all the users in the database """
 
@@ -210,83 +251,13 @@ class SqlHelper:
 
         return users
 
-    def save_question(self):
-        """ Adds question to the database """
-
-        cur = self.database.cursor()
-        query = """ INSERT INTO questions (meetup_id, user_id, title, body) VALUES (%(createdBy)s, %(meetup)s, %(title)s, %(body)s) RETURNING question_id; """
-        cur.execute(query, self.details)
-
-        question_id = cur.fetchone()[0]
-        self.database.commit()
-        cur.close()
-
-        return question_id
-
-    def upvote_question(self, question_id):
-        """ Upvotes a question """
-
-        cur = self.database.cursor()
-        query = """ UPDATE questions SET votes = votes + 1 WHERE question_id = {} RETURNING meetup_id, title, body, votes; """.format(
-            question_id)
-        cur.execute(query)
-
-        data = cur.fetchone()
-        self.database.commit()
-        cur.close()
-
-        return data
-
-    def downvote_question(self, question_id):
-        """ Upvotes a question """
-
-        cur = self.database.cursor()
-        query = """ UPDATE questions SET votes = votes - 1 WHERE question_id = {} RETURNING meetup_id, title, body, votes; """.format(
-            question_id)
-        cur.execute(query)
-
-        data = cur.fetchone()
-        self.database.commit()
-        cur.close()
-
-        return data
-
-    def reply_meetup(self, rsvp):
-        """ Saves attendance response to the database """
-
-        cur = self.database.cursor()
-        query = """ INSERT INTO rsvps (user_id, meetup_id, response) VALUES (%(user)s, %(meetup)s, %(response)s) RETURNING rsvp_id; """
-        cur.execute(query, rsvp)
-
-        rsvp_id = cur.fetchone()[0]
-        self.database.commit()
-        cur.close()
-
-        return rsvp_id
-
-    def save_comment(self):
-        """ Save comment details to the database """
-
-        cur = self.database.cursor()
-
-        query = """ INSERT INTO comments (question_id, user_id, comments) VALUES (%(question)s, %(user)s, %(comment)s) RETURNING comment_id; """
-        cur.execute(query, self.details)
-
-        comment_id = cur.fetchone()[0]
-        self.database.commit()
-        cur.close()
-
-        return comment_id
-
     def get_images(self, meetup_id):
-        """ Saves images to the database """
+        """ Fetches images from the database """
 
         cur = self.database.cursor()
 
-        query = """ SELECT images FROM meetups WHERE meetup_id = %d; """ % (
-            meetup_id)
-
-        cur.execute(query)
+        cur.execute(""" SELECT images FROM meetups WHERE meetup_id = %d; """ % (
+            meetup_id))
 
         images = cur.fetchone()[0]
 
@@ -320,7 +291,7 @@ class SqlHelper:
         return images
 
     def get_tags(self, meetup_id):
-        """ Saves images to the database """
+        """ Fetches the tags to a meetup from the database """
 
         cur = self.database.cursor()
 
@@ -339,12 +310,12 @@ class SqlHelper:
         return tags
 
     def add_tags(self, meetup_id):
-        """ Saves images to the database """
+        """ Saves tags to a meetup in the database """
 
-        data = {
-            "tags": self.details["tags"],
-            "meetupId": meetup_id
-        }
+        data = dict(
+            tags=self.details["tags"],
+            meetupId=meetup_id
+        )
 
         cur = self.database.cursor()
 

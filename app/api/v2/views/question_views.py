@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from .. import version2
 from .. models.question_model import QuestionModels
 
@@ -7,31 +7,15 @@ from .. models.question_model import QuestionModels
 def create_question():
     """ Creates a question for a specific meetup """
 
-    header = request.headers.get("Authorization")
-
-    if not header:
-        return jsonify(
-            {"error": "This resource is secured. Please provide authorization header",
-             "status": 400}
-        ), 400
-
-    auth_token = header.split(" ")[1]
-
-    response = QuestionModels().validate_token_status(auth_token)
-
-    if isinstance(response, str):
-        return jsonify(
-            {"error": response,
-             "status": 400}
-        ), 400
-
     details = request.get_json()
 
-    if not isinstance(details["user"], int):
-        return jsonify({"error": "user must an integer", "status": 400}), 400
+    if QuestionModels().check_authorization():
 
-    if not isinstance(details["meetup"], int):
-        return jsonify({"error": "Meetup must an integer", "status": 400}), 400
+        return QuestionModels().check_authorization()
+
+    elif QuestionModels().check_if_is_integer(details):
+
+        return QuestionModels().check_if_is_integer(details)
 
     resp = QuestionModels(details).create_question()
 
@@ -43,32 +27,15 @@ def upvote_question(question_id):
     """ 
     This method upvotes a specific question 
     """
-    header = request.headers.get("Authorization")
-
-    if not header:
-        return jsonify(
-            {"error": "This resource is secured. Please provide authorization header",
-             "status": 400}
-        ), 400
-
-    auth_token = header.split(" ")[1]
-
-    response = QuestionModels().validate_token_status(auth_token)
-
-    if isinstance(response, str):
-        return jsonify(
-            {"error": response,
-             "status": 400}
-        ), 400
-
     details = request.get_json()
 
-    try:
-        if not isinstance(details["user"], int):
-            return jsonify({"error": "user must be represented by an integer id", "status": 400}), 400
+    if QuestionModels().check_authorization():
 
-    except KeyError as keyerr:
-        return jsonify({"error": "{} is  a required key".format(keyerr), "status": 400}), 400
+        return QuestionModels().check_authorization()
+
+    if QuestionModels().check_if_is_integer(details):
+
+        return QuestionModels().check_if_is_integer(details)
 
     return jsonify(QuestionModels(details).upvote_question(question_id)), 200
 
@@ -77,69 +44,49 @@ def upvote_question(question_id):
 def downvote_question(question_id):
     """ Downvotes a question to a specific meetup """
 
-    header = request.headers.get("Authorization")
+    if not request.headers.get("Authorization"):
+        resp = {"error": "This resource is secured. Please provide authorization header",
+                "status": 400}
 
-    if not header:
+        return jsonify(resp), resp["status"]
+
+    auth_token = request.headers.get("Authorization").split(" ")[1]
+
+    if isinstance(QuestionModels().validate_token_status(auth_token), str):
         return jsonify(
-            {"error": "This resource is secured. Please provide authorization header",
-             "status": 400}
-        ), 400
-
-    auth_token = header.split(" ")[1]
-
-    response = QuestionModels().validate_token_status(auth_token)
-
-    if isinstance(response, str):
-        return jsonify(
-            {"error": response,
+            {"error": QuestionModels().validate_token_status(auth_token),
              "status": 400}
         ), 400
 
     details = request.get_json()
 
-    try:
-        if not isinstance(details["user"], int):
-            return jsonify({"error": "user must be represented by an integer id", "status": 400}), 400
+    if QuestionModels().check_if_is_integer(details):
 
-    except KeyError as keyerr:
-        return jsonify({"error": "{} is  a required key".format(keyerr), "status": 400}), 400
+        return QuestionModels().check_if_is_integer(details)
 
-    resp = QuestionModels(details).downvote_question(question_id)
+    resp = jsonify(QuestionModels(details).downvote_question(question_id))
 
-    return jsonify(resp), resp["status"]
+    status = QuestionModels(details).downvote_question(question_id)["status"]
+
+    return resp, status
 
 
 @version2.route("/comments", methods=["POST"])
 def post_comment():
     """ Posts a comment to a question """
 
-    header = request.headers.get("Authorization")
+    details, not_authorized = request.get_json(), QuestionModels().check_authorization()
 
-    if not header:
-        return jsonify(
-            {"error": "This resource is secured. Please provide authorization header",
-             "status": 400}
-        ), 400
+    if not_authorized:
 
-    auth_token = header.split(" ")[1]
+        return QuestionModels().check_authorization()
 
-    response = QuestionModels().validate_token_status(auth_token)
+    if QuestionModels().check_if_is_integer(details):
 
-    if isinstance(response, str):
-        return jsonify(
-            {"error": response,
-             "status": 400}
-        ), 400
+        respond = QuestionModels().check_if_is_integer(details)
 
-    details = request.get_json()
-
-    try:
-        if not isinstance(details["user"], int):
-            return jsonify({"error": "user must be represented by an integer id", "status": 400}), 400
-
-    except KeyError as keyerr:
-        return jsonify({"error": "{} is  a required key".format(keyerr), "status": 400}), 400
+        return respond
 
     resp = QuestionModels(details).post_comment()
 
-    return jsonify(resp), resp["status"]
+    return make_response(jsonify(resp), resp["status"])
