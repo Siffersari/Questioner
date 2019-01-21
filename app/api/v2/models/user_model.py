@@ -21,6 +21,9 @@ class UserModels(BaseModels):
     def register_user(self):
         """ Validates user user before adding them """
 
+        locations = ["firstname", "lastname", "othername",
+                     "email", "phone_number", "username", "password"]
+
         required = ["firstname", "lastname", "othername",
                     "email", "phoneNumber", "username", "password"]
 
@@ -57,12 +60,10 @@ class UserModels(BaseModels):
             "email": self.user_details["email"],
             "phoneNumber": self.user_details["phoneNumber"],
             "username": self.user_details["username"],
-            "registered": datetime.now(),
-            "password": generate_password_hash(self.user_details["password"]),
-            "isAdmin": False
+            "password": generate_password_hash(self.user_details["password"])
         }
 
-        user_id = SqlHelper(payload).save_user()
+        user_id = SqlHelper(payload).save_to_database(locations, "users")
 
         token = self.give_auth_token(user_id)
 
