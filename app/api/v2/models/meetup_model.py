@@ -184,12 +184,6 @@ class MeetupModels(BaseModels):
 
             return meetup
 
-        try:
-            images = self.meetup_details["images"]
-
-        except KeyError as missingkey:
-            return self.makeresp("Expected {} key to be present in the provided data but found none ".format(missingkey), 400)
-
         user = validate_meetup(self.meetup_details)
 
         if not isinstance(user, tuple):
