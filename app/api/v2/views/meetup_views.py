@@ -7,17 +7,15 @@ from .. models.meetup_model import MeetupModels
 def post_new_meetup():
     """ Creates a new meetup record if details provided"""
 
-    data = request.get_json()
-
     if MeetupModels().check_authorization():
 
         return MeetupModels().check_authorization()
 
-    elif MeetupModels().check_if_is_integer(data):
+    elif MeetupModels().check_if_is_integer(request.get_json()):
 
-        return MeetupModels().check_if_is_integer(data)
+        return MeetupModels().check_if_is_integer(request.get_json())
 
-    resp = MeetupModels(data).create_meetup()
+    resp = MeetupModels(request.get_json()).create_meetup()
 
     return jsonify(resp), resp["status"]
 
