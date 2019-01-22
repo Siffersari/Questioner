@@ -90,3 +90,21 @@ def post_comment():
     resp = QuestionModels(details).post_comment()
 
     return make_response(jsonify(resp), resp["status"])
+
+
+@version2.route("/questions/<int:question_id>", methods=["GET"])
+def fetch_specific_question(question_id):
+    """
+    Fetches a question record given the question id 
+    """
+
+    check = QuestionModels().check_authorization()
+
+    if not check:
+
+        response = QuestionModels().fetch_specific_question(question_id)
+
+        return jsonify(response), response["status"]
+
+    else:
+        return check
