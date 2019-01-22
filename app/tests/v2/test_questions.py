@@ -102,6 +102,13 @@ class TestQuestions(unittest.TestCase):
 
         return response
 
+    def fetch_specific_question(self, path="/api/v2/questions/<int:question-i>"):
+        """ Gets a specific question record using the question id """
+
+        response = self.client.get(path, headers=self.headers)
+
+        return response
+
     def create_comment(self, path="/api/v2/comments", data={}):
         """ Posts a comment to a question """
 
@@ -140,6 +147,31 @@ class TestQuestions(unittest.TestCase):
 
         self.assertEqual(new_question.status_code, 201)
         self.assertTrue(new_question.json["data"])
+
+    def test_fetch_specific_question(self):
+        """ Tests for successfull fetch of question if correct id """
+
+        new_question = self.post_question()
+
+        self.assertEqual(new_question.status_code, 201)
+
+        self.assertEqual(self.fetch_specific_question(
+            path="/api/v2/questions/1").status_code, 200)
+
+        self.assertTrue(self.fetch_specific_question(
+            path="/api/v2/questions/1").json["data"][0]["title"])
+
+        self.assertTrue(self.fetch_specific_question(
+            path="/api/v2/questions/1").json["data"][0]["body"])
+
+    def test_fails_to_fetch_returning_error_if_missing_id(self):
+        """ Tests for failure if nonexistent question id provided """
+
+        self.assertEqual(self.fetch_specific_question(
+            path="/api/v2/questions/1").status_code, 404)
+
+        self.assertTrue(self.fetch_specific_question(
+            path="/api/v2/questions/1").json["error"])
 
     def test_create_comment(self):
         """ Tests whether new question is created with data provided """
