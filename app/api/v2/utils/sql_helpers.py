@@ -13,6 +13,22 @@ class SqlHelper:
         self.database = create_tables()
         self.details = details
 
+    def get_all(self, database):
+        """
+        Fetches all details from a specified
+        database
+        """
+
+        cur = self.database.cursor()
+
+        cur.execute(""" SELECT * FROM {};""".format(database))
+
+        all_items = cur.fetchall()
+
+        cur.close()
+
+        return all_items
+
     def get_admin_user(self, user_id):
         """ Fetches admin user if exists """
 
@@ -62,8 +78,6 @@ class SqlHelper:
             data = cur.fetchone()
 
             cur.close()
-
-            #response = [item for item in data if item in required]
 
             return data
 
