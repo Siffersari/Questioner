@@ -109,6 +109,11 @@ class TestQuestions(unittest.TestCase):
 
         return response
 
+    def fetch_all_questions(self, path="/api/v2/questions"):
+        """ Fetches all the questions posted """
+
+        return self.client.get(path, headers=self.headers)
+
     def create_comment(self, path="/api/v2/comments", data={}):
         """ Posts a comment to a question """
 
@@ -147,6 +152,14 @@ class TestQuestions(unittest.TestCase):
 
         self.assertEqual(new_question.status_code, 201)
         self.assertTrue(new_question.json["data"])
+
+    def test_fetch_all_questions(self):
+        """ Tests that all questions are fetched successfully """
+
+        new_question = self.post_question()
+
+        self.assertEqual(new_question.status_code, 201)
+        self.assertEqual(new_question.json["data"][0]["id"], 1)
 
     def test_fetch_specific_question(self):
         """ Tests for successfull fetch of question if correct id """
