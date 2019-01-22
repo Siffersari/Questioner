@@ -129,6 +129,11 @@ class TestQuestions(unittest.TestCase):
 
         return response
 
+    def fetch_all_comments(self, path="/api/v2/comments"):
+        """ Fetches all the comments """
+
+        return self.client.get(path, headers=self.headers)
+
     def upvote_question(self, path="/api/v2/questions/<int:question_id>/upvote", data={}):
         """ Increases votes of a specific question by 1 """
 
@@ -196,6 +201,16 @@ class TestQuestions(unittest.TestCase):
         self.assertEqual(self.create_comment().status_code, 201)
 
         self.assertTrue(self.create_comment().json["data"])
+
+    def test_fetch_comments(self):
+        """ Tests for successfull fetch of comments """
+        new_question = self.post_question()
+
+        self.assertEqual(new_question.status_code, 201)
+
+        self.assertEqual(self.create_comment().status_code, 201)
+
+        self.assertTrue(self.create_comment().json["data"][0]["comment"])
 
     def test_upvote_question(self):
         """ Tests for upvoting a question """
