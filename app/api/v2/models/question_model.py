@@ -200,3 +200,30 @@ class QuestionModels(BaseModels):
         }
 
         return self.makeresp(resp, 200)
+
+    def fetch_specific_question(self, question_id):
+        """ 
+        This methods takes in a question id and checks
+        if the question exists then returns it 
+        """
+
+        question = self.sql.fetch_details_by_id(
+            "question_id", question_id, "questions")
+
+        response, status = "", 200
+
+        if not question:
+
+            return self.makeresp("Question not found", 404)
+
+        user = self.sql.get_username_by_id(int(question[1]))
+
+        response = self.makeresp({
+
+            "user": user[0],
+            "meetup": question[2],
+            "title": question[3],
+            "body": question[4]
+        }, status)
+
+        return response
