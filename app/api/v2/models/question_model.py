@@ -227,3 +227,29 @@ class QuestionModels(BaseModels):
         }, status)
 
         return response
+
+
+    def fetch_all_questions(self):
+        """ 
+        Returns all questions 
+        """
+
+        response = []
+
+        questions = self.sql.get_all("questions")
+
+        for items in questions:
+
+            user = self.sql.get_username_by_id(items[1])[0]
+
+            response.append({
+                "id": questions[0][0],
+                "createdBy": user,
+                "meetup": items[2],
+                "topic": items[3],
+                "body": items[4],
+                "createdOn": items[6]
+                
+            })
+
+        return self.makeresp(response, 200)

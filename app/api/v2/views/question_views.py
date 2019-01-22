@@ -22,6 +22,17 @@ def create_question():
     return jsonify(resp), resp["status"]
 
 
+@version2.route("/questions", methods=["GET"])
+def fetch_all_questions():
+    """ Returns all question records on the platform """
+
+    if not QuestionModels().check_authorization():
+
+        return jsonify(QuestionModels().fetch_all_questions()), 200
+
+    return QuestionModels().check_authorization()
+
+
 @version2.route("/questions/<int:question_id>/upvote", methods=["PATCH"])
 def upvote_question(question_id):
     """ 
