@@ -102,6 +102,15 @@ def post_comment():
 
     return make_response(jsonify(resp), resp["status"])
 
+@version2.route("/comments", methods=['GET'])
+def fetch_all_comments():
+    """ Fetches all comments to a question """
+
+    if QuestionModels().check_authorization():
+
+        return QuestionModels().check_authorization()
+
+    return make_response(jsonify(QuestionModels().fetch_all_comments()), 200)
 
 @version2.route("/questions/<int:question_id>", methods=["GET"])
 def fetch_specific_question(question_id):

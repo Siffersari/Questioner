@@ -253,3 +253,26 @@ class QuestionModels(BaseModels):
             })
 
         return self.makeresp(response, 200)
+
+    def fetch_all_comments(self):
+        """ Fetches all comments to questions """
+
+        response = []
+
+        comments = self.sql.get_all("comments")
+
+        for items in comments:
+
+            user = self.sql.get_username_by_id(items[2])[0]
+
+            response.append({
+                "id": items[0],
+                "createdBy": user,
+                "question": items[1],
+                "comment": items[3],
+                "createdOn": items[4]
+                
+            })
+
+        return self.makeresp(response, 200)
+
