@@ -134,6 +134,11 @@ class TestQuestions(unittest.TestCase):
 
         return self.client.get(path, headers=self.headers)
 
+    def fetch_one_comment(self, path="/api/v2/comments/<int:comment-id>"):
+        """ Gets just a single comment by the id """
+
+        return self.client.get(path, headers=self.headers)
+
     def upvote_question(self, path="/api/v2/questions/<int:question_id>/upvote", data={}):
         """ Increases votes of a specific question by 1 """
 
@@ -211,6 +216,34 @@ class TestQuestions(unittest.TestCase):
         self.assertEqual(self.create_comment().status_code, 201)
 
         self.assertTrue(self.create_comment().json["data"][0]["comment"])
+
+        self.assertEqual(self.fetch_all_comments(
+            path="/api/v2/comments").status_code, 200)
+
+        self.assertTrue(self.fetch_all_comments().json["data"][0]["comment"])
+
+        self.assertEqual(self.create_comment(
+        ).json["data"][0]["comment"], self.fetch_all_comments().json["data"][0]["comment"][0])
+
+    def test_fetch_one_comment(self):
+        """ Tests for success when fetching comment with existing id """
+
+        new_question = self.post_question()
+
+        self.assertEqual(new_question.status_code, 201)
+
+        self.assertEqual(self.create_comment().status_code, 201)
+
+        self.assertTrue(self.create_comment().json["data"][0]["comment"])
+
+        self.assertEqual(self.fetch_one_comment(
+            path="/api/v2/comments/1").status_code, 200)
+
+        self.assertTrue(self.fetch_one_comment(
+            path="/api/v2/comments/1").json["data"][0]["comment"])
+
+        self.assertEqual(self.create_comment(
+        ).json["data"][0]["comment"], self.fetch_one_comment(path="/api/v2/comments/1").json["data"][0]["comment"])
 
     def test_upvote_question(self):
         """ Tests for upvoting a question """
