@@ -302,3 +302,21 @@ class QuestionModels(BaseModels):
         }, 200)
 
         return response
+
+    def delete_question(self, question_id):
+        """ Deletes from the database a question """
+
+        question = self.sql.fetch_details_by_id(
+            "question_id", question_id, "questions")
+
+        if not question:
+
+            return self.makeresp("This question could not be found", 404)
+
+        if not self.question_details["user"] == question[1]:
+
+            return self.makeresp("You can not delete a question you don't own", 403)
+
+        SqlHelper().delete_from_database(question_id, "questions")
+
+        return self.makeresp({"message": "This question has been deleted successfully"}, 200)
