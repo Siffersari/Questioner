@@ -320,3 +320,23 @@ class QuestionModels(BaseModels):
         SqlHelper().delete_from_database(question_id, "questions")
 
         return self.makeresp({"message": "This question has been deleted successfully"}, 200)
+
+
+    def remove_comment(self, comment_id):
+
+        """ Removes a comment from the database """
+
+        comment = self.sql.fetch_details_by_id(
+            "comment_id", comment_id, "comments")
+
+        if not comment:
+
+            return self.makeresp("This comment could not be found", 404)
+
+        if not self.question_details["user"] == comment[1]:
+
+            return self.makeresp("You can not delete a comment you don't own", 403)
+
+        SqlHelper().delete_from_database(comment_id, "comments")
+
+        return self.makeresp({"message": "Comment deleted successfully"}, 200)
