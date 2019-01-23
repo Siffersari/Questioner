@@ -171,7 +171,7 @@ class MeetupModels(BaseModels):
         if not isinstance(user, tuple):
 
             return user
-        SqlHelper().delete_meetup(meetup_id)
+        SqlHelper().delete_from_database(meetup_id, "meetups")
 
         return self.makeresp(["This meetup has been deleted successfully"], 200)
 
