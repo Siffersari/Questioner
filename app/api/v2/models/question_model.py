@@ -228,7 +228,6 @@ class QuestionModels(BaseModels):
 
         return response
 
-
     def fetch_all_questions(self):
         """ 
         Returns all questions 
@@ -249,7 +248,7 @@ class QuestionModels(BaseModels):
                 "topic": items[3],
                 "body": items[4],
                 "createdOn": items[6]
-                
+
             })
 
         return self.makeresp(response, 200)
@@ -271,8 +270,35 @@ class QuestionModels(BaseModels):
                 "question": items[1],
                 "comment": items[3],
                 "createdOn": items[4]
-                
+
             })
 
         return self.makeresp(response, 200)
 
+    def fetch_one_comment(self, comment_id):
+        """ Gets just one comment record with the passed id """
+
+        comment_data = ''
+
+        comment = self.sql.fetch_details_by_id(
+            "comment_id", comment_id, "comments")
+
+        if not comment:
+
+            return self.makeresp("This comment cannot not be found", 404)
+
+        user = self.sql.get_username_by_id(int(comment[2]))
+
+        if len(comment[3]) == 1:
+
+            comment_data = comment[3][0]
+
+        response = self.makeresp({
+
+            "user": user[0],
+            "question": comment[1],
+            "comment": comment_data,
+            "createdOn": comment[4]
+        }, 200)
+
+        return response
