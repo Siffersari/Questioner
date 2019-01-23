@@ -147,3 +147,28 @@ def fetch_one_comment(comment_id):
     status = response["status"]
 
     return jsonify(response), status
+
+
+@version2.route("/questions/<int:question_id>", methods=['DELETE'])
+def delete_question(question_id):
+    """ Deletes a question to a meetup record """
+
+    if QuestionModels().check_authorization():
+
+        return QuestionModels().check_authorization()
+
+    if not request.get_json():
+
+        return jsonify({"error": "Expected data in JSON format but got none", "status": 400}, 400)
+
+    try:
+
+        user = request.get_json()["user"]
+
+    except KeyError as erra:
+
+        return jsonify({"error": "Expected {} field but got none".format(erra), "status": 400}, 400)
+
+    response = QuestionModels(request.get_json()).delete_question(question_id)
+
+    return jsonify(response), response["status"]

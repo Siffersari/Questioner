@@ -225,14 +225,18 @@ class SqlHelper:
 
         return meetups
 
-    def delete_meetup(self, meetup_id):
+    def delete_from_database(self, item_id, database):
         """ Deletes a meetup record """
+
+        table_key = database[:-1]
+
+        item_name = table_key + '_id'
 
         cur = self.database.cursor()
 
         try:
             cur.execute(
-                """ DELETE FROM meetups WHERE meetup_id = %d; """ % (meetup_id))
+                """ DELETE FROM %s WHERE %s = %d; """ % (database, item_name, item_id))
 
             self.database.commit()
 

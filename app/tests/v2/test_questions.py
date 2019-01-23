@@ -155,6 +155,19 @@ class TestQuestions(unittest.TestCase):
 
         return response
 
+    def delete_question(self, path="/api/v2/questions/<int:question_id>", data={}):
+        """ Deletes a specific question by ID """
+
+        if not data:
+            data = {
+                "user": 1
+            }
+
+        response = self.client.delete(path, data=json.dumps(
+            data), content_type=self.content_type, headers=self.headers)
+
+        return response
+
     def test_post_new_question(self):
         """ Tests whether new question is created with data provided """
 
@@ -270,6 +283,19 @@ class TestQuestions(unittest.TestCase):
             path="/api/v2/questions/{}/upvote".format(new_vote.json["data"][0]["id"]))
 
         self.assertEqual(vote.status_code, 200)
+
+    def test_delete_question_if_owner_success(self):
+        """ Test for successful delete if the user is the owner of the question """
+
+        new_question = self.post_question()
+
+        self.assertEqual(new_question.status_code, 201)
+
+        self.assertEqual(self.delete_question(
+            path="/api/v2/questions/1").status_code, 200)
+
+        self.assertEqual(self.delete_question(
+            path="/api/v2/questions/1").status_code, 404)
 
     def tearDown(self):
         """ Destroys set up data before running each test """
