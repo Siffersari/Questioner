@@ -75,11 +75,11 @@ def downvote_question(question_id):
 
         return QuestionModels().check_if_is_integer(details)
 
-    resp = jsonify(QuestionModels(details).downvote_question(question_id))
+    resp = QuestionModels(details).downvote_question(question_id)
 
-    status = QuestionModels(details).downvote_question(question_id)["status"]
+    status = resp["status"]
 
-    return resp, status
+    return jsonify(resp), status
 
 
 @version2.route("/comments", methods=["POST"])
@@ -159,7 +159,7 @@ def delete_question(question_id):
 
     if not request.get_json():
 
-        return jsonify({"error": "Expected data in JSON format but got none", "status": 400}, 400)
+        return jsonify({"error": "Expected data in JSON format but got none", "status": 400}), 400
 
     try:
 
@@ -167,8 +167,35 @@ def delete_question(question_id):
 
     except KeyError as erra:
 
-        return jsonify({"error": "Expected {} field but got none".format(erra), "status": 400}, 400)
+        return jsonify({"error": "Expected {} field but got none".format(erra), "status": 400}), 400
 
     response = QuestionModels(request.get_json()).delete_question(question_id)
 
     return jsonify(response), response["status"]
+
+
+@version2.route("/comments/<int:comment_id>", methods=['DELETE'])
+def delete_comment(comment_id):
+    """ Deletes a comment to a question if exists by Id """
+
+    if QuestionModels().check_authorization():
+
+        return QuestionModels().check_authorization()
+
+    data = request.get_json()
+
+    if not data:
+
+        return jsonify({"error": "Expected data in JSON format but got none", "status": 400}), 400
+
+    try:
+
+        user = request.get_json()["user"]
+
+    except KeyError as missing_erra:
+
+        return jsonify({"error": "Expected {} field but got none".format(missing_erra), "status": 400}), 400
+
+    result = QuestionModels(data).remove_comment(comment_id)
+
+    return jsonify(result), result["status"]

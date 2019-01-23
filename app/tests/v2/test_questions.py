@@ -168,6 +168,19 @@ class TestQuestions(unittest.TestCase):
 
         return response
 
+    def delete_comment(self, path="/api/v2/comments/<int:comment_id>", data={}):
+        """ Deletes a specific comment by ID """
+
+        if not data:
+            data = {
+                "user": 1
+            }
+
+        response = self.client.delete(path, data=json.dumps(
+            data), content_type=self.content_type, headers=self.headers)
+
+        return response
+
     def test_post_new_question(self):
         """ Tests whether new question is created with data provided """
 
@@ -296,6 +309,23 @@ class TestQuestions(unittest.TestCase):
 
         self.assertEqual(self.delete_question(
             path="/api/v2/questions/1").status_code, 404)
+
+    def test_delete_comment_if_owner_success(self):
+        """ Test for successful delete of comment by owner """
+
+        new_question = self.post_question()
+
+        self.assertEqual(new_question.status_code, 201)
+
+        new_comment = self.create_comment()
+
+        self.assertEqual(new_comment.status_code, 201)
+
+        self.assertEqual(self.delete_comment(
+            path="/api/v2/comments/1").status_code, 200)
+
+        self.assertEqual(self.delete_comment(
+            path="/api/v2/comments/1").status_code, 404)
 
     def tearDown(self):
         """ Destroys set up data before running each test """
