@@ -27,6 +27,20 @@ class UserModels(BaseModels):
         required = ["firstname", "lastname", "othername",
                     "email", "phoneNumber", "username", "password"]
 
+        phone = self.user_details["phoneNumber"]
+
+        if not (str(phone).isdigit() and len(phone) == 10):
+
+            return self.makeresp("Please ensure that your phone number is valid", 400)
+
+        try:
+
+            if self.user_details["password"] != self.user_details["confirmPass"]:
+
+                return self.makeresp("Please ensure that both password fields match", 400)
+        except KeyError as keyismis:
+            return self.makeresp("Expected {} in data provided, instead got note".format(keyismis), 400)
+
         ismissingkey = DataValidators(
             self.user_details).check_all_keys_present(required)
 
