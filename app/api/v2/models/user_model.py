@@ -39,7 +39,7 @@ class UserModels(BaseModels):
 
                 return self.makeresp("Please ensure that both password fields match", 400)
         except KeyError as keyismis:
-            return self.makeresp("Expected {} in data provided, instead got note".format(keyismis), 400)
+            return self.makeresp("Expected {} in data provided, instead got none".format(keyismis), 400)
 
         ismissingkey = DataValidators(
             self.user_details).check_all_keys_present(required)
