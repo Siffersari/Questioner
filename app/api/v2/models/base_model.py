@@ -98,6 +98,8 @@ class BaseModels(object):
                     "status": 400}
             ), 400
 
+        return response
+
     def check_if_is_integer(self, data):
         """
         Check if the provided value for user key is an integer

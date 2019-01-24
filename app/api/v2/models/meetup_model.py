@@ -177,6 +177,11 @@ class MeetupModels(BaseModels):
         if not isinstance(user, tuple):
 
             return user
+
+        if not self.meetup_details["user"] == meetup[1]:
+
+            return self.makeresp("You can not delete a Meetup you don't own", 403)
+
         SqlHelper().delete_from_database(meetup_id, "meetups")
 
         return self.makeresp(["This meetup has been deleted successfully"], 200)
