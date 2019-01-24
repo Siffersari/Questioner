@@ -83,6 +83,12 @@ class MeetupModels(BaseModels):
 
             return user
 
+        if not isinstance(images, list):
+            images = [images]
+
+        elif not isinstance(tags, list):
+            tags = [tags]
+
         payload = {
             "createdBy": self.meetup_details["user"],
             "topic": topic,
@@ -190,6 +196,9 @@ class MeetupModels(BaseModels):
 
             return user
 
+        if not isinstance(self.meetup_details["images"], list):
+            self.meetup_details["images"] = [self.meetup_details["images"]]
+
         updated_img = SqlHelper(self.meetup_details).get_images(meetup_id)
 
         if self.check_is_error(updated_img):
@@ -235,6 +244,9 @@ class MeetupModels(BaseModels):
 
             return meetup
 
+        if not isinstance(self.meetup_details["tags"], list):
+            self.meetup_details["tags"] = [self.meetup_details["tags"]]
+
         tags = SqlHelper(self.meetup_details).get_tags(meetup_id)
 
         if isinstance(tags, str):
@@ -245,8 +257,10 @@ class MeetupModels(BaseModels):
                 "tags": SqlHelper(self.meetup_details).add_tags(meetup_id)
             }, 201)
 
-        self.meetup_details["tags"] = tags + \
-            [tag for tag in tags_data if not tag in tags]
+        if isinstance(tags_data, list):
+
+            self.meetup_details["tags"] = tags + \
+                [tag for tag in tags_data if not tag in tags]
 
         tags = SqlHelper(self.meetup_details).add_tags(meetup_id)
 

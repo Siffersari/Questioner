@@ -29,7 +29,8 @@ class TestQuestions(unittest.TestCase):
             "email": "test@test.com",
             "phoneNumber": "0712332112",
             "username": "testuser",
-            "password": "P@5sword"
+            "password": "P@5sword",
+            "confirmPass": "P@5sword"
         }
 
         self.meetup = {

@@ -44,6 +44,12 @@ class RsvpModels(BaseModels):
         if not meetup:
             return self.makeresp("Meetup not found", 404)
 
+        rsvp = self.sql.fetch_details_by_id(
+            "rsvp_id", self.rsvp_details["user"], "rsvps")
+
+        if rsvp:
+            return self.makeresp("RSVP already received. You can not rsvp again", 403)
+
         validresp = ["yes", "Yes", "YES", "no", "No", "NO", "maybe", "Maybe"]
 
         if response not in validresp:

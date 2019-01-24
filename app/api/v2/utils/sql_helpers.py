@@ -44,8 +44,11 @@ class SqlHelper:
         if not admins:
             return "Administrators not Found"
 
-        if not int(user_id) in admins[0]:
-            return "This user doesn't have the priviledges for this action"
+        admin = [user for user in admins if user_id in user]
+
+        if not int(user_id) in admin[0]:
+
+            return "This user doesn't have the priviledges for this action.{}".format(admin)
 
         return user_id
 
