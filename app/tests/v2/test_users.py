@@ -26,7 +26,8 @@ class TestUsers(unittest.TestCase):
             "email": "test@test.com",
             "phoneNumber": "0712332112",
             "username": "testuser",
-            "password": "P@5sword"
+            "password": "P@5sword",
+            "confirmPass": "P@5sword"
         }
 
     def register_user(self, path="/api/v2/auth/signup", data={}):
