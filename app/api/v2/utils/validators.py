@@ -38,6 +38,8 @@ class DataValidators(BaseModels):
         missing = []
 
         for key, value in self.given_data.items():
+            if isinstance(value, str):
+                value = value.replace(" ", "")
             if not (key == "images") and not value:
                 missing.append(key)
 
@@ -76,11 +78,11 @@ class DataValidators(BaseModels):
 
         if isinstance(user, str):
 
-            return "Please check your username"
+            return "Please check your credentials"
 
         user_id, firstname, lastname, password, registered = user
 
         if not check_password_hash(password, self.given_data["password"]):
 
-            return "Please check your password "
+            return "Please check your credentials "
         return user

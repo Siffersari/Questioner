@@ -7,15 +7,17 @@ from .. models.meetup_model import MeetupModels
 def post_new_meetup():
     """ Creates a new meetup record if details provided"""
 
-    if MeetupModels().check_authorization():
+    decoded_auth = MeetupModels().check_authorization()
 
-        return MeetupModels().check_authorization()
+    if not isinstance(decoded_auth, int):
 
-    elif MeetupModels().check_if_is_integer(request.get_json()):
+        return decoded_auth
 
-        return MeetupModels().check_if_is_integer(request.get_json())
+    data = request.get_json()
 
-    resp = MeetupModels(request.get_json()).create_meetup()
+    data["user"] = decoded_auth
+
+    resp = MeetupModels(data).create_meetup()
 
     return jsonify(resp), resp["status"]
 
@@ -24,20 +26,26 @@ def post_new_meetup():
 def fetch_specific_meetup(meetup_id):
     """ Fetches a specific meetup record given meetup_id """
 
-    if MeetupModels().check_authorization():
+    decoded_auth = MeetupModels().check_authorization()
 
-        return MeetupModels().check_authorization()
+    if not isinstance(decoded_auth, int):
 
-    return jsonify(MeetupModels().fetch_specific_meetup(meetup_id)), MeetupModels().fetch_specific_meetup(meetup_id)["status"]
+        return decoded_auth
+
+    response = MeetupModels().fetch_specific_meetup(meetup_id)
+
+    return jsonify(response), response["status"]
 
 
 @version2.route("/meetups/upcoming", methods=["GET"])
 def fetch_upcoming_meetup():
     """ Fetches all upcoming meetup records """
 
-    if MeetupModels().check_authorization():
+    decoded_auth = MeetupModels().check_authorization()
 
-        return MeetupModels().check_authorization()
+    if not isinstance(decoded_auth, int):
+
+        return decoded_auth
 
     response = MeetupModels().fetch_upcoming_meetups()
 
@@ -50,15 +58,15 @@ def fetch_upcoming_meetup():
 def delete_meetup(meetup_id):
     """ Deletes a meetup record """
 
-    if MeetupModels().check_authorization():
+    decoded_auth = MeetupModels().check_authorization()
 
-        return MeetupModels().check_authorization()
+    if not isinstance(decoded_auth, int):
 
-    details = request.get_json()
+        return decoded_auth
 
-    if MeetupModels().check_if_is_integer(details):
-
-        return MeetupModels().check_if_is_integer(details)
+    details = {
+        "user": decoded_auth
+    }
 
     response = MeetupModels(details).delete_meetup(meetup_id)
 
@@ -69,15 +77,15 @@ def delete_meetup(meetup_id):
 def post_images(meetup_id):
     """ Add images to a meetup """
 
-    if MeetupModels().check_authorization():
+    decoded_auth = MeetupModels().check_authorization()
 
-        return MeetupModels().check_authorization()
+    if not isinstance(decoded_auth, int):
+
+        return decoded_auth
 
     details = request.get_json()
 
-    if MeetupModels().check_if_is_integer(details):
-
-        return MeetupModels().check_if_is_integer(details)
+    details["user"] = decoded_auth
 
     try:
 
@@ -96,11 +104,15 @@ def post_images(meetup_id):
 def add_tags(meetup_id):
     """ Add tags to a meetup """
 
-    if MeetupModels().check_authorization():
+    decoded_auth = MeetupModels().check_authorization()
 
-        return MeetupModels().check_authorization()
+    if not isinstance(decoded_auth, int):
+
+        return decoded_auth
 
     details = request.get_json()
+
+    details["user"] = decoded_auth
 
     if MeetupModels().check_if_is_integer(details):
 

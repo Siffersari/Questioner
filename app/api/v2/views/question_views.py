@@ -9,13 +9,13 @@ def create_question():
 
     details = request.get_json()
 
-    if QuestionModels().check_authorization():
+    decoded_auth = QuestionModels().check_authorization()
 
-        return QuestionModels().check_authorization()
+    if not isinstance(decoded_auth, int):
 
-    elif QuestionModels().check_if_is_integer(details):
+        return decoded_auth
 
-        return QuestionModels().check_if_is_integer(details)
+    details["user"] = decoded_auth
 
     resp = QuestionModels(details).create_question()
 
@@ -26,7 +26,7 @@ def create_question():
 def fetch_all_questions():
     """ Returns all question records on the platform """
 
-    if not QuestionModels().check_authorization():
+    if isinstance(QuestionModels().check_authorization(), int):
 
         return jsonify(QuestionModels().fetch_all_questions()), 200
 
@@ -38,15 +38,16 @@ def upvote_question(question_id):
     """ 
     This method upvotes a specific question 
     """
-    details = request.get_json()
 
-    if QuestionModels().check_authorization():
+    decoded_auth = QuestionModels().check_authorization()
 
-        return QuestionModels().check_authorization()
+    if not isinstance(decoded_auth, int):
 
-    if QuestionModels().check_if_is_integer(details):
+        return decoded_auth
 
-        return QuestionModels().check_if_is_integer(details)
+    details = {
+        "user": decoded_auth
+    }
 
     return jsonify(QuestionModels(details).upvote_question(question_id)), 200
 
@@ -63,17 +64,17 @@ def downvote_question(question_id):
 
     auth_token = request.headers.get("Authorization").split(" ")[1]
 
-    if isinstance(QuestionModels().validate_token_status(auth_token), str):
+    validation_response = QuestionModels().validate_token_status(auth_token)
+
+    if not isinstance(validation_response, int):
         return jsonify(
-            {"error": QuestionModels().validate_token_status(auth_token),
+            {"error": validation_response,
              "status": 400}
         ), 400
 
-    details = request.get_json()
-
-    if QuestionModels().check_if_is_integer(details):
-
-        return QuestionModels().check_if_is_integer(details)
+    details = {
+        "user": validation_response
+    }
 
     resp = QuestionModels(details).downvote_question(question_id)
 
@@ -88,15 +89,11 @@ def post_comment():
 
     details, not_authorized = request.get_json(), QuestionModels().check_authorization()
 
-    if not_authorized:
+    if not isinstance(not_authorized, int):
 
-        return QuestionModels().check_authorization()
+        return not_authorized
 
-    if QuestionModels().check_if_is_integer(details):
-
-        respond = QuestionModels().check_if_is_integer(details)
-
-        return respond
+    details["user"] = not_authorized
 
     resp = QuestionModels(details).post_comment()
 
@@ -107,7 +104,7 @@ def post_comment():
 def fetch_all_comments():
     """ Fetches all comments to a question """
 
-    if QuestionModels().check_authorization():
+    if not isinstance(QuestionModels().check_authorization(), int):
 
         return QuestionModels().check_authorization()
 
@@ -122,7 +119,7 @@ def fetch_specific_question(question_id):
 
     check = QuestionModels().check_authorization()
 
-    if not check:
+    if isinstance(check, int):
 
         response = QuestionModels().fetch_specific_question(question_id)
 
@@ -136,7 +133,7 @@ def fetch_specific_question(question_id):
 def fetch_one_comment(comment_id):
     """ Returns the comment given the id """
 
-    if QuestionModels().check_authorization():
+    if not isinstance(QuestionModels().check_authorization(), int):
 
         error_response = QuestionModels().check_authorization()
 
@@ -153,23 +150,21 @@ def fetch_one_comment(comment_id):
 def delete_question(question_id):
     """ Deletes a question to a meetup record """
 
-    if QuestionModels().check_authorization():
+    if not isinstance(QuestionModels().check_authorization(), int):
 
         return QuestionModels().check_authorization()
 
-    if not request.get_json():
+    decoded_auth = QuestionModels().check_authorization()
 
-        return jsonify({"error": "Expected data in JSON format but got none", "status": 400}), 400
+    if not isinstance(decoded_auth, int):
 
-    try:
+        return decoded_auth
 
-        user = request.get_json()["user"]
+    details = {
+        "user": decoded_auth
+    }
 
-    except KeyError as erra:
-
-        return jsonify({"error": "Expected {} field but got none".format(erra), "status": 400}), 400
-
-    response = QuestionModels(request.get_json()).delete_question(question_id)
+    response = QuestionModels(details).delete_question(question_id)
 
     return jsonify(response), response["status"]
 
@@ -178,24 +173,16 @@ def delete_question(question_id):
 def delete_comment(comment_id):
     """ Deletes a comment to a question if exists by Id """
 
-    if QuestionModels().check_authorization():
+    decoded_auth = QuestionModels().check_authorization()
 
-        return QuestionModels().check_authorization()
+    if not isinstance(decoded_auth, int):
 
-    data = request.get_json()
+        return decoded_auth
 
-    if not data:
+    details = {
+        "user": decoded_auth
+    }
 
-        return jsonify({"error": "Expected data in JSON format but got none", "status": 400}), 400
-
-    try:
-
-        user = request.get_json()["user"]
-
-    except KeyError as missing_erra:
-
-        return jsonify({"error": "Expected {} field but got none".format(missing_erra), "status": 400}), 400
-
-    result = QuestionModels(data).remove_comment(comment_id)
+    result = QuestionModels(details).remove_comment(comment_id)
 
     return jsonify(result), result["status"]

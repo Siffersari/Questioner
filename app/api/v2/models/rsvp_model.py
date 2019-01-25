@@ -25,6 +25,7 @@ class RsvpModels(BaseModels):
             self.rsvp_details).check_values_not_empty()
 
         if isinstance(isempty, str):
+
             return self.makeresp(isempty, 400)
 
         try:
@@ -45,7 +46,7 @@ class RsvpModels(BaseModels):
             return self.makeresp("Meetup not found", 404)
 
         rsvp = self.sql.fetch_details_by_id(
-            "rsvp_id", self.rsvp_details["user"], "rsvps")
+            "user_id", self.rsvp_details["user"], "rsvps")
 
         if rsvp:
             return self.makeresp("RSVP already received. You can not rsvp again", 403)

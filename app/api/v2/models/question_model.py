@@ -321,9 +321,7 @@ class QuestionModels(BaseModels):
 
         return self.makeresp({"message": "This question has been deleted successfully"}, 200)
 
-
     def remove_comment(self, comment_id):
-
         """ Removes a comment from the database """
 
         comment = self.sql.fetch_details_by_id(
