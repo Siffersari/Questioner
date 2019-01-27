@@ -332,7 +332,7 @@ class QuestionModels(BaseModels):
 
             return self.makeresp("This comment could not be found", 404)
 
-        if not self.question_details["user"] == comment[1]:
+        if not self.question_details["user"] == comment[2]:
 
             return self.makeresp("You can not delete a comment you don't own", 403)
 
