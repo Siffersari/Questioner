@@ -88,7 +88,12 @@ class BaseModels(object):
                     "status": 400}
             ), 400
 
-        auth_token = header.split(" ")[1]
+        try:
+            auth_token = header.split(" ")[1]
+        except:
+            return jsonify({
+                "error": "This token could not be processed. Please check your token again"
+            })
 
         response = self.validate_token_status(auth_token)
 

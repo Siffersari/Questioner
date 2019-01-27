@@ -29,7 +29,7 @@ def create_app(config_name="development"):
         return jsonify({"error": "Bad Request. Please check that your input is valid", "status": 400}), 400
 
     @app.errorhandler(404)
-    def Badrequest(error):
+    def NotFound(error):
         return jsonify({"error": "Not Found. The resource you are trying to access was not found", "status": 404}), 404
 
     @app.errorhandler(405)
@@ -40,4 +40,4 @@ def create_app(config_name="development"):
     def ServerError(error):
         return jsonify({"error": "Internal error", "status": 500}), 500
 
-    return app
+    return app 
