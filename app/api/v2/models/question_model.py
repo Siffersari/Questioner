@@ -242,12 +242,13 @@ class QuestionModels(BaseModels):
             user = self.sql.get_username_by_id(items[1])[0]
 
             response.append({
-                "id": questions[0][0],
+                "id": items[0],
                 "createdBy": user,
                 "meetup": items[2],
                 "topic": items[3],
                 "body": items[4],
-                "createdOn": items[6]
+                "createdOn": items[6],
+                "votes": items[5]
 
             })
 
