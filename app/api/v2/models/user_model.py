@@ -67,6 +67,10 @@ class UserModels(BaseModels):
 
             return self.makeresp("This email already exists in the database", 409)
 
+        if not isinstance(SqlHelper().get_user_by_username(self.user_details["username"]), str):
+
+            return self.makeresp("This username already exists in the database", 409)
+
         payload = {
             "firstname": self.user_details["firstname"],
             "lastname": self.user_details["lastname"],
