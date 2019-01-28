@@ -77,7 +77,7 @@ class SqlHelper:
         try:
             cur = self.database.cursor()
             cur.execute(
-                """ SELECT user_id FROM rsvps WHERE meetup_id = {}; """.format(meetup_id))
+                """ SELECT user_id, response FROM rsvps WHERE meetup_id = {}; """.format(meetup_id))
 
             data = cur.fetchall()
 
