@@ -70,6 +70,24 @@ class SqlHelper:
 
         return admins
 
+
+    def fetch_rsvp(self, meetup_id):
+        """ Returns all the rsvps with the given meetup id """
+
+        try:
+            cur = self.database.cursor()
+            cur.execute(
+                """ SELECT user_id, response FROM rsvps WHERE meetup_id = {}; """.format(meetup_id))
+
+            data = cur.fetchall()
+
+            cur.close()
+
+            return data
+
+        except Exception:
+            return "Not Found"
+
     def fetch_details_by_id(self, item_name, item_id, table):
         """ returns a details given the id """
 
