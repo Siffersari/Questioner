@@ -28,7 +28,7 @@ class QuestionModels(BaseModels):
             user = self.sql.get_username_by_id(
                 int(self.question_details["user"]))
 
-            meetup = self.sql.fetch_details_by_id(
+            meetup = self.sql.fetch_details_by_criteria(
                 "meetup_id", self.question_details["meetup"], "meetups")
 
             existing = self.sql.fetch_id_if_text_exists(
@@ -81,7 +81,7 @@ class QuestionModels(BaseModels):
         question by 1 
         """
 
-        question = self.sql.fetch_details_by_id(
+        question = self.sql.fetch_details_by_criteria(
             "question_id", question_id, "questions")
 
         if not question:
@@ -96,7 +96,7 @@ class QuestionModels(BaseModels):
         user_id = self.question_details["user"]
 
         try:
-            user = SqlHelper().fetch_details_by_id(
+            user = SqlHelper().fetch_details_by_criteria(
                 "user_id", user_id, "users")
 
         except KeyError as errs:
@@ -114,7 +114,7 @@ class QuestionModels(BaseModels):
         Decreases the number of votes by 1 
         """
 
-        question = self.sql.fetch_details_by_id(
+        question = self.sql.fetch_details_by_criteria(
             "question_id", question_id, "questions")
 
         if not question:
@@ -127,7 +127,7 @@ class QuestionModels(BaseModels):
             return self.makeresp(isempty, 400)
 
         try:
-            user = self.sql.fetch_details_by_id(
+            user = self.sql.fetch_details_by_criteria(
                 "user_id", self.question_details["user"], "users")
 
         except KeyError as keyerr:
@@ -150,7 +150,7 @@ class QuestionModels(BaseModels):
             user = self.sql.get_username_by_id(
                 int(self.question_details["user"]))
 
-            question = self.sql.fetch_details_by_id(
+            question = self.sql.fetch_details_by_criteria(
                 "question_id", self.question_details["question"], "questions")
 
             comment = self.question_details["comment"]
@@ -180,9 +180,9 @@ class QuestionModels(BaseModels):
             {
                 "id": comment_id,
                 "user": user[0],
-                "question": question[0],
-                "title": question[3],
-                "body": question[4],
+                "question": question[0][0],
+                "title": question[0][3],
+                "body": question[0][4],
                 "comment": comment
             }, 201)
 
@@ -207,7 +207,7 @@ class QuestionModels(BaseModels):
         if the question exists then returns it 
         """
 
-        question = self.sql.fetch_details_by_id(
+        question = self.sql.fetch_details_by_criteria(
             "question_id", question_id, "questions")
 
         response, status = "", 200
@@ -216,14 +216,14 @@ class QuestionModels(BaseModels):
 
             return self.makeresp("Question not found", 404)
 
-        user = self.sql.get_username_by_id(int(question[1]))
+        user = self.sql.get_username_by_id(int(question[0][1]))
 
         response = self.makeresp({
 
             "user": user[0],
-            "meetup": question[2],
-            "title": question[3],
-            "body": question[4]
+            "meetup": question[0][2],
+            "title": question[0][3],
+            "body": question[0][4]
         }, status)
 
         return response
@@ -281,25 +281,25 @@ class QuestionModels(BaseModels):
 
         comment_data = ''
 
-        comment = self.sql.fetch_details_by_id(
+        comment = self.sql.fetch_details_by_criteria(
             "comment_id", comment_id, "comments")
 
         if not comment:
 
             return self.makeresp("This comment cannot not be found", 404)
 
-        user = self.sql.get_username_by_id(int(comment[2]))
+        user = self.sql.get_username_by_id(int(comment[0][2]))
 
-        if len(comment[3]) == 1:
+        if len(comment[0][3]) == 1:
 
-            comment_data = comment[3][0]
+            comment_data = comment[0][3][0]
 
         response = self.makeresp({
 
             "user": user[0],
-            "question": comment[1],
+            "question": comment[0][1],
             "comment": comment_data,
-            "createdOn": comment[4]
+            "createdOn": comment[0][4]
         }, 200)
 
         return response
@@ -307,14 +307,14 @@ class QuestionModels(BaseModels):
     def delete_question(self, question_id):
         """ Deletes from the database a question """
 
-        question = self.sql.fetch_details_by_id(
+        question = self.sql.fetch_details_by_criteria(
             "question_id", question_id, "questions")
 
         if not question:
 
             return self.makeresp("This question could not be found", 404)
 
-        if not self.question_details["user"] == question[1]:
+        if not self.question_details["user"] == question[0][1]:
 
             return self.makeresp("You can not delete a question you don't own", 403)
 
@@ -325,14 +325,14 @@ class QuestionModels(BaseModels):
     def remove_comment(self, comment_id):
         """ Removes a comment from the database """
 
-        comment = self.sql.fetch_details_by_id(
+        comment = self.sql.fetch_details_by_criteria(
             "comment_id", comment_id, "comments")
 
         if not comment:
 
             return self.makeresp("This comment could not be found", 404)
 
-        if not self.question_details["user"] == comment[2]:
+        if not self.question_details["user"] == comment[0][2]:
 
             return self.makeresp("You can not delete a comment you don't own", 403)
 
