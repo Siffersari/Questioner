@@ -126,6 +126,20 @@ class BaseTest(unittest.TestCase):
 
         return response
 
+    def fetch_meetup_id(self, path="/api/v2/meetups", data={}):
+        """ Fetches a specific meetup id given topic and location """
+
+        if not data:
+
+            data = {
+                "topic": "Do It Yourself",
+                "location": "Angle House, Nairobi"
+            }
+
+        response = self.client.get(path, data= json.dumps(data), headers=self.get_token())
+
+        return response
+
     def fetch_specific_meetup(self, path="/api/v2/meetups/<meetup-id>"):
         """ Fetches a specific meetup record """
 
