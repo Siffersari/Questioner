@@ -36,7 +36,7 @@ class RsvpModels(BaseModels):
         except KeyError as error:
             return self.makeresp("{} is a required data key".format(error), 400)
 
-        meetup = self.sql.fetch_details_by_id(
+        meetup = self.sql.fetch_details_by_criteria(
             "meetup_id", meetup_id, "meetups")
 
         if not user:
@@ -69,7 +69,7 @@ class RsvpModels(BaseModels):
         resp = {
             "id": rsvp_id,
             "meetup": rsvp["meetup"],
-            "topic": meetup[2],
+            "topic": meetup[0][2],
             "status": rsvp["response"]
         }
 

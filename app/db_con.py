@@ -69,7 +69,7 @@ def create_table_users():
     created_on TIMESTAMP NOT NULL DEFAULT current_timestamp
     ); """
 
-    blacklist = """ CREATE TABLE IF NOT EXISTS blacklisted (tokens VARCHAR (256) NOT NULL); """
+    blacklist = """ CREATE TABLE IF NOT EXISTS blacklist (tokens VARCHAR (256) NOT NULL); """
 
     return [users, meetups, questions, rsvps, comments, blacklist]
 

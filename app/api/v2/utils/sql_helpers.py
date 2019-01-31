@@ -88,15 +88,19 @@ class SqlHelper:
         except Exception:
             return "Not Found"
 
-    def fetch_details_by_id(self, item_name, item_id, table):
-        """ returns a details given the id """
+    def fetch_details_by_criteria(self, item_name, criteria, table):
+        """ returns details of any matching criteria given """
 
         try:
             cur = self.database.cursor()
-            cur.execute(
-                """ SELECT * FROM {} WHERE {} = {}; """.format(table, item_name, int(item_id)))
+            if isinstance(criteria, str):
+                cur.execute(
+                    """ SELECT * FROM {} WHERE {} = '{}'; """.format(table, item_name, criteria))
+            else:
+                cur.execute(
+                    """ SELECT * FROM {} WHERE {} = {}; """.format(table, item_name, criteria))
 
-            data = cur.fetchone()
+            data = cur.fetchall()
 
             cur.close()
 
@@ -156,7 +160,7 @@ class SqlHelper:
 
         curr = self.database.cursor()
 
-        query = """ SELECT * FROM blacklisted WHERE tokens = %s; """
+        query = """ SELECT * FROM blacklist WHERE tokens = %s; """
 
         curr.execute(query, [token])
 

@@ -41,7 +41,7 @@ def validate_meetup(details):
 
 def check_meetup_exists(meetup_id):
 
-    meetup = SqlHelper().fetch_details_by_id(
+    meetup = SqlHelper().fetch_details_by_criteria(
         "meetup_id", meetup_id, "meetups")
 
     if not meetup:
@@ -89,6 +89,21 @@ class MeetupModels(BaseModels):
         elif not isinstance(tags, list):
             tags = [tags]
 
+        topic_exists = SqlHelper().fetch_details_by_criteria(
+            "topic", self.meetup_details["topic"], "meetups")
+            
+        location_detail = self.meetup_details["location"].replace(" ", "")
+
+        try:
+            topic_exists = [
+                item[4] for item in topic_exists if location_detail.lower() in item[4].lower().replace(" ", "")]
+
+        except:
+            pass
+
+        if topic_exists:
+            return self.makeresp("Please select a different topic or location for your meetup", 409)
+
         payload = {
             "createdBy": self.meetup_details["user"],
             "topic": topic,
@@ -120,20 +135,20 @@ class MeetupModels(BaseModels):
 
         meetup = check_meetup_exists(meetup_id)
 
-        if not isinstance(meetup, tuple):
+        if not isinstance(meetup, list):
 
             return meetup
 
-        username = SqlHelper().get_username_by_id(meetup[1])
+        username = SqlHelper().get_username_by_id(meetup[0][1])
 
         resp = {
             "id": meetup_id,
-            "topic": meetup[2],
-            "location": meetup[4],
-            "happeningOn": "{:%B %d, %Y %I:%M%p}".format(meetup[3]),
-            "tags": meetup[6],
-            "images": meetup[5],
-            "createdOn": meetup[7],
+            "topic": meetup[0][2],
+            "location": meetup[0][4],
+            "happeningOn": "{:%B %d, %Y %I:%M%p}".format(meetup[0][3]),
+            "tags": meetup[0][6],
+            "images": meetup[0][5],
+            "createdOn": meetup[0][7],
             "createdBy": username[0]
         }
 
@@ -168,7 +183,7 @@ class MeetupModels(BaseModels):
 
         meetup = check_meetup_exists(meetup_id)
 
-        if not isinstance(meetup, tuple):
+        if not isinstance(meetup, list):
 
             return meetup
 
@@ -178,7 +193,7 @@ class MeetupModels(BaseModels):
 
             return user
 
-        if not self.meetup_details["user"] == meetup[1]:
+        if not self.meetup_details["user"] == meetup[0][1]:
 
             return self.makeresp("You can not delete a Meetup you don't own", 403)
 
@@ -191,7 +206,7 @@ class MeetupModels(BaseModels):
 
         meetup = check_meetup_exists(meetup_id)
 
-        if not isinstance(meetup, tuple):
+        if not isinstance(meetup, list):
 
             return meetup
 
@@ -210,8 +225,8 @@ class MeetupModels(BaseModels):
             updimages = SqlHelper(self.meetup_details).post_images(meetup_id)
 
             return self.makeresp({
-                "meetup": meetup[0],
-                "topic": meetup[2],
+                "meetup": meetup[0][0],
+                "topic": meetup[0][2],
                 "images": updimages
             }, 201)
 
@@ -221,8 +236,8 @@ class MeetupModels(BaseModels):
         updated_img = SqlHelper(self.meetup_details).post_images(meetup_id)
 
         response = {
-            "meetup": meetup[0],
-            "topic": meetup[2],
+            "meetup": meetup[0][0],
+            "topic": meetup[0][2],
             "images": self.meetup_details["images"]
         }
 
@@ -245,7 +260,7 @@ class MeetupModels(BaseModels):
 
         meetup = check_meetup_exists(meetup_id)
 
-        if not isinstance(meetup, tuple):
+        if not isinstance(meetup, list):
 
             return meetup
 
@@ -257,8 +272,8 @@ class MeetupModels(BaseModels):
         if isinstance(tags, str):
 
             return self.makeresp({
-                "meetup": meetup[0],
-                "topic": meetup[2],
+                "meetup": meetup[0][0],
+                "topic": meetup[0][2],
                 "tags": SqlHelper(self.meetup_details).add_tags(meetup_id)
             }, 201)
 
@@ -270,7 +285,7 @@ class MeetupModels(BaseModels):
         tags = SqlHelper(self.meetup_details).add_tags(meetup_id)
 
         return self.makeresp({
-            "meetup": meetup[0],
-            "topic": meetup[2],
+            "meetup": meetup[0][0],
+            "topic": meetup[0][2],
             "tags": self.meetup_details["tags"]
         }, 201)
