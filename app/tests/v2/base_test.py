@@ -25,6 +25,10 @@ class BaseTest(unittest.TestCase):
 
         self.meetup_data_2 = Data().meetup2
 
+        self.fetch_meet_data = Data().fetch_meetup_data
+
+        self.wrong_meet_topic = Data().wrong_meet_topic
+
         self.missing_meetup_data = Data().missing_meetup_details
 
         self.imageless_meetup_data = Data().imageless_meetup_details
@@ -131,12 +135,10 @@ class BaseTest(unittest.TestCase):
 
         if not data:
 
-            data = {
-                "topic": "Do It Yourself",
-                "location": "Angle House, Nairobi"
-            }
+            data = self.fetch_meet_data
 
-        response = self.client.get(path, data= json.dumps(data), headers=self.get_token())
+        response = self.client.get(
+            path, data=json.dumps(data), content_type=self.content_type, headers=self.get_token())
 
         return response
 
