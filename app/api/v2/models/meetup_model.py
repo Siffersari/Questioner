@@ -91,17 +91,17 @@ class MeetupModels(BaseModels):
 
         topic_exists = SqlHelper().fetch_details_by_criteria(
             "topic", self.meetup_details["topic"], "meetups")
-            
+
         location_detail = self.meetup_details["location"].replace(" ", "")
 
         try:
-            topic_exists = [
+            meetup_is_same_location = [
                 item[4] for item in topic_exists if location_detail.lower() in item[4].lower().replace(" ", "")]
 
         except:
             pass
 
-        if topic_exists:
+        if meetup_is_same_location:
             return self.makeresp("Please select a different topic or location for your meetup", 409)
 
         payload = {
@@ -129,6 +129,46 @@ class MeetupModels(BaseModels):
         }
 
         return self.makeresp(resp, 201)
+
+    def fetch_meetup_id_by_details(self):
+        """
+        Fetches a meetup id given the topic 
+        and the location of the meetup
+        """
+
+        try:
+            topic, location = self.meetup_details["topic"], self.meetup_details["location"]
+
+        except KeyError as errkey:
+            return UserModels().makeresp("Expected {} key to be present in the data but found none".format(errkey), 400)
+
+        user = validate_meetup(self.meetup_details)
+
+        if not isinstance(user, tuple):
+
+            return user
+
+        topic_exists = SqlHelper().fetch_details_by_criteria(
+            "topic", self.meetup_details["topic"], "meetups")
+
+        location_detail = self.meetup_details["location"].replace(" ", "")
+
+        try:
+            is_same_location = [
+                item[0] for item in topic_exists if location_detail.lower() in item[4].lower().replace(" ", "")]
+
+            if not is_same_location:
+                return self.makeresp("No meetup with such details found", 404)
+        except:
+            pass
+
+        response = {
+            "id": is_same_location[0],
+            "topic": topic,
+            "location": location
+        }
+
+        return self.makeresp(response, 200)
 
     def fetch_specific_meetup(self, meetup_id):
         """ Fetches a specific meetup record  """
