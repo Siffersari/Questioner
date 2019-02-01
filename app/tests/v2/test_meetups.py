@@ -49,18 +49,22 @@ class TestMeetups(BaseTest):
         self.assertEqual(meetup.status_code, 201)
         self.assertTrue(meetup.json["data"])
 
-        self.assertEqual(self.fetch_meetup_id().status_code, 200)
+        self.assertEqual(self.fetch_meetup_id(path="/api/v2/meetups/{}/{}".format(
+            self.meetup_data["topic"], self.meetup_data["location"])).status_code, 200)
 
-        self.assertTrue(self.fetch_meetup_id().json["data"][0]["id"] == 1)
+        self.assertTrue(self.fetch_meetup_id(path="/api/v2/meetups/{}/{}".format(
+            self.meetup_data["topic"], self.meetup_data["location"])).json["data"][0]["id"] == 1)
 
     def test_failure_if_non_existent_meetup(self):
         """
         Tests for failure if no meetup exists at all 
         """
 
-        self.assertEqual(self.fetch_meetup_id().status_code, 404)
+        self.assertEqual(self.fetch_meetup_id(path="/api/v2/meetups/{}/{}".format(
+            self.meetup_data["topic"], self.meetup_data["location"])).status_code, 404)
 
-        self.assertTrue("No meetup" in self.fetch_meetup_id().json["error"])
+        self.assertTrue("No meetup" in self.fetch_meetup_id(path="/api/v2/meetups/{}/{}".format(
+            self.meetup_data["topic"], self.meetup_data["location"])).json["error"])
 
     def test_failure_if_wrong_topic(self):
         """ 
@@ -73,11 +77,11 @@ class TestMeetups(BaseTest):
         self.assertEqual(meetup.status_code, 201)
         self.assertTrue(meetup.json["data"])
 
-        self.assertEqual(self.fetch_meetup_id(
-            data=self.wrong_meet_topic).status_code, 404)
+        self.assertEqual(self.fetch_meetup_id(path="/api/v2/meetups/{}/{}".format(
+            self.wrong_meet_topic["topic"], self.wrong_meet_topic["location"])).status_code, 404)
 
-        self.assertTrue("No meetup" in self.fetch_meetup_id(
-            data=self.wrong_meet_topic).json["error"])
+        self.assertTrue("No meetup" in self.fetch_meetup_id(path="/api/v2/meetups/{}/{}".format(
+            self.wrong_meet_topic["topic"], self.wrong_meet_topic["location"])).json["error"])
 
     def test_fetches_meetup_record_if_correct_id(self):
         """
