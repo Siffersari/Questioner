@@ -33,6 +33,16 @@ class Data:
             "tags": ["Creative", "Technology"]
         }
 
+        self.fetch_meetup_data = {
+            "topic": "Do It Yourself",
+            "location": "Angle House, Nairobi"
+        }
+
+        self.wrong_meet_topic = {
+            "topic": "This wont be found",
+            "location": "Angle House, Nairobi"
+        }
+
         self.missing_meetup_details = {
             "location": "Jungle House, Mombase",
             "images": ["img1.jgp", "img2.jpg"],
@@ -46,6 +56,7 @@ class Data:
             "happeningOn": "Feb 15 2019 10:30AM",
             "tags": ["Creative"]
         }
+
         self.question = {
             "meetup": 1,
             "title": "Leather bag price",
