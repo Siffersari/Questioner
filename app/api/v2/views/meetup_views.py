@@ -114,10 +114,29 @@ def add_tags(meetup_id):
 
     details["user"] = decoded_auth
 
-    if MeetupModels().check_if_is_integer(details):
-
-        return MeetupModels().check_if_is_integer(details)
-
     response = MeetupModels(details).add_tags(meetup_id)
 
     return jsonify(response), MeetupModels(details).add_tags(meetup_id)["status"]
+
+
+@version2.route("/meetups", methods=["GET"])
+def fetch_meetup_id():
+    """ Fetches a meetup id given location and topic """
+
+    decoded_auth = MeetupModels().check_authorization()
+
+    if not isinstance(decoded_auth, int):
+
+        return decoded_auth
+
+    try:
+        details = request.get_json()
+
+        details["user"] = decoded_auth
+
+    except:
+        return jsonify(MeetupModels().makeresp("Please provide a JSON object with a topic and location", 400)), 400
+
+    response = MeetupModels(details).fetch_meetup_id_by_details()
+
+    return jsonify(response), response["status"]
