@@ -119,8 +119,8 @@ def add_tags(meetup_id):
     return jsonify(response), MeetupModels(details).add_tags(meetup_id)["status"]
 
 
-@version2.route("/meetups", methods=["GET"])
-def fetch_meetup_id():
+@version2.route("/meetups/<string:topic>/<string:location>", methods=["GET"])
+def fetch_meetup_id(topic, location):
     """ Fetches a meetup id given location and topic """
 
     decoded_auth = MeetupModels().check_authorization()
@@ -129,13 +129,11 @@ def fetch_meetup_id():
 
         return decoded_auth
 
-    try:
-        details = request.get_json()
-
-        details["user"] = decoded_auth
-
-    except:
-        return jsonify(MeetupModels().makeresp("Please provide a JSON object with a topic and location", 400)), 400
+    details = {
+        "topic": topic,
+        "location": location,
+        "user": decoded_auth
+    }
 
     response = MeetupModels(details).fetch_meetup_id_by_details()
 
