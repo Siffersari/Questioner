@@ -25,6 +25,10 @@ class BaseTest(unittest.TestCase):
 
         self.meetup_data_2 = Data().meetup2
 
+        self.fetch_meet_data = Data().fetch_meetup_data
+
+        self.wrong_meet_topic = Data().wrong_meet_topic
+
         self.missing_meetup_data = Data().missing_meetup_details
 
         self.imageless_meetup_data = Data().imageless_meetup_details
@@ -123,6 +127,18 @@ class BaseTest(unittest.TestCase):
 
         response = self.client.post(path, data=json.dumps(
             data), content_type=self.content_type, headers=self.get_token())
+
+        return response
+
+    def fetch_meetup_id(self, path="/api/v2/meetups", data={}):
+        """ Fetches a specific meetup id given topic and location """
+
+        if not data:
+
+            data = self.fetch_meet_data
+
+        response = self.client.get(
+            path, data=json.dumps(data), content_type=self.content_type, headers=self.get_token())
 
         return response
 

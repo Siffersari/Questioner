@@ -38,6 +38,47 @@ class TestMeetups(BaseTest):
         self.assertEqual(missing_images.status_code, 201)
         self.assertTrue(missing_images.json["data"])
 
+    def test_fetches_correct_meetup_id_if_correct_details(self):
+        """
+        Tests whether the correct meetup id is fetched if the
+        correct details are provided 
+        """
+
+        meetup = self.create_meetup()
+
+        self.assertEqual(meetup.status_code, 201)
+        self.assertTrue(meetup.json["data"])
+
+        self.assertEqual(self.fetch_meetup_id().status_code, 200)
+
+        self.assertTrue(self.fetch_meetup_id().json["data"][0]["id"] == 1)
+
+    def test_failure_if_non_existent_meetup(self):
+        """
+        Tests for failure if no meetup exists at all 
+        """
+
+        self.assertEqual(self.fetch_meetup_id().status_code, 404)
+
+        self.assertTrue("No meetup" in self.fetch_meetup_id().json["error"])
+
+    def test_failure_if_wrong_topic(self):
+        """ 
+        Test for error if provide meetup topic doesn't
+        exist 
+        """
+
+        meetup = self.create_meetup()
+
+        self.assertEqual(meetup.status_code, 201)
+        self.assertTrue(meetup.json["data"])
+
+        self.assertEqual(self.fetch_meetup_id(
+            data=self.wrong_meet_topic).status_code, 404)
+
+        self.assertTrue("No meetup" in self.fetch_meetup_id(
+            data=self.wrong_meet_topic).json["error"])
+
     def test_fetches_meetup_record_if_correct_id(self):
         """
         Tests that endpoint fetches a specific meetup record if
