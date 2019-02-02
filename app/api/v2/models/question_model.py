@@ -247,7 +247,7 @@ class QuestionModels(BaseModels):
                 "id": items[0],
                 "createdBy": user,
                 "meetup": items[2],
-                "topic": items[3],
+                "title": items[3],
                 "body": items[4],
                 "createdOn": items[6],
                 "votes": items[5]
