@@ -223,7 +223,9 @@ class QuestionModels(BaseModels):
             "user": user[0],
             "meetup": question[0][2],
             "title": question[0][3],
-            "body": question[0][4]
+            "body": question[0][4],
+            "createdOn": question[0][6],
+            "votes": question[0][5]
         }, status)
 
         return response
@@ -245,7 +247,7 @@ class QuestionModels(BaseModels):
                 "id": items[0],
                 "createdBy": user,
                 "meetup": items[2],
-                "topic": items[3],
+                "title": items[3],
                 "body": items[4],
                 "createdOn": items[6],
                 "votes": items[5]
