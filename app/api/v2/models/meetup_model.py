@@ -329,3 +329,36 @@ class MeetupModels(BaseModels):
             "topic": meetup[0][2],
             "tags": self.meetup_details["tags"]
         }, 201)
+
+    def fetch_meetup_questions(self, meetup_id):
+        """ 
+        Gets all questions to a specific meetup record 
+        with the given id 
+        """
+
+        response = []
+
+        questions = SqlHelper().get_all("questions", "meetup_id", meetup_id)
+
+        for items in questions:
+
+            user = SqlHelper().get_username_by_id(items[2])[0]
+
+            response.append({
+                "id": items[0],
+                "createdBy": user,
+                "meetup": items[1],
+                "title": items[3],
+                "body": items[4],
+                "createdOn": items[6],
+                "votes": items[5]
+
+            })
+
+        if not response:
+            return {
+                "data": "No questions found to this meetup yet",
+                "status": 200
+            }
+
+        return self.makeresp(response, 200)
