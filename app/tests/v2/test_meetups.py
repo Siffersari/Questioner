@@ -186,6 +186,15 @@ class TestMeetups(BaseTest):
         self.assertEqual(self.add_tags(
             path="/api/v2/meetups/1/tags").status_code, 404)
 
+    def test_fetches_meetup_questions(self):
+        """ Tests for successful fetch of meetup questions """
+        
+        self.create_meetup()
+
+        self.post_question()
+
+        self.assertEqual(self.fetch_meetup_questions(path="/api/v2/meetups/1/questions").json["data"][0]["id"], 1)
+
     def tearDown(self):
         """ Destroys set up data before running each test """
 
