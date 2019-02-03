@@ -216,12 +216,12 @@ class QuestionModels(BaseModels):
 
             return self.makeresp("Question not found", 404)
 
-        user = self.sql.get_username_by_id(int(question[0][1]))
+        user = self.sql.get_username_by_id(int(question[0][2]))
 
         response = self.makeresp({
 
             "user": user[0],
-            "meetup": question[0][2],
+            "meetup": question[0][1],
             "title": question[0][3],
             "body": question[0][4],
             "createdOn": question[0][6],
@@ -241,12 +241,12 @@ class QuestionModels(BaseModels):
 
         for items in questions:
 
-            user = self.sql.get_username_by_id(items[1])[0]
+            user = self.sql.get_username_by_id(items[2])[0]
 
             response.append({
                 "id": items[0],
                 "createdBy": user,
-                "meetup": items[2],
+                "meetup": items[1],
                 "title": items[3],
                 "body": items[4],
                 "createdOn": items[6],

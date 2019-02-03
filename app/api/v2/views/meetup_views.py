@@ -138,3 +138,16 @@ def fetch_meetup_id(topic, location):
     response = MeetupModels(details).fetch_meetup_id_by_details()
 
     return jsonify(response), response["status"]
+
+
+@version2.route("/meetups/<int:meetup_id>/questions", methods=["GET"])
+def fetch_meetup_questions(meetup_id):
+    """ Fetches all questions to a meetup record """
+
+    check = MeetupModels().check_authorization()
+
+    if isinstance(check, int):
+
+        return jsonify(MeetupModels().fetch_meetup_questions(meetup_id)), 200
+
+    return check
