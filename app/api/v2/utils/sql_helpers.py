@@ -21,7 +21,14 @@ class SqlHelper:
 
         cur = self.database.cursor()
 
-        cur.execute(""" SELECT * FROM {};""".format(database))
+        if database == "questions":
+
+            cur.execute(""" SELECT * FROM {} ORDER BY votes DESC;""".format(database))
+
+        else:
+
+            cur.execute(""" SELECT * FROM {};""".format(database))
+            
 
         all_items = cur.fetchall()
 
