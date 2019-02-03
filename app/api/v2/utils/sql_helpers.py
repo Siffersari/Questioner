@@ -13,7 +13,7 @@ class SqlHelper:
         self.database = create_tables()
         self.details = details
 
-    def get_all(self, database):
+    def get_all(self, database, item_name='', item_id=''):
         """
         Fetches all details from a specified
         database
@@ -21,12 +21,17 @@ class SqlHelper:
 
         cur = self.database.cursor()
 
-        if database == "questions":
+        if item_id:
+
+            cur.execute(""" SELECT * FROM {} WHERE {} = {} ;""".format(database, item_name, item_id))
+        
+
+        elif database == "questions" and not item_id:
 
             cur.execute(
                 """ SELECT * FROM {} ORDER BY votes DESC;""".format(database))
 
-        else:
+        elif database == "comments" and not item_id:
 
             cur.execute(""" SELECT * FROM {};""".format(database))
 
@@ -187,7 +192,7 @@ class SqlHelper:
         queries = {
             "meetup": """ %(createdBy)s, %(topic)s, %(location)s, %(happeningOn)s, %(images)s, %(Tags)s """,
             "user": """ %(firstname)s, %(lastname)s, %(othername)s, %(email)s, %(phoneNumber)s, %(username)s, %(password)s """,
-            "question": """ %(createdBy)s, %(meetup)s, %(title)s, %(body)s """,
+            "question": """ %(meetup)s, %(createdBy)s, %(title)s, %(body)s """,
             "rsvp": """ %(user)s, %(meetup)s, %(response)s """,
             "comment": """ %(question)s, %(user)s, %(comment)s """
         }
