@@ -23,12 +23,12 @@ class SqlHelper:
 
         if database == "questions":
 
-            cur.execute(""" SELECT * FROM {} ORDER BY votes DESC;""".format(database))
+            cur.execute(
+                """ SELECT * FROM {} ORDER BY votes DESC;""".format(database))
 
         else:
 
             cur.execute(""" SELECT * FROM {};""".format(database))
-            
 
         all_items = cur.fetchall()
 
@@ -76,7 +76,6 @@ class SqlHelper:
             return "Failed to add user as Admin"
 
         return admins
-
 
     def fetch_rsvp(self, meetup_id):
         """ Returns all the rsvps with the given meetup id """
