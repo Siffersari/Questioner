@@ -174,6 +174,11 @@ class BaseTest(unittest.TestCase):
 
         return self.client.get(path, headers=self.get_token())
 
+    def fetch_meetup_questions(self, path="/api/v2/meetups/<meetup-id>/questions"):
+        """ Fetches all the questions to a specific meetup record """
+
+        return self.client.get(path, headers=self.get_token())
+
     def create_comment(self, path="/api/v2/comments", data={}):
         """ Posts a comment to a question """
 
