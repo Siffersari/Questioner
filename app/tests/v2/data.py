@@ -21,7 +21,7 @@ class Data:
             "location": "Angle House, Nairobi",
             "images": ["img1.jgp", "img2.jpg"],
             "topic": "Do It Yourself",
-            "happeningOn": "Feb 4 2019 10:30AM",
+            "happeningOn": "Feb 4 2020 10:30AM",
             "tags": ["Creative", "Technology"]
         }
 
@@ -29,7 +29,7 @@ class Data:
             "location": "Kenyatta University, Kiambu",
             "images": ["img1.jgp", "img2.jpg"],
             "topic": "Main Graduation",
-            "happeningOn": "Feb 8 2019 10:30AM",
+            "happeningOn": "Feb 8 2020 10:30AM",
             "tags": ["Creative", "Technology"]
         }
 
