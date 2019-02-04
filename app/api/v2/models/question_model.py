@@ -1,5 +1,6 @@
 from datetime import datetime
 from .base_model import BaseModels
+from .meetup_model import check_meetup_exists
 from ..utils.validators import DataValidators
 from ..utils.sql_helpers import SqlHelper
 from flask import current_app
@@ -243,10 +244,13 @@ class QuestionModels(BaseModels):
 
             user = self.sql.get_username_by_id(items[2])[0]
 
+            meetup = check_meetup_exists(items[1])
+
             response.append({
                 "id": items[0],
                 "createdBy": user,
                 "meetup": items[1],
+                "meetupTopic": meetup[0][2],
                 "title": items[3],
                 "body": items[4],
                 "createdOn": items[6],
