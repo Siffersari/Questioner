@@ -190,7 +190,7 @@ class BaseTest(unittest.TestCase):
 
         return response
 
-    def fetch_all_comments(self, path="/api/v2/comments"):
+    def fetch_all_comments(self, path="/api/v2/questions/<int:question_id>/comments"):
         """ Fetches all the comments """
 
         return self.client.get(path, headers=self.get_token())
