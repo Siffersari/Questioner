@@ -256,12 +256,12 @@ class QuestionModels(BaseModels):
 
         return self.makeresp(response, 200)
 
-    def fetch_all_comments(self):
+    def fetch_all_comments(self, question_id):
         """ Fetches all comments to questions """
 
         response = []
 
-        comments = self.sql.get_all("comments")
+        comments = self.sql.get_all("comments", "question_id", question_id)
 
         for items in comments:
 
@@ -275,6 +275,14 @@ class QuestionModels(BaseModels):
                 "createdOn": items[4]
 
             })
+
+        if not response:
+            response = {
+                "data": "No comments found to this question yet",
+                "status": 200
+            }
+
+            return response
 
         return self.makeresp(response, 200)
 
