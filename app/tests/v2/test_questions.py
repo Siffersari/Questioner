@@ -71,12 +71,13 @@ class TestQuestions(BaseTest):
         self.assertTrue(self.create_comment().json["data"][0]["comment"])
 
         self.assertEqual(self.fetch_all_comments(
-            path="/api/v2/comments").status_code, 200)
+            path="/api/v2/questions/1/comments").status_code, 200)
 
-        self.assertTrue(self.fetch_all_comments().json["data"][0]["comment"])
-
+        self.assertTrue(self.fetch_all_comments(
+            path="/api/v2/questions/1/comments").json["data"][0]["comment"])
+            
         self.assertEqual(self.create_comment(
-        ).json["data"][0]["comment"], self.fetch_all_comments().json["data"][0]["comment"][0])
+        ).json["data"][0]["comment"], self.fetch_all_comments(path="/api/v2/questions/1/comments").json["data"][0]["comment"][0])
 
     def test_fetch_one_comment(self):
         """ Tests for success when fetching comment with existing id """
