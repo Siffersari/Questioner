@@ -120,20 +120,19 @@ class SqlHelper:
         except Exception:
             return "Not Found"
 
-    def fetch_id_if_text_exists(self, item_name, text, table):
-        # select meetup_id from meetups where topic = 'This is topic';
-        singular = table[:-1] + '_id'
+    def fetch_details_if_text_exists(self, item_name, text, table):
 
         cur = self.database.cursor()
-        cur.execute(""" SELECT {} FROM {} WHERE lower({}) = '{}'; """.format(
-            singular, table, item_name, text.lower()))
-        text = cur.fetchone()
+        cur.execute(""" SELECT * FROM {} WHERE lower({}) = '{}'; """.format(
+            table, item_name, text.lower()))
+
+        text = cur.fetchall()
 
         if not text:
-            # no meetup or question found with that text
+            
             return " Text not found"
 
-        return text[0]
+        return text
 
     def get_username_by_id(self, user_id):
         """ returns a username given the id """
@@ -194,7 +193,8 @@ class SqlHelper:
             "user": """ %(firstname)s, %(lastname)s, %(othername)s, %(email)s, %(phoneNumber)s, %(username)s, %(password)s """,
             "question": """ %(meetup)s, %(createdBy)s, %(title)s, %(body)s """,
             "rsvp": """ %(user)s, %(meetup)s, %(response)s """,
-            "comment": """ %(question)s, %(user)s, %(comment)s """
+            "comment": """ %(question)s, %(user)s, %(meetup)s, %(comment)s """,
+            "vote": """ %(question)s, %(user)s, %(meetup)s, %(vote)s """
         }
 
         table_key = database[:-1]
@@ -252,6 +252,25 @@ class SqlHelper:
 
         return data
 
+    def update_votes(self, vote_id, status):
+        """ Updates the vote to either upvote or downvote """
+
+        cur = self.database.cursor()
+
+        query = """ UPDATE votes SET vote = '{}' WHERE vote_id = {} RETURNING vote; """.format(
+            status, vote_id)
+
+        cur.execute(query)
+
+        data = cur.fetchone()
+
+        self.database.commit()
+
+        cur.close()
+
+        return data
+
+
     def get_upcoming_meetups(self):
 
         cur = self.database.cursor()
@@ -261,7 +280,7 @@ class SqlHelper:
 
         return meetups
 
-    def delete_from_database(self, item_id, database):
+    def delete_from_database(self, item_id, database, option_name=""):
         """ Deletes a meetup record """
 
         table_key = database[:-1]
@@ -269,6 +288,9 @@ class SqlHelper:
         item_name = table_key + '_id'
 
         cur = self.database.cursor()
+
+        if option_name:
+            item_name = option_name
 
         try:
             cur.execute(
