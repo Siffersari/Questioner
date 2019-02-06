@@ -22,7 +22,7 @@ class CommentModels(BaseModels):
     def post_comment(self):
         """ Posts a comment to a question """
 
-        locations = ["question_id", "user_id", "comments"]
+        locations = ["question_id", "user_id", "meetup_id", "comments"]
 
         try:
 
@@ -52,6 +52,8 @@ class CommentModels(BaseModels):
         if not question:
             return self.makeresp("Question not found", 404)
 
+        self.comment_details["meetup"] = question[0][1]
+
         comment_id = SqlHelper(self.comment_details).save_to_database(
             locations, "comments")
 
@@ -80,8 +82,8 @@ class CommentModels(BaseModels):
                 "id": items[0],
                 "createdBy": user,
                 "question": items[1],
-                "comment": items[3],
-                "createdOn": items[4]
+                "comment": items[4],
+                "createdOn": items[5]
 
             })
 
@@ -109,16 +111,16 @@ class CommentModels(BaseModels):
 
         user = self.sql.get_username_by_id(int(comment[0][2]))
 
-        if len(comment[0][3]) == 1:
+        if len(comment[0][4]) == 1:
 
-            comment_data = comment[0][3][0]
+            comment_data = comment[0][4][0]
 
         response = self.makeresp({
 
             "user": user[0],
             "question": comment[0][1],
             "comment": comment_data,
-            "createdOn": comment[0][4]
+            "createdOn": comment[0][5]
         }, 200)
 
         return response
