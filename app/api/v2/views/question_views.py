@@ -49,7 +49,9 @@ def upvote_question(question_id):
         "user": decoded_auth
     }
 
-    return jsonify(QuestionModels(details).upvote_question(question_id)), 200
+    response = QuestionModels(details).upvote_question(question_id)
+
+    return jsonify(response), response["status"]
 
 
 @version2.route("/questions/<int:question_id>/downvote", methods=["PATCH"])
@@ -83,34 +85,6 @@ def downvote_question(question_id):
     return jsonify(resp), status
 
 
-@version2.route("/comments", methods=["POST"])
-def post_comment():
-    """ Posts a comment to a question """
-
-    details, not_authorized = request.get_json(), QuestionModels().check_authorization()
-
-    if not isinstance(not_authorized, int):
-
-        return not_authorized
-
-    details["user"] = not_authorized
-
-    resp = QuestionModels(details).post_comment()
-
-    return make_response(jsonify(resp), resp["status"])
-
-
-@version2.route("/questions/<int:question_id>/comments", methods=['GET'])
-def fetch_all_comments(question_id):
-    """ Fetches all comments to a question """
-
-    if not isinstance(QuestionModels().check_authorization(), int):
-
-        return QuestionModels().check_authorization()
-
-    return make_response(jsonify(QuestionModels().fetch_all_comments(question_id)), 200)
-
-
 @version2.route("/questions/<int:question_id>", methods=["GET"])
 def fetch_specific_question(question_id):
     """
@@ -127,23 +101,6 @@ def fetch_specific_question(question_id):
 
     else:
         return check
-
-
-@version2.route("/comments/<int:comment_id>", methods=["GET"])
-def fetch_one_comment(comment_id):
-    """ Returns the comment given the id """
-
-    if not isinstance(QuestionModels().check_authorization(), int):
-
-        error_response = QuestionModels().check_authorization()
-
-        return error_response
-
-    response = QuestionModels().fetch_one_comment(comment_id)
-
-    status = response["status"]
-
-    return jsonify(response), status
 
 
 @version2.route("/questions/<int:question_id>", methods=['DELETE'])
@@ -167,22 +124,3 @@ def delete_question(question_id):
     response = QuestionModels(details).delete_question(question_id)
 
     return jsonify(response), response["status"]
-
-
-@version2.route("/comments/<int:comment_id>", methods=['DELETE'])
-def delete_comment(comment_id):
-    """ Deletes a comment to a question if exists by Id """
-
-    decoded_auth = QuestionModels().check_authorization()
-
-    if not isinstance(decoded_auth, int):
-
-        return decoded_auth
-
-    details = {
-        "user": decoded_auth
-    }
-
-    result = QuestionModels(details).remove_comment(comment_id)
-
-    return jsonify(result), result["status"]

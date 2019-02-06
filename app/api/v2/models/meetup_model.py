@@ -239,6 +239,14 @@ class MeetupModels(BaseModels):
 
         SqlHelper().delete_from_database(meetup_id, "meetups")
 
+        SqlHelper().delete_from_database(meetup_id, "questions", "meetup_id")
+
+        SqlHelper().delete_from_database(meetup_id, "comments", "meetup_id")
+
+        SqlHelper().delete_from_database(meetup_id, "votes", "meetup_id")
+
+        SqlHelper().delete_from_database(meetup_id, "rsvps", "meetup_id")
+
         return self.makeresp(["This meetup has been deleted successfully"], 200)
 
     def post_images(self, meetup_id):

@@ -32,7 +32,7 @@ class QuestionModels(BaseModels):
             meetup = self.sql.fetch_details_by_criteria(
                 "meetup_id", self.question_details["meetup"], "meetups")
 
-            existing = self.sql.fetch_id_if_text_exists(
+            existing = self.sql.fetch_details_if_text_exists(
                 "title", self.question_details["title"], "questions")
 
             title = self.question_details["title"]
@@ -55,7 +55,10 @@ class QuestionModels(BaseModels):
             return self.makeresp("Meetup not found", 404)
 
         if not self.check_is_error(existing):
-            return self.makeresp("This Question already exists", 409)
+
+            if [meet_id[1] for meet_id in existing if self.question_details["meetup"] in meet_id]:
+
+                return self.makeresp("This Question already exists", 409)
 
         question = {
             "meetup": self.question_details["meetup"],
@@ -82,8 +85,13 @@ class QuestionModels(BaseModels):
         question by 1 
         """
 
+        locations, vote_id = ["question_id", "user_id", "meetup_id", "vote"], ''
+
         question = self.sql.fetch_details_by_criteria(
             "question_id", question_id, "questions")
+
+        votes = self.sql.fetch_details_by_criteria(
+            "question_id", question_id, "votes")
 
         if not question:
             return self.makeresp("Question not found", 404)
@@ -106,17 +114,47 @@ class QuestionModels(BaseModels):
         if not user:
             return self.makeresp("User does not exist. Please register first", 404)
 
+        voted_users = [
+            user for user in votes if self.question_details["user"] in user]
+
+        if voted_users:
+
+            vote_id = voted_users[0][0]
+
+            if [vote[3] for vote in voted_users if "up" in vote]:
+
+                return self.makeresp("You have already upvoted this question", 403)
+
+            else:
+
+                self.sql.update_votes(vote_id, "up")
+
+        elif not voted_users:
+
+            details = {
+                "question": question_id,
+                "user": self.question_details["user"],
+                "vote": "up",
+                "meetup": question[0][1]
+            }
+
+            vote_id = SqlHelper(details).save_to_database(locations, "votes")
+
         data = self.sql.vote_question(question_id)
 
-        return self.makequestionresponse(data)
+        return self.makequestionresponse(data, vote_id)
 
     def downvote_question(self, question_id):
         """ 
         Decreases the number of votes by 1 
         """
+        locations, vote_id = ["question_id", "user_id", "meetup_id", "vote"], ''
 
         question = self.sql.fetch_details_by_criteria(
             "question_id", question_id, "questions")
+
+        votes = self.sql.fetch_details_by_criteria(
+            "question_id", question_id, "votes")
 
         if not question:
             return self.makeresp("Question not found", 404)
@@ -137,57 +175,37 @@ class QuestionModels(BaseModels):
         if not user:
             return self.makeresp("User does not exist. Please register first", 404)
 
+        voted_users = [
+            user for user in votes if self.question_details["user"] in user]
+
+        if voted_users:
+
+            vote_id = voted_users[0][0]
+
+            if [vote[3] for vote in voted_users if "down" in vote]:
+
+                return self.makeresp("You have already downvoted this question", 403)
+
+            else:
+
+                self.sql.update_votes(vote_id, "down")
+
+        elif not voted_users:
+
+            details = {
+                "question": question_id,
+                "user": self.question_details["user"],
+                "vote": "down",
+                "meetup": question[0][1]
+            }
+
+            vote_id = SqlHelper(details).save_to_database(locations, "votes")
+
         data = self.sql.vote_question(question_id, "down")
 
-        return self.makequestionresponse(data)
+        return self.makequestionresponse(data, vote_id)
 
-    def post_comment(self):
-        """ Posts a comment to a question """
-
-        locations = ["question_id", "user_id", "comments"]
-
-        try:
-
-            user = self.sql.get_username_by_id(
-                int(self.question_details["user"]))
-
-            question = self.sql.fetch_details_by_criteria(
-                "question_id", self.question_details["question"], "questions")
-
-            comment = self.question_details["comment"]
-
-            isempty = DataValidators(
-                self.question_details).check_values_not_empty()
-
-            if isinstance(isempty, str):
-                return self.makeresp(isempty, 400)
-
-            if isinstance(comment, str):
-                self.question_details["comment"] = [comment]
-
-        except KeyError as keyerror:
-            return self.makeresp("{} is a required field".format(keyerror), 400)
-
-        if not user:
-            return self.makeresp("User not found", 404)
-
-        if not question:
-            return self.makeresp("Question not found", 404)
-
-        comment_id = SqlHelper(self.question_details).save_to_database(
-            locations, "comments")
-
-        return self.makeresp(
-            {
-                "id": comment_id,
-                "user": user[0],
-                "question": question[0][0],
-                "title": question[0][3],
-                "body": question[0][4],
-                "comment": comment
-            }, 201)
-
-    def makequestionresponse(self, question):
+    def makequestionresponse(self, question, vote_id=''):
         """
         This method takes in data and selects what part of 
         data to make response with and responds
@@ -197,7 +215,8 @@ class QuestionModels(BaseModels):
             "meetup": question[0],
             "title": question[1],
             "body": question[2],
-            "votes": question[3]
+            "votes": question[3],
+            "id": vote_id
         }
 
         return self.makeresp(resp, 200)
@@ -260,64 +279,6 @@ class QuestionModels(BaseModels):
 
         return self.makeresp(response, 200)
 
-    def fetch_all_comments(self, question_id):
-        """ Fetches all comments to questions """
-
-        response = []
-
-        comments = self.sql.get_all("comments", "question_id", question_id)
-
-        for items in comments:
-
-            user = self.sql.get_username_by_id(items[2])[0]
-
-            response.append({
-                "id": items[0],
-                "createdBy": user,
-                "question": items[1],
-                "comment": items[3],
-                "createdOn": items[4]
-
-            })
-
-        if not response:
-            response = {
-                "data": "No comments found to this question yet",
-                "status": 200
-            }
-
-            return response
-
-        return self.makeresp(response, 200)
-
-    def fetch_one_comment(self, comment_id):
-        """ Gets just one comment record with the passed id """
-
-        comment_data = ''
-
-        comment = self.sql.fetch_details_by_criteria(
-            "comment_id", comment_id, "comments")
-
-        if not comment:
-
-            return self.makeresp("This comment cannot not be found", 404)
-
-        user = self.sql.get_username_by_id(int(comment[0][2]))
-
-        if len(comment[0][3]) == 1:
-
-            comment_data = comment[0][3][0]
-
-        response = self.makeresp({
-
-            "user": user[0],
-            "question": comment[0][1],
-            "comment": comment_data,
-            "createdOn": comment[0][4]
-        }, 200)
-
-        return response
-
     def delete_question(self, question_id):
         """ Deletes from the database a question """
 
@@ -328,28 +289,14 @@ class QuestionModels(BaseModels):
 
             return self.makeresp("This question could not be found", 404)
 
-        if not self.question_details["user"] == question[0][1]:
+        if not self.question_details["user"] == question[0][2]:
 
             return self.makeresp("You can not delete a question you don't own", 403)
 
         SqlHelper().delete_from_database(question_id, "questions")
 
+        SqlHelper().delete_from_database(question_id, "comments", "question_id")
+
+        SqlHelper().delete_from_database(question_id, "votes", "question_id")
+
         return self.makeresp({"message": "This question has been deleted successfully"}, 200)
-
-    def remove_comment(self, comment_id):
-        """ Removes a comment from the database """
-
-        comment = self.sql.fetch_details_by_criteria(
-            "comment_id", comment_id, "comments")
-
-        if not comment:
-
-            return self.makeresp("This comment could not be found", 404)
-
-        if not self.question_details["user"] == comment[0][2]:
-
-            return self.makeresp("You can not delete a comment you don't own", 403)
-
-        SqlHelper().delete_from_database(comment_id, "comments")
-
-        return self.makeresp({"message": "Comment deleted successfully"}, 200)
