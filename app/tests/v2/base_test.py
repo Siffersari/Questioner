@@ -89,6 +89,14 @@ class BaseTest(unittest.TestCase):
 
         return response
 
+    def logout_user(self, path="/api/v2/auth/logout"):
+        """ Logs out a user """
+
+        response = self.client.post(
+            path, content_type=self.content_type, headers=self.get_token())
+
+        return response
+
     def create_meetup(self, path="api/v2/meetups", data={}):
         """ Creates a meetup """
 
