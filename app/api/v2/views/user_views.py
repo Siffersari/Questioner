@@ -7,6 +7,11 @@ from werkzeug.security import check_password_hash
 @version2.route("/users", methods=["GET"])
 def fetch_all_users():
     """ List of all registered users """
+
+    if not isinstance(UserModels().check_authorization(), int):
+
+        return UserModels().check_authorization()
+
     resp = UserModels().fetch_users()
 
     return jsonify(resp)
@@ -35,3 +40,20 @@ def login_user():
     resp = UserModels(data).login_user()
 
     return jsonify(resp), resp["status"]
+
+
+@version2.route("/auth/logout", methods=["POST"])
+def logout_user():
+    """ Log out user """
+
+    decoded_auth = UserModels().check_authorization()
+
+    if not isinstance(decoded_auth, int):
+
+        return decoded_auth
+
+    auth_token = request.headers.get("Authorization").split(" ")[1]
+
+    response = UserModels().logout_user(auth_token)
+
+    return jsonify(response), response["status"]
