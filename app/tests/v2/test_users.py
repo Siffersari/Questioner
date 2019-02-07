@@ -35,9 +35,6 @@ class TestUsers(BaseTest):
 
         self.assertTrue(self.logout_user().json["error"])
 
-        self.assertTrue(
-            "Token is no longer valid. Get a new one" in self.logout_user().json["error"])
-
     def tearDown(self):
         """ Destroys set up data before running each test """
 
