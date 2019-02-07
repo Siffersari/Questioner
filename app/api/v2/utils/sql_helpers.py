@@ -23,8 +23,8 @@ class SqlHelper:
 
         if item_id:
 
-            cur.execute(""" SELECT * FROM {} WHERE {} = {} ;""".format(database, item_name, item_id))
-        
+            cur.execute(
+                """ SELECT * FROM {} WHERE {} = {} ;""".format(database, item_name, item_id))
 
         elif database == "questions" and not item_id:
 
@@ -129,7 +129,7 @@ class SqlHelper:
         text = cur.fetchall()
 
         if not text:
-            
+
             return " Text not found"
 
         return text
@@ -194,7 +194,8 @@ class SqlHelper:
             "question": """ %(meetup)s, %(createdBy)s, %(title)s, %(body)s """,
             "rsvp": """ %(user)s, %(meetup)s, %(response)s """,
             "comment": """ %(question)s, %(user)s, %(meetup)s, %(comment)s """,
-            "vote": """ %(question)s, %(user)s, %(meetup)s, %(vote)s """
+            "vote": """ %(question)s, %(user)s, %(meetup)s, %(vote)s """,
+            "blacklis": """ %(token)s """
         }
 
         table_key = database[:-1]
@@ -207,6 +208,11 @@ class SqlHelper:
 
         query = """ INSERT INTO %s (%s) VALUES (%s) RETURNING %s; """ % (
             database, columns, values, item_id)
+
+        if database == "blacklist":
+
+            query = """ INSERT INTO blacklist VALUES (%s) RETURNING tokens; """ % (
+                values)
 
         cur.execute(query, self.details)
 
@@ -269,7 +275,6 @@ class SqlHelper:
         cur.close()
 
         return data
-
 
     def get_upcoming_meetups(self):
 

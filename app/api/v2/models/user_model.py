@@ -147,3 +147,16 @@ class UserModels(BaseModels):
         }
 
         return self.makeresp(resp, 200)
+
+    def logout_user(self, token):
+        """ Blacklists a user's token """
+
+        details = {
+            "token": token
+        }
+
+        blacked_token = SqlHelper(details).save_to_database('', "blacklist")
+
+        return self.makeresp({"message": "You have been successfully logged out",
+                              "status": 200,
+                              "token": blacked_token}, 200)
