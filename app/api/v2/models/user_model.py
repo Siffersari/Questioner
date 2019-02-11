@@ -96,26 +96,24 @@ class UserModels(BaseModels):
 
         return self.makeresp(resp, 201)
 
-    def fetch_users(self):
+    def fetch_user(self, user_id):
         """ Returns all the users """
 
-        users = SqlHelper().get_all_users()
+        user = SqlHelper().get_user(user_id)
 
-        resp = []
+        questions = SqlHelper().fetch_statistics(user_id, "questions")
 
-        for user in users:
-            try:
-                user_id, first_name, last_name = user
-                final = {
-                    "userId": user_id,
-                    "user": "%s %s" % (last_name, first_name)
-                }
-                resp.append(final)
-            except:
-                pass
+        comments = SqlHelper().fetch_statistics(user_id, "comments")
 
         return self.makeresp({
-            "users": resp
+            "name": "{} {}".format(user[3], user[1]),
+            "email": user[4],
+            "phoneNumber": user[5],
+            "username": user[6],
+            "registeredOn": user[7],
+            "isAdmin": user[9],
+            "questions": questions[0],
+            "comments": comments[0]
         }, 200)
 
     def login_user(self):

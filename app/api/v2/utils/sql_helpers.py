@@ -123,8 +123,8 @@ class SqlHelper:
     def fetch_details_if_text_exists(self, item_name, text, table):
 
         cur = self.database.cursor()
-        cur.execute(""" SELECT * FROM {} WHERE lower({}) = '{}'; """.format(
-            table, item_name, text.lower()))
+        cur.execute(""" SELECT * FROM %s WHERE lower(%s) = '%s'; """ % (
+            table, item_name, text.lower().replace("'", "''")))
 
         text = cur.fetchall()
 
@@ -318,19 +318,41 @@ class SqlHelper:
 
         return cur.fetchone() is not None
 
-    def get_all_users(self):
-        """ Returns all the users in the database """
+    def get_user(self, user_id):
+        """ 
+        Returns all the users details from the database associated with the given user id
+        """
 
         cur = self.database.cursor()
 
         cur.execute(
-            """SELECT user_id, firstname, lastname FROM users;""")
+            """SELECT * FROM users WHERE user_id = {};""".format(user_id))
 
-        users = cur.fetchall()
+        user = cur.fetchone()
+
+        if not user:
+
+            return "User not Found"
 
         cur.close()
 
-        return users
+        return user
+
+    def fetch_statistics(self, user_id, database):
+        """ Fetches user statistics from database """
+
+        cur = self.database.cursor()
+
+        cur.execute(
+            """ SELECT COUNT (*) FROM %s WHERE user_id = %d;""" % (database, user_id))
+
+        data = cur.fetchone()
+
+        if not data:
+
+            return 'None yet'
+
+        return data
 
     def get_images(self, meetup_id):
         """ Fetches images from the database """
