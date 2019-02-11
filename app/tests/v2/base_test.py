@@ -97,6 +97,13 @@ class BaseTest(unittest.TestCase):
 
         return response
 
+    def fetch_user_details(self, path="/api/v2/users"):
+        """ Fetches details of a specific users """
+
+        response = self.client.get(path, headers=self.get_token())
+
+        return response
+
     def create_meetup(self, path="api/v2/meetups", data={}):
         """ Creates a meetup """
 

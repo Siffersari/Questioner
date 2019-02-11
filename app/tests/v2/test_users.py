@@ -33,7 +33,15 @@ class TestUsers(BaseTest):
 
         self.assertEqual(self.logout_user().status_code, 200)
 
-        self.assertTrue(self.logout_user().json["error"])
+    def test_fetch_user(self):
+        """ Tests for successful fetch of user details """
+
+        self.register_user()
+
+        self.assertEqual(self.fetch_user_details().status_code, 200)
+
+        self.assertTrue(self.fetch_user_details(
+        ).json["data"][0]["username"] == 'testuser')
 
     def tearDown(self):
         """ Destroys set up data before running each test """
