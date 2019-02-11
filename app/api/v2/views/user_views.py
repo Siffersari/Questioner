@@ -57,3 +57,11 @@ def logout_user():
     response = UserModels().logout_user(auth_token)
 
     return jsonify(response), response["status"]
+
+
+@version2.route("/users/<int:user_id>", methods=['GET'])
+def fetch_user_profile(user_id):
+
+    """ Fetches details of a given user """
+
+    pass
