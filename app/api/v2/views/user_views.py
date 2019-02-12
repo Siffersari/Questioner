@@ -61,3 +61,40 @@ def logout_user():
     response = UserModels().logout_user(auth_token)
 
     return jsonify(response), response["status"]
+
+
+@version2.route("/users/<string:email>", methods=["GET"])
+def request_password_reset(email):
+    """ Requests for a password reset """
+
+    response = UserModels().request_password_reset(email)
+
+    return jsonify(response), response["status"]
+
+
+@version2.route("/auth/reset_password/<token>")
+def reset_password(token):
+    """ Resets password """
+
+    decoded_auth = UserModels().check_authorization()
+
+    if isinstance(decoded_auth, int):
+
+        return jsonify(UserModels().makeresp("This token is invalid", 400))
+
+    if not "@" in decoded_auth:
+
+        return decoded_auth
+
+    details = request.get_json()
+
+    try:
+        details["email"] = decoded_auth
+
+    except:
+        
+        return jsonify(UserModels().makeresp("Please provide data as JSON format", 400))
+
+    response = UserModels(details).reset_password()
+
+    return jsonify(response), response["status"]
