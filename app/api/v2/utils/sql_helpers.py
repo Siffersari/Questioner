@@ -314,9 +314,11 @@ class SqlHelper:
         cur = self.database.cursor()
 
         cur.execute(
-            """ SELECT email FROM users WHERE email = '%s';""" % (email))
+            """ SELECT email FROM users WHERE lower(email) = '%s';""" % (email.lower()))
 
-        return cur.fetchone() is not None
+        email = cur.fetchone()
+
+        return email
 
     def get_user(self, user_id):
         """ 
@@ -433,3 +435,19 @@ class SqlHelper:
         cur.close()
 
         return tags
+
+    def update_password(self, password, email):
+        """ Updates the password field """
+
+        cur = self.database.cursor()
+
+        cur.execute(""" UPDATE users SET password = '{}' WHERE lower(email) =  '{}' RETURNING email; """.format(
+            password, email.lower()))
+
+        email = cur.fetchone()
+
+        self.database.commit()
+
+        cur.close()
+
+        return email

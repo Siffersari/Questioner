@@ -36,7 +36,7 @@ class BaseModels(object):
         return isinstance(data, str)
 
     @staticmethod
-    def give_auth_token(user_id):
+    def give_auth_token(user_id='', email=''):
         """ Generates a JWT auth token """
         app = os.getenv("SECRET_KEY")
 
@@ -45,6 +45,15 @@ class BaseModels(object):
             "iat": datetime.utcnow(),
             "sub": user_id
         }
+
+        if email:
+
+            token_data = {
+
+                "exp": datetime.utcnow() + timedelta(seconds=900),
+                "iat": datetime.utcnow(),
+                "sub": email
+            }
 
         token = jwt.encode(
             token_data,
@@ -98,10 +107,13 @@ class BaseModels(object):
         response = self.validate_token_status(auth_token)
 
         if isinstance(response, str):
-            return jsonify(
-                {"error": response,
-                    "status": 400}
-            ), 400
+
+            if not "@" in response:
+
+                return jsonify(
+                    {"error": response,
+                        "status": 400}
+                ), 400
 
         return response
 

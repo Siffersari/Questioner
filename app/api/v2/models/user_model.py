@@ -3,9 +3,22 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .base_model import BaseModels
 from ..utils.validators import DataValidators
 from ..utils.sql_helpers import SqlHelper
-from flask import current_app
+from flask import current_app, url_for, Flask
+from flask_mail import Mail, Message
 from .... db_con import create_tables
 import re
+import os
+
+
+app = Flask(__name__)
+
+app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
+app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT') or 25)
+app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS') is not None
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+
+mail = Mail(app)
 
 
 class UserModels(BaseModels):
@@ -106,7 +119,7 @@ class UserModels(BaseModels):
         comments = SqlHelper().fetch_statistics(user_id, "comments")
 
         return self.makeresp({
-            "name": "{} {}".format(user[3], user[1]),
+            "name": "{} {}".format(user[2], user[1]),
             "email": user[4],
             "phoneNumber": user[5],
             "username": user[6],
@@ -158,3 +171,72 @@ class UserModels(BaseModels):
         return self.makeresp({"message": "You have been successfully logged out",
                               "status": 200,
                               "token": blacked_token}, 200)
+
+    def request_password_reset(self, email):
+        """ Sends password reset email if email exists """
+
+        user = SqlHelper().check_user_exist_by_email(email)
+
+        if not user:
+            return self.makeresp("This email doesn't not exist", 400)
+
+        token = UserModels().give_auth_token(email=email)
+
+        message = Message('Password Reset',
+                          sender='questioner@no-reply.com', recipients=[email])
+
+        link = url_for('version2.reset_password',
+                       token=token.decode('utf-8'), _external=True)
+
+        message.body = 'Your reset password link {}'.format(link)
+
+        try:
+            mail.send(message)
+
+        except Exception:
+
+            return self.makeresp("This request could not be completed", 501)
+
+        return {
+
+            "message": 'Please check your email for instructions',
+            "status": 200
+        }
+
+    def reset_password(self):
+        """ Resets the existing password """
+
+        try:
+
+            match = self.user_details["password"] == self.user_details["confirmPass"]
+
+            if not match:
+
+                return self.makeresp("Please ensure that both password fields match", 400)
+
+        except KeyError as misskey:
+
+            return self.makeresp("Expected {} in data provided, instead got none".format(misskey), 400)
+
+        isempty = DataValidators(self.user_details).check_values_not_empty()
+
+        if self.check_is_error(isempty):
+
+            return self.makeresp(isempty, 400)
+
+        password = generate_password_hash(self.user_details["password"])
+
+        email = SqlHelper().update_password(
+            password, self.user_details["email"])
+
+        if not email:
+
+            return self.makeresp("This action has been forbidden", 403)
+
+        response = {
+            "message": "Password reset successfully",
+            "status": 200,
+            "email": email[0]
+        }
+
+        return self.makeresp(response, 200)
