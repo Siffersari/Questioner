@@ -13,10 +13,12 @@ import os
 app = Flask(__name__)
 
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
-app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT') or 25)
-app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS') is not None
+app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT') or 587)
+app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL') is not None
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
+
 
 mail = Mail(app)
 
@@ -183,7 +185,7 @@ class UserModels(BaseModels):
         token = UserModels().give_auth_token(email=email)
 
         message = Message('Password Reset',
-                          sender='questioner@no-reply.com', recipients=[email])
+                          sender=os.environ.get('MAIL_USERNAME'), recipients=[email])
 
         link = url_for('version2.reset_password',
                        token=token.decode('utf-8'), _external=True)
@@ -193,9 +195,13 @@ class UserModels(BaseModels):
         try:
             mail.send(message)
 
-        except Exception:
+        except Exception as exception:
 
-            return self.makeresp("This request could not be completed", 501)
+            return {
+                "message": "This request could not be completed",
+                "status": 422,
+                "error": str(exception)
+            }
 
         return {
 
