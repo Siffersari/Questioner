@@ -193,9 +193,13 @@ class UserModels(BaseModels):
         try:
             mail.send(message)
 
-        except Exception:
+        except Exception as exception:
 
-            return self.makeresp("This request could not be completed", 501)
+            return {
+                "message": "This request could not be completed",
+                "status": 422,
+                "error": str(exception)
+            }
 
         return {
 
