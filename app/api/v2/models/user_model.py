@@ -199,7 +199,8 @@ class UserModels(BaseModels):
             return {
                 "message": "This request could not be completed",
                 "status": 422,
-                "error": str(exception)
+                "error": str(exception),
+                "body": str(Exception)
             }
 
         return {
