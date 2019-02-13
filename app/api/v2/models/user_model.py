@@ -13,13 +13,14 @@ import os
 app = Flask(__name__)
 
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
-app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT') or 25)
-app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS') is not None
+app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT') or 587)
 app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL') is not None
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
 
-mail = Mail(app)
+
+mail = Mail(app) 
 
 
 class UserModels(BaseModels):
@@ -191,16 +192,8 @@ class UserModels(BaseModels):
 
         message.body = 'Your reset password link {}'.format(link)
 
-        try:
-            mail.send(message)
-
-        except Exception as exception:
-
-            return {
-                "message": "This request could not be completed",
-                "status": 422,
-                "error": str(exception)
-            }
+        
+        mail.send(message)
 
         return {
 
