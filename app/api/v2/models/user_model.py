@@ -20,7 +20,7 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
 
 
-mail = Mail(app) 
+mail = Mail(app)
 
 
 class UserModels(BaseModels):
@@ -192,8 +192,16 @@ class UserModels(BaseModels):
 
         message.body = 'Your reset password link {}'.format(link)
 
-        
-        mail.send(message)
+        try:
+            mail.send(message)
+
+        except Exception as exception:
+
+            return {
+                "message": "This request could not be completed",
+                "status": 422,
+                "error": str(exception)
+            }
 
         return {
 
