@@ -189,11 +189,8 @@ class UserModels(BaseModels):
         message = Message('Password Reset',
                           sender=os.environ.get('MAIL_USERNAME'), recipients=[email])
 
-        link = url_for('version2.reset_password',
-                       token=token.decode('utf-8'), _external=True)
-
-        reset_page = 'https://siffersari.github.io/Questioner-Ultimate/confirm.html?token={}&pre={}'.format(
-            token.decode('utf-8'), link.split('/eyJ')[0])
+        reset_page = 'https://siffersari.github.io/Questioner-Ultimate/confirm.html?token={}'.format(
+            token.decode('utf-8'))
 
         message.html = "<p>To reset your password <a href='{}'>click here</a>. </p><p>Alternatively, you can paste the following link in your browser's address bar:</p><p>{}</p><p>If you have not requested a password reset simply ignore this message.</p><p>Sincerely,</p><p>Questioner</p>".format(
             reset_page, reset_page)
