@@ -53,7 +53,9 @@ class UserModels(BaseModels):
             if self.user_details["password"] != self.user_details["confirmPass"]:
 
                 return self.makeresp("Please ensure that both password fields match", 400)
+
         except KeyError as keyismis:
+
             return self.makeresp("Expected {} in data provided, instead got none".format(keyismis), 400)
 
         ismissingkey = DataValidators(
@@ -233,6 +235,13 @@ class UserModels(BaseModels):
         if self.check_is_error(isempty):
 
             return self.makeresp(isempty, 400)
+
+        isvalidpass = DataValidators(
+            self.user_details).check_password_is_valid()
+
+        if self.check_is_error(isvalidpass):
+
+            return self.makeresp(isvalidpass, 400)
 
         password = generate_password_hash(self.user_details["password"])
 
