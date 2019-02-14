@@ -72,7 +72,7 @@ def request_password_reset(email):
     return jsonify(response), response["status"]
 
 
-@version2.route("/auth/reset_password/<token>")
+@version2.route("/auth/reset_password/<token>", methods=['POST'])
 def reset_password(token):
     """ Resets password """
 
@@ -92,7 +92,7 @@ def reset_password(token):
         details["email"] = decoded_auth
 
     except:
-        
+
         return jsonify(UserModels().makeresp("Please provide data as JSON format", 400))
 
     response = UserModels(details).reset_password()
