@@ -53,7 +53,9 @@ class UserModels(BaseModels):
             if self.user_details["password"] != self.user_details["confirmPass"]:
 
                 return self.makeresp("Please ensure that both password fields match", 400)
+
         except KeyError as keyismis:
+
             return self.makeresp("Expected {} in data provided, instead got none".format(keyismis), 400)
 
         ismissingkey = DataValidators(
@@ -187,11 +189,8 @@ class UserModels(BaseModels):
         message = Message('Password Reset',
                           sender=os.environ.get('MAIL_USERNAME'), recipients=[email])
 
-        link = url_for('version2.reset_password',
-                       token=token.decode('utf-8'), _external=True)
-
-        reset_page = 'https://siffersari.github.io/Questioner-Ultimate/confirm.html?token={}&pre={}'.format(
-            token.decode('utf-8'), link.split('/eyJ')[0])
+        reset_page = 'https://siffersari.github.io/Questioner-Ultimate/confirm.html?token={}'.format(
+            token.decode('utf-8'))
 
         message.html = "<p>To reset your password <a href='{}'>click here</a>. </p><p>Alternatively, you can paste the following link in your browser's address bar:</p><p>{}</p><p>If you have not requested a password reset simply ignore this message.</p><p>Sincerely,</p><p>Questioner</p>".format(
             reset_page, reset_page)
@@ -233,6 +232,13 @@ class UserModels(BaseModels):
         if self.check_is_error(isempty):
 
             return self.makeresp(isempty, 400)
+
+        isvalidpass = DataValidators(
+            self.user_details).check_password_is_valid()
+
+        if self.check_is_error(isvalidpass):
+
+            return self.makeresp(isvalidpass, 400)
 
         password = generate_password_hash(self.user_details["password"])
 
