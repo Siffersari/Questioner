@@ -72,7 +72,7 @@ def request_password_reset(email):
     return jsonify(response), response["status"]
 
 
-@version2.route("/auth/reset_password/<token>")
+@version2.route("/auth/reset_password/<token>" )
 def reset_password(token):
     """ Resets password """
 
