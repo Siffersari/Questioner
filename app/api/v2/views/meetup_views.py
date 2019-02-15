@@ -41,12 +41,6 @@ def fetch_specific_meetup(meetup_id):
 def fetch_upcoming_meetup():
     """ Fetches all upcoming meetup records """
 
-    decoded_auth = MeetupModels().check_authorization()
-
-    if not isinstance(decoded_auth, int):
-
-        return decoded_auth
-
     response = MeetupModels().fetch_upcoming_meetups()
 
     status = response["status"]
