@@ -160,9 +160,9 @@ class BaseTest(unittest.TestCase):
 
         return response
 
-    def fetch_upcoming_meetup(self, path="/api/v1/meetups/upcoming"):
+    def fetch_upcoming_meetup(self, path="/api/v2/meetups/upcoming"):
 
-        response = self.client.get(path, headers=self.get_token())
+        response = self.client.get(path)
 
         return response
 
