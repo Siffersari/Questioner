@@ -1,6 +1,7 @@
 import os
 import psycopg2
 from flask import current_app
+from werkzeug.security import generate_password_hash
 
 
 def connect_to_database_url(url):
@@ -45,7 +46,7 @@ def create_table_users():
     firstname VARCHAR (20) NOT NULL, lastname VARCHAR (20) NOT NULL, othername VARCHAR (20),
     email VARCHAR (30) NOT NULL, phone_number VARCHAR (20), username VARCHAR (20) NOT NULL,
     registered_on TIMESTAMP NOT NULL DEFAULT current_timestamp, password VARCHAR (256) NOT NULL,
-    roles VARCHAR (20) DEFAULT true
+    roles VARCHAR (20) DEFAULT false
     );"""
 
     meetups = """ CREATE TABLE IF NOT EXISTS meetups (meetup_id serial PRIMARY KEY NOT NULL,
@@ -80,6 +81,28 @@ def create_table_users():
     return [users, meetups, questions, rsvps, comments, blacklist, votes]
 
 
+def create_super_user():
+    """ Creates a super user """
+
+    db_url = os.getenv('DATABASE_URL')
+
+    conn = psycopg2.connect(db_url)
+
+    curr = conn.cursor()
+
+    password = generate_password_hash('TestP@ssw0rd')
+
+    curr.execute(""" INSERT INTO users (firstname, lastname, othername, email, phone_number, username, password, roles) SELECT 'Bjorn', 'Berg' , 'Germain', 'developerkenyah@gmail.com', '0707007070', 'Bjorn', '{}' , True WHERE NOT EXISTS (SELECT username FROM users WHERE username = 'Bjorn') RETURNING user_id;""".format(password))
+
+    user_id = curr.fetchone()
+
+    conn.commit()
+
+    curr.close()
+
+    return user_id
+
+
 def create_tables():
     """ 
     Takes an argument with two possible values 'main' or 'testing'
@@ -97,5 +120,7 @@ def create_tables():
     for i in data:
         curr.execute(i)
         conn.commit()
+
+    create_super_user()
 
     return conn
