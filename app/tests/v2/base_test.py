@@ -21,6 +21,8 @@ class BaseTest(unittest.TestCase):
 
         self.user_data = Data().test_user
 
+        self.admin_data = Data().admin_data
+
         self.meetup_data = Data().meetup
 
         self.meetup_data_2 = Data().meetup2
@@ -57,10 +59,8 @@ class BaseTest(unittest.TestCase):
         os.environ["DATABASE_URL"] = "dbname='questioner' host='localhost' port='5432' user='leewel' password='root'"
 
     def get_token(self):
-        self.user = self.client.post("/api/v2/auth/signup",
-                                     data=json.dumps(self.user_data), content_type="application/json")
 
-        login = self.login_user()
+        login = self.login_user(role='admin')
 
         headers = {'Authorization': 'Bearer {}'.format(
             login.json["data"][0]["token"])}
@@ -78,11 +78,15 @@ class BaseTest(unittest.TestCase):
 
         return response
 
-    def login_user(self, path="/api/v2/auth/login", data={}):
+    def login_user(self, path="/api/v2/auth/login", data={}, role=''):
         """ Logs in a user if registered """
 
         if not data:
             data = self.user_data
+
+        if role:
+
+            data = self.admin_data 
 
         response = self.client.post(path, data=json.dumps(
             data), content_type="application/json")
