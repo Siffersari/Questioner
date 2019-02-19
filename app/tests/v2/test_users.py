@@ -41,7 +41,7 @@ class TestUsers(BaseTest):
         self.assertEqual(self.fetch_user_details().status_code, 200)
 
         self.assertTrue(self.fetch_user_details(
-        ).json["data"][0]["username"] == 'testuser')
+        ).json["data"][0]["username"] == 'Bjorn')
 
     def tearDown(self):
         """ Destroys set up data before running each test """

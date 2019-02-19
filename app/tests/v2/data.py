@@ -1,3 +1,5 @@
+import os
+
 
 class Data:
     """
@@ -15,6 +17,11 @@ class Data:
             "username": "testuser",
             "password": "P@5sword",
             "confirmPass": "P@5sword"
+        }
+
+        self.admin_data = {
+            "username": 'Bjorn',
+            "password": 'TestP@ssw0rd'
         }
 
         self.meetup = {
