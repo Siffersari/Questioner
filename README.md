@@ -26,6 +26,7 @@ POST | /meetups/int:meetup-id/tags | Add tags to a meetup
 POST | /meetups/int:meetup-id/images | Add images to a meetup
 GET | /meetups/int:meetup-id | Fetch a specific meetup record
 GET | /meetups/upcoming | Fetch all upcoming meetup records
+GET | /meetups/int:meetup_id/questions | Fetches all questions to a specific meetup record
 DELETE | /meetups/int:meetup-id | Delete a meetup
 
 #### Question Endpoints
@@ -33,19 +34,35 @@ DELETE | /meetups/int:meetup-id | Delete a meetup
 Method | Endpoint | Purpose
 --- | --- | ---
 POST | /questions | Create a question for a specific meetup
-POST | /comments | Comment on a question
+GET | /questions | Fetches all question records
+GET | /questions/Int:question_id | Fetches a specific question
+GET | /questions/int:question_id/comments | Fetches all comments to a specific question record
 PATCH | /questions/int:question-id/upvote | Upvote a specific question
 PATCH | /questions/int:question-id/downvote | Downvote a specific question
+DELETE | /questions/int:question_id | Deletes a specific question record
+
+
+#### Comment Endpoints
+
+Method | Endpoint | Purpose
+--- | --- | ---
+
+POST | /comments | Comment on a question
+
+GET | /comments/int:comment_id | Fetches a specific comment to a question
+
+DELETE | /comments/int:comment_id | Deletes a specific comment record
 
 #### User Endpoints
 
 Method | Endpoint | Purpose
 --- | --- | ---
 POST | /auth/signup | Register a new users
-POST | /auth/login | Log in  registered users
-POST | /auth/login/refresh | Refreshes access token
+POST | /auth/login | Log in registered users
 POST | /auth/logout | Log out users 
-GET | /users | Fetch all registered users
+GET | /users | Fetch details of a specific user
+GET | /users/string:email | Request Password Reset Link
+POST |/auth/reset_password/token | Reset Password
 
 ### Pre-requisites
 ```
