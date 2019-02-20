@@ -42,10 +42,9 @@ PATCH | /questions/int:question-id/downvote | Downvote a specific question
 Method | Endpoint | Purpose
 --- | --- | ---
 POST | /auth/signup | Register a new users
-POST | /auth/login | Log in  registered users
-POST | /auth/login/refresh | Refreshes access token
+POST | /auth/login | Log in registered users
 POST | /auth/logout | Log out users 
-GET | /users | Fetch all registered users
+GET | /users | Fetch details of a specific user
 
 ### Pre-requisites
 ```
