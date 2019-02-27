@@ -122,6 +122,15 @@ class UserModels(BaseModels):
 
         comments = SqlHelper().fetch_statistics(user_id, "comments")
 
+        askedQuestion = SqlHelper().fetch_details(
+            'question_id', 'questions', 'user_id', user_id)
+
+        createdMeetups = SqlHelper().fetch_details(
+            'meetup_id', 'meetups', 'user_id', user_id)
+
+        scheduledMeetups = SqlHelper().fetch_details(
+            'meetup_id', 'rsvps', 'user_id', user_id)
+
         return self.makeresp({
             "name": "{} {}".format(user[2], user[1]),
             "email": user[4],
@@ -130,7 +139,10 @@ class UserModels(BaseModels):
             "registeredOn": user[7],
             "isAdmin": user[9],
             "questions": questions[0],
-            "comments": comments[0]
+            "comments": comments[0],
+            "createdMeets": createdMeetups,
+            "scheduledMeets": scheduledMeetups,
+            "askedQuestions": askedQuestion
         }, 200)
 
     def login_user(self):
