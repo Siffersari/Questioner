@@ -41,6 +41,36 @@ class SqlHelper:
 
         return all_items
 
+    def fetch_details(self, item, database, item_name, item_id):
+        """
+        Fetches requested data from the specified
+        database
+        """
+
+        cur = self.database.cursor()
+
+        query = """ SELECT {} FROM {} WHERE {} = {} ;"""
+
+        if database == 'rsvps':
+
+            query = """ SELECT {} FROM {} WHERE {} = {} AND response = 'yes' ;"""
+
+        cur.execute(query.format(item, database, item_name, item_id))
+
+        all_items = cur.fetchall()
+
+        finaldata = []
+
+        if all_items:
+
+            for item in all_items:
+
+                finaldata.append(item[0])
+
+        cur.close()
+
+        return finaldata or 'None'
+
     def get_admin_user(self, user_id):
         """ Fetches admin user if exists """
 
@@ -58,9 +88,14 @@ class SqlHelper:
 
         admin = [user for user in admins if user_id in user]
 
-        if not int(user_id) in admin[0]:
+        try:
 
-            return "This user doesn't have the priviledges for this action.{}".format(admin)
+            if not int(user_id) in admin[0]:
+                return "This user doesn't have the priviledges for this action."
+
+        except:
+
+            return "This user doesn't have the priviledges for this action."
 
         return user_id
 
