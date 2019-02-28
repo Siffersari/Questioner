@@ -59,17 +59,9 @@ class SqlHelper:
 
         all_items = cur.fetchall()
 
-        finaldata = []
-
-        if all_items:
-
-            for item in all_items:
-
-                finaldata.append(item[0])
-
         cur.close()
 
-        return finaldata or 'None'
+        return all_items or 'None'
 
     def get_admin_user(self, user_id):
         """ Fetches admin user if exists """
