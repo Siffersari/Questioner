@@ -122,6 +122,22 @@ class UserModels(BaseModels):
 
         comments = SqlHelper().fetch_statistics(user_id, "comments")
 
+        askedQuestion = SqlHelper().fetch_details(
+            '*', 'questions', 'user_id', user_id)
+
+        createdMeetups = SqlHelper().fetch_details(
+            '*', 'meetups', 'user_id', user_id)
+
+        scheduledMeetups = SqlHelper().fetch_details(
+            'meetup_id', 'rsvps', 'user_id', user_id)
+
+        finalschedule = scheduledMeetups
+
+        if not self.check_is_error(scheduledMeetups):
+
+            finalschedule = [SqlHelper().fetch_details(
+                '*', 'meetups', 'meetup_id', meet[0]) for meet in scheduledMeetups]
+
         return self.makeresp({
             "name": "{} {}".format(user[2], user[1]),
             "email": user[4],
@@ -130,7 +146,10 @@ class UserModels(BaseModels):
             "registeredOn": user[7],
             "isAdmin": user[9],
             "questions": questions[0],
-            "comments": comments[0]
+            "comments": comments[0],
+            "createdMeets": createdMeetups,
+            "scheduledMeets": finalschedule,
+            "askedQuestions": askedQuestion
         }, 200)
 
     def login_user(self):
